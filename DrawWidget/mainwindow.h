@@ -9,7 +9,7 @@ class MainWindow;
 
 class MainWindow : public QMainWindow
 {
-    Q_OBJECT
+    Q_OBJECT;
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
@@ -30,6 +30,8 @@ private slots:
     void on_task4_clicked();
     void on_task5_clicked();
     void on_task6_clicked();
+    void checkIntersection();
+    void updateIntersection();
 };
 
 #endif // MAINWINDOW_H
