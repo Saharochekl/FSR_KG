@@ -28,12 +28,14 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     customdrawwidget.cpp \
-    mathfunctions.cpp
+    mathfunctions.cpp \
+    task_1.cpp
 
 HEADERS += \
         mainwindow.h \
     customdrawwidget.h \
-    mathfunctions.h
+    mathfunctions.h \
+    task_1.h
 
 FORMS += \
         mainwindow.ui
