@@ -27,8 +27,13 @@ void MainWindow::on_getResult_clicked()
             ui->textBrowser->setText("Отрезки не заданы полностью.");
             return;
         }
+
         bool intersect = doIntersect(points[0], points[1], points[2], points[3]);
-        ui->textBrowser->setText(intersect ? "Отрезки пересекаются." : "Отрезки не пересекаются.");
+        if (intersect) {
+            ui->textBrowser->setText("Отрезки пересекаются.");
+        } else {
+            ui->textBrowser->setText("Отрезки не пересекаются.");
+        }
         break;
     }
     case Task2: {
@@ -36,8 +41,16 @@ void MainWindow::on_getResult_clicked()
             ui->textBrowser->setText("Точки не заданы полностью для предиката поворота.");
             return;
         }
+
         int o = orientation(points[0], points[1], points[2]);
-        QString result = (o == 0) ? "Straight." : (o == 1) ? "Right." : "Left.";
+        QString result;
+        if (o == 0) {
+            result = "Straight.";
+        } else if (o == 1) {
+            result = "Right.";
+        } else {
+            result = "Left.";
+        }
         ui->textBrowser->setText(result);
         break;
     }
