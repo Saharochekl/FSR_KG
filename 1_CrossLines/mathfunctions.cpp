@@ -14,13 +14,13 @@ int orientation(QPointF p, QPointF q, QPointF r) {
     }
 }
 
-bool onSegment(QPointF p, QPoint q, QPointF r) {
+bool onSegment(QPointF p, QPointF q, QPointF r) {
     return ((q.x() <= std::max(p.x(), r.x())) && (q.x() >= std::min(p.x(), r.x()))&&
             (q.y() <= std::max(p.y(), r.y())) && (q.y() >= std::min(p.y(), r.y())));
 }
 
-bool doIntersect(QPointF A, QPointF B, QPointF C, QPointF D, QPointF intersection) {
-    // Вычисляем ориентации для четырёх комбинаций точек
+bool doIntersect(QPointF A, QPointF B, QPointF C, QPointF D, QPointF& intersection)
+{    // Вычисляем ориентации для четырёх комбинаций точек
     int o1 = orientation(A, B, C);
     int o2 = orientation(A, B, D);
     int o3 = orientation(C, D, A);

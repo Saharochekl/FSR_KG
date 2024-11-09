@@ -30,7 +30,7 @@ private:
 
 private slots:
     void getMouseCoord(QPointF point);
-
+    //void addPoint(QPointF point);
     void on_red_Button_clicked();
     void on_green_Button_clicked();
     void on_pushButton_deletePoints_clicked();

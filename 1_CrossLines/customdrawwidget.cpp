@@ -115,20 +115,12 @@ void CustomDrawWidget::changedColor(QColor color)
    repaint();
 }
 
-void CustomDrawWidget::dataChanged(QPointF vecPoint) {
-   // Добавляем точку в контейнер points
-   vecPoint.append(vecPoint);
-
-   // Отображаем текущие точки в TextBrowser для отладки
-   QString pointInfo = QString("Добавлена точка: (%1, %2)").arg(vecPoint.x()).arg(point.y());
-                           ui->textBrowser->append(pointInfo);
-}
 
 void CustomDrawWidget::mousePressEvent(QMouseEvent *pe)
 {
    if (pe->button() == Qt::LeftButton)
    {
-        QPointF newPoint = pe->localPos() / scale;
+        QPointF newPoint = pe->position() / scale;
 
         switch (typeTask)
         {

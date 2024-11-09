@@ -8,10 +8,22 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
     connect(ui->widget, &CustomDrawWidget::dataChanged,this,&MainWindow::getMouseCoord);
+    //connect(ui->widget, &CustomDrawWidget::dataChanged, this, &MainWindow::addPoint);
 
     ui->red_Button->setChecked(true);
 }
+
+//void MainWindow::addPoint(QPointF point) {
+//    // Добавляем точку в контейнер points
+//    points.append(point);
+
+//    // Отображаем текущие точки в TextBrowser для отладки
+//    QString pointInfo = QString("Добавлена точка: (%1, %2)").arg(point.x()).arg(point.y());
+//                            ui->textBrowser->append(pointInfo);
+//}
+
 
 MainWindow::~MainWindow()
 {
@@ -24,13 +36,15 @@ void MainWindow::on_getResult_clicked()
     switch (currentTaskType) {
     case Task1: {
         if (points.size() < 4) {
-            ui->textBrowser->setText("Отрезки не заданы полностью.");
+            ui->textBrowser->setText("Отрезки не заданы полностьюррррр.");
             return;
         }
 
         // Объявляем переменную для хранения точки пересечения
         QPointF intersection;
-
+        QString tmp = QString("Size of points Vec(%1).")
+                             .arg(points.size());
+        ui->textBrowser->append(tmp);
         // Проверяем пересечение и вычисляем точку пересечения
         bool intersect = doIntersect(points[0], points[1], points[2], points[3], intersection);
         if (intersect) {
@@ -84,11 +98,11 @@ void MainWindow::on_getResult_clicked()
 
 void MainWindow::getMouseCoord(QPointF point)
 {
+    points.append(point);
     double x_ = point.x();
     double y_ = point.y();
     QString textOutPut = "x_: " + QString::number(x_) + " y_: " +
             QString::number(y_);
-
     ui->textBrowser->append(textOutPut);
 }
 
@@ -106,6 +120,11 @@ void MainWindow::on_green_Button_clicked()
 
 void MainWindow::on_pushButton_deletePoints_clicked()
 {
+    // Очищаем вектор с точками
+    points.clear();
+
+    // Обновляем интерфейс для отображения изменений
+    ui->textBrowser->append("Все точки удалены.");
     ui->widget->clearVector();
     ui->textBrowser->clear();
 }
@@ -115,8 +134,8 @@ void MainWindow::on_task1_clicked()
     ui->widget->setType(task1);
     currentTaskType = Task1;
     points.clear();
-    points.resize(4); // Пересечение двух отрезков требует 4 точки
     ui->textBrowser->setText("Выбрано: Пересечение двух отрезков");
+
 }
 
 void MainWindow::on_task3_clicked()
