@@ -25,7 +25,7 @@ private:
         Task6   // Локализация точки относительно многоугольника
     };
     TaskType currentTaskType; // Переменная для хранения текущей задачи
-    QVector<QPoint> points; // Контейнер для хранения точек
+    QVector<QPointF> points; // Контейнер для хранения точек
     Ui::MainWindow *ui;
 
 private slots:

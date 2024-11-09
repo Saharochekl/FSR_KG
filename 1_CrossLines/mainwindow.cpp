@@ -37,9 +37,9 @@ void MainWindow::on_getResult_clicked()
             QString result = QString("Отрезки пересекаются в точке (%1, %2).")
                                  .arg(intersection.x())
                                  .arg(intersection.y());
-            ui->textBrowser->setText(result);
+            ui->textBrowser->append(result);
         } else {
-            ui->textBrowser->setText("Отрезки не пересекаются.");
+            ui->textBrowser->append("Отрезки не пересекаются.");
         }
         break;
     }
@@ -89,7 +89,7 @@ void MainWindow::getMouseCoord(QPointF point)
     QString textOutPut = "x_: " + QString::number(x_) + " y_: " +
             QString::number(y_);
 
-    ui->textBrowser->setText(textOutPut);
+    ui->textBrowser->append(textOutPut);
 }
 
 void MainWindow::on_red_Button_clicked()

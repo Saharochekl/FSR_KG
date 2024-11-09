@@ -115,74 +115,80 @@ void CustomDrawWidget::changedColor(QColor color)
    repaint();
 }
 
-void CustomDrawWidget::mousePressEvent(QMouseEvent *pe)
-{
-    if (pe->button() == Qt::LeftButton)
-    {
-        if (typeTask == task1){
-            if (vecPoint.size() > 4)
-            {
-                vecPoint.clear();
-            }
-            vecPoint.push_back( pe->localPos()/scale);
-        }
-        if (typeTask == task2){
-            if (vecPoint.size() > 3)
-            {
-                vecPoint.clear();
-            }
-            vecPoint.push_back( pe->localPos()/scale);
-        }
-        if (typeTask == task5)
-        {
-            if (isFirstPolygon == true)
-            {
-                Polygon1.push_back( pe->localPos()/scale);
-            }
-            else
-            {
-                Polygon2.push_back( pe->localPos()/scale);
-            }
+void CustomDrawWidget::dataChanged(QPointF vecPoint) {
+   // Добавляем точку в контейнер points
+   vecPoint.append(vecPoint);
 
-
-        }
-
-        emit dataChanged(pe->localPos()/scale);
-    }
-    else if (pe->button() == Qt::RightButton)
-    {
-        layMove = true;
-        if (typeTask == task1 or typeTask == task2 or typeTask == task3)
-        {
-            if (vecPoint.size() > 0)
-            {
-                double radius = 10;
-                double dist = 99999;
-                int cur_id = -1;
-
-                for (int i =0; i< vecPoint.size(); i++)
-                {
-                    double d = distance(vecPoint[i], pe->localPos()/scale);
-                    if (d < radius)
-                    {
-                        if (d < dist){
-                            dist = d;
-                            cur_id = i;
-                        }
-                    }
-                }
-                m_id = cur_id;
-            }
-        }
-        if (typeTask == task5)
-        {
-
-        }
-    }
-
-    update();
+   // Отображаем текущие точки в TextBrowser для отладки
+   QString pointInfo = QString("Добавлена точка: (%1, %2)").arg(vecPoint.x()).arg(point.y());
+                           ui->textBrowser->append(pointInfo);
 }
 
+void CustomDrawWidget::mousePressEvent(QMouseEvent *pe)
+{
+   if (pe->button() == Qt::LeftButton)
+   {
+        QPointF newPoint = pe->localPos() / scale;
+
+        switch (typeTask)
+        {
+        case task1:
+            if (vecPoint.size() >= 4) {
+                vecPoint.clear();
+            }
+            vecPoint.push_back(newPoint);
+            break;
+
+        case task2:
+            if (vecPoint.size() >= 3) {
+                vecPoint.clear();
+            }
+            vecPoint.push_back(newPoint);
+            break;
+
+        case task5:
+            if (isFirstPolygon) {
+                Polygon1.push_back(newPoint);
+            } else {
+                Polygon2.push_back(newPoint);
+            }
+            break;
+
+        default:
+            break;
+        }
+
+        // Эмитируем сигнал для передачи новой точки
+        emit dataChanged(newPoint);
+   }
+   else if (pe->button() == Qt::RightButton)
+   {
+        layMove = true;
+
+        if (typeTask == task1 || typeTask == task2 || typeTask == task3)
+        {
+            if (!vecPoint.isEmpty())
+            {
+                double radius = 10;
+                double closestDistance = std::numeric_limits<double>::max();
+                int closestIndex = -1;
+
+                for (int i = 0; i < vecPoint.size(); ++i)
+                {
+                    double distanceToCurrent = distance(vecPoint[i], pe->localPos() / scale);
+                    if (distanceToCurrent < radius && distanceToCurrent < closestDistance)
+                    {
+                        closestDistance = distanceToCurrent;
+                        closestIndex = i;
+                    }
+                }
+                m_id = closestIndex;
+            }
+        }
+   }
+
+   update();  // Обновление виджета для отображения новых изменений
+}
 void CustomDrawWidget::mouseDoubleClickEvent(QMouseEvent * pe)
 {
     if (pe->button() == Qt::RightButton)

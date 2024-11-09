@@ -1,9 +1,10 @@
 #include "mathfunctions.h"
 #include <algorithm>
+#include <iostream>
 
-int orientation(QPoint p, QPoint q, QPoint r) {
-    int val = (q.y() - p.y()) * (r.x() - q.x()) - (q.x() - p.x()) * (r.y() - q.y());
-
+int orientation(QPointF p, QPointF q, QPointF r) {
+    //int val = (q.y() - p.y()) * (r.x() - q.x()) - (q.x() - p.x()) * (r.y() - q.y());
+    double val = (p.x()-q.x())*(r.y()-p.y()) - (r.x()-p.x())*(p.y()-q.y());
     if (val == 0) {
         return 0;  // На прямой
     } else if (val > 0) {
@@ -13,12 +14,12 @@ int orientation(QPoint p, QPoint q, QPoint r) {
     }
 }
 
-bool onSegment(QPoint p, QPoint q, QPoint r) {
-    return (q.x() <= std::max(p.x(), r.x()) && q.x() >= std::min(p.x(), r.x()) &&
-            q.y() <= std::max(p.y(), r.y()) && q.y() >= std::min(p.y(), r.y()));
+bool onSegment(QPointF p, QPoint q, QPointF r) {
+    return ((q.x() <= std::max(p.x(), r.x())) && (q.x() >= std::min(p.x(), r.x()))&&
+            (q.y() <= std::max(p.y(), r.y())) && (q.y() >= std::min(p.y(), r.y())));
 }
 
-bool doIntersect(QPoint A, QPoint B, QPoint C, QPoint D, QPointF intersection) {
+bool doIntersect(QPointF A, QPointF B, QPointF C, QPointF D, QPointF intersection) {
     // Вычисляем ориентации для четырёх комбинаций точек
     int o1 = orientation(A, B, C);
     int o2 = orientation(A, B, D);
@@ -28,6 +29,7 @@ bool doIntersect(QPoint A, QPoint B, QPoint C, QPoint D, QPointF intersection) {
     // Основное условие: отрезки пересекаются, если ориентации различны
     if (o1 != o2 && o3 != o4) {
         // Вычисляем точку пересечения
+        //std::cout << "ffff";
         double a1 = B.y() - A.y();
         double b1 = A.x() - B.x();
         double c1 = a1 * A.x() + b1 * A.y();
@@ -42,8 +44,13 @@ bool doIntersect(QPoint A, QPoint B, QPoint C, QPoint D, QPointF intersection) {
             double x = (b2 * c1 - b1 * c2) / determinant;
             double y = (a1 * c2 - a2 * c1) / determinant;
             intersection = QPointF(x, y);
-            return true;
+
+            // Дополнительно проверяем, лежит ли точка пересечения на обоих отрезках
+            if (onSegment(A, intersection.toPoint(), B) && onSegment(C, intersection.toPoint(), D)) {
+                return true;
+            }
         }
+        return false;
     }
 
     // Граничные случаи: когда точки лежат на одном отрезке
