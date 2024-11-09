@@ -41,7 +41,6 @@ private slots:
     void on_task4_clicked();
     void on_task5_clicked();
     void on_task6_clicked();
-    void on_task7_clicked();
 };
 
 #endif // MAINWINDOW_H

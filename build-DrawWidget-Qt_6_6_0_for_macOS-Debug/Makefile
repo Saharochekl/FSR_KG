@@ -55,14 +55,18 @@ OBJECTS_DIR   = ./
 SOURCES       = ../1_CrossLines/main.cpp \
 		../1_CrossLines/mainwindow.cpp \
 		../1_CrossLines/customdrawwidget.cpp \
-		../1_CrossLines/mathfunctions.cpp moc_mainwindow.cpp \
-		moc_customdrawwidget.cpp
+		../1_CrossLines/mathfunctions.cpp \
+		../1_CrossLines/task_1.cpp moc_mainwindow.cpp \
+		moc_customdrawwidget.cpp \
+		moc_task_1.cpp
 OBJECTS       = main.o \
 		mainwindow.o \
 		customdrawwidget.o \
 		mathfunctions.o \
+		task_1.o \
 		moc_mainwindow.o \
-		moc_customdrawwidget.o
+		moc_customdrawwidget.o \
+		moc_task_1.o
 DIST          = /Users/zuha/Qt/6.6.0/macos/mkspecs/features/spec_pre.prf \
 		/Users/zuha/Qt/6.6.0/macos/mkspecs/features/device_config.prf \
 		/Users/zuha/Qt/6.6.0/macos/mkspecs/common/unix.conf \
@@ -229,10 +233,12 @@ DIST          = /Users/zuha/Qt/6.6.0/macos/mkspecs/features/spec_pre.prf \
 		/Users/zuha/Qt/6.6.0/macos/mkspecs/features/lex.prf \
 		../1_CrossLines/DrawWidget.pro ../1_CrossLines/mainwindow.h \
 		../1_CrossLines/customdrawwidget.h \
-		../1_CrossLines/mathfunctions.h ../1_CrossLines/main.cpp \
+		../1_CrossLines/mathfunctions.h \
+		../1_CrossLines/task_1.h ../1_CrossLines/main.cpp \
 		../1_CrossLines/mainwindow.cpp \
 		../1_CrossLines/customdrawwidget.cpp \
-		../1_CrossLines/mathfunctions.cpp
+		../1_CrossLines/mathfunctions.cpp \
+		../1_CrossLines/task_1.cpp
 QMAKE_TARGET  = DrawWidget
 DESTDIR       = 
 TARGET        = DrawWidget.app/Contents/MacOS/DrawWidget
@@ -618,8 +624,8 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents ../1_CrossLines/mainwindow.h ../1_CrossLines/customdrawwidget.h ../1_CrossLines/mathfunctions.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../1_CrossLines/main.cpp ../1_CrossLines/mainwindow.cpp ../1_CrossLines/customdrawwidget.cpp ../1_CrossLines/mathfunctions.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../1_CrossLines/mainwindow.h ../1_CrossLines/customdrawwidget.h ../1_CrossLines/mathfunctions.h ../1_CrossLines/task_1.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../1_CrossLines/main.cpp ../1_CrossLines/mainwindow.cpp ../1_CrossLines/customdrawwidget.cpp ../1_CrossLines/mathfunctions.cpp ../1_CrossLines/task_1.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../1_CrossLines/mainwindow.ui $(DISTDIR)/
 
 
@@ -649,9 +655,9 @@ benchmark: first
 
 compiler_rcc_make_all:
 compiler_rcc_clean:
-compiler_moc_header_make_all: moc_mainwindow.cpp moc_customdrawwidget.cpp
+compiler_moc_header_make_all: moc_mainwindow.cpp moc_customdrawwidget.cpp moc_task_1.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_mainwindow.cpp moc_customdrawwidget.cpp
+	-$(DEL_FILE) moc_mainwindow.cpp moc_customdrawwidget.cpp moc_task_1.cpp
 moc_mainwindow.cpp: ../1_CrossLines/mainwindow.h \
 		../1_CrossLines/customdrawwidget.h \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtWidgets.framework/Headers/QWidget \
@@ -663,6 +669,7 @@ moc_mainwindow.cpp: ../1_CrossLines/mainwindow.h \
 		../1_CrossLines/mathfunctions.h \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QPointF \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qpoint.h \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QPoint \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtWidgets.framework/Headers/QMainWindow \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtWidgets.framework/Headers/qmainwindow.h \
 		/Users/zuha/Qt/6.6.0/macos/libexec/moc
@@ -678,8 +685,19 @@ moc_customdrawwidget.cpp: ../1_CrossLines/customdrawwidget.h \
 		../1_CrossLines/mathfunctions.h \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QPointF \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qpoint.h \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QPoint \
 		/Users/zuha/Qt/6.6.0/macos/libexec/moc
 	/Users/zuha/Qt/6.6.0/macos/libexec/moc $(DEFINES) -D__APPLE__ -D__GNUC__=4 -D__APPLE_CC__ -D__cplusplus=199711L -D__APPLE_CC__=6000 -D__clang__ -D__clang_major__=15 -D__clang_minor__=0 -D__clang_patchlevel__=0 -D__GNUC__=4 -D__GNUC_MINOR__=2 -D__GNUC_PATCHLEVEL__=1 -I/Users/zuha/Qt/6.6.0/macos/mkspecs/macx-clang -I'/Users/zuha/Desktop/FKI/3 курс/5 семестр 2024/FSR_KG/1_CrossLines' -I/Users/zuha/Qt/6.6.0/macos/lib/QtWidgets.framework/Headers -I/Users/zuha/Qt/6.6.0/macos/lib/QtGui.framework/Headers -I/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers -I. -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1 -I/Library/Developer/CommandLineTools/usr/lib/clang/15.0.0/include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include -I/Library/Developer/CommandLineTools/usr/include -F/Users/zuha/Qt/6.6.0/macos/lib ../1_CrossLines/customdrawwidget.h -o moc_customdrawwidget.cpp
+
+moc_task_1.cpp: ../1_CrossLines/task_1.h \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtWidgets.framework/Headers/QWidget \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtWidgets.framework/Headers/qwidget.h \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QPoint \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qpoint.h \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtGui.framework/Headers/QMouseEvent \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtGui.framework/Headers/qevent.h \
+		/Users/zuha/Qt/6.6.0/macos/libexec/moc
+	/Users/zuha/Qt/6.6.0/macos/libexec/moc $(DEFINES) -D__APPLE__ -D__GNUC__=4 -D__APPLE_CC__ -D__cplusplus=199711L -D__APPLE_CC__=6000 -D__clang__ -D__clang_major__=15 -D__clang_minor__=0 -D__clang_patchlevel__=0 -D__GNUC__=4 -D__GNUC_MINOR__=2 -D__GNUC_PATCHLEVEL__=1 -I/Users/zuha/Qt/6.6.0/macos/mkspecs/macx-clang -I'/Users/zuha/Desktop/FKI/3 курс/5 семестр 2024/FSR_KG/1_CrossLines' -I/Users/zuha/Qt/6.6.0/macos/lib/QtWidgets.framework/Headers -I/Users/zuha/Qt/6.6.0/macos/lib/QtGui.framework/Headers -I/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers -I. -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1 -I/Library/Developer/CommandLineTools/usr/lib/clang/15.0.0/include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include -I/Library/Developer/CommandLineTools/usr/include -F/Users/zuha/Qt/6.6.0/macos/lib ../1_CrossLines/task_1.h -o moc_task_1.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
@@ -715,6 +733,7 @@ main.o: ../1_CrossLines/main.cpp ../1_CrossLines/mainwindow.h \
 		../1_CrossLines/mathfunctions.h \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QPointF \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qpoint.h \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QPoint \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtWidgets.framework/Headers/QMainWindow \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtWidgets.framework/Headers/qmainwindow.h \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtWidgets.framework/Headers/QApplication \
@@ -732,6 +751,7 @@ mainwindow.o: ../1_CrossLines/mainwindow.cpp ../1_CrossLines/mainwindow.h \
 		../1_CrossLines/mathfunctions.h \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QPointF \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qpoint.h \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QPoint \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtWidgets.framework/Headers/QMainWindow \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtWidgets.framework/Headers/qmainwindow.h \
 		ui_mainwindow.h
@@ -747,20 +767,40 @@ customdrawwidget.o: ../1_CrossLines/customdrawwidget.cpp ../1_CrossLines/customd
 		../1_CrossLines/mathfunctions.h \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QPointF \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qpoint.h \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QPoint \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtGui.framework/Headers/QPainter \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtGui.framework/Headers/qpainter.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o customdrawwidget.o ../1_CrossLines/customdrawwidget.cpp
 
 mathfunctions.o: ../1_CrossLines/mathfunctions.cpp ../1_CrossLines/mathfunctions.h \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QPointF \
-		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qpoint.h
+		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qpoint.h \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QPoint
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mathfunctions.o ../1_CrossLines/mathfunctions.cpp
+
+task_1.o: ../1_CrossLines/task_1.cpp ../1_CrossLines/task_1.h \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtWidgets.framework/Headers/QWidget \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtWidgets.framework/Headers/qwidget.h \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QPoint \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qpoint.h \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtGui.framework/Headers/QMouseEvent \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtGui.framework/Headers/qevent.h \
+		../1_CrossLines/mathfunctions.h \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QPointF \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtGui.framework/Headers/QPainter \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtGui.framework/Headers/qpainter.h \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtWidgets.framework/Headers/QMessageBox \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtWidgets.framework/Headers/qmessagebox.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o task_1.o ../1_CrossLines/task_1.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp
 
 moc_customdrawwidget.o: moc_customdrawwidget.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_customdrawwidget.o moc_customdrawwidget.cpp
+
+moc_task_1.o: moc_task_1.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_task_1.o moc_task_1.cpp
 
 ####### Install
 
