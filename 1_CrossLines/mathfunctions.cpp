@@ -5,7 +5,7 @@ int orientation(QPoint p, QPoint q, QPoint r) {
     int val = (q.y() - p.y()) * (r.x() - q.x()) - (q.x() - p.x()) * (r.y() - q.y());
 
     if (val == 0) {
-        return 0;  // Коллинеарные точки
+        return 0;  // На прямой
     } else if (val > 0) {
         return 1;  // Правый поворот
     } else {
@@ -18,7 +18,8 @@ bool onSegment(QPoint p, QPoint q, QPoint r) {
             q.y() <= std::max(p.y(), r.y()) && q.y() >= std::min(p.y(), r.y()));
 }
 
-bool doIntersect(QPoint A, QPoint B, QPoint C, QPoint D) {
+bool doIntersect(QPoint A, QPoint B, QPoint C, QPoint D, QPointF intersection) {
+    // Вычисляем ориентации для четырёх комбинаций точек
     int o1 = orientation(A, B, C);
     int o2 = orientation(A, B, D);
     int o3 = orientation(C, D, A);
@@ -26,24 +27,44 @@ bool doIntersect(QPoint A, QPoint B, QPoint C, QPoint D) {
 
     // Основное условие: отрезки пересекаются, если ориентации различны
     if (o1 != o2 && o3 != o4) {
-        return true;
+        // Вычисляем точку пересечения
+        double a1 = B.y() - A.y();
+        double b1 = A.x() - B.x();
+        double c1 = a1 * A.x() + b1 * A.y();
+
+        double a2 = D.y() - C.y();
+        double b2 = C.x() - D.x();
+        double c2 = a2 * C.x() + b2 * C.y();
+
+        double determinant = a1 * b2 - a2 * b1;
+
+        if (determinant != 0) {
+            double x = (b2 * c1 - b1 * c2) / determinant;
+            double y = (a1 * c2 - a2 * c1) / determinant;
+            intersection = QPointF(x, y);
+            return true;
+        }
     }
 
-    // Граничные случаи: когда точки коллинеарны и лежат на одном отрезке
+    // Граничные случаи: когда точки лежат на одном отрезке
     if (o1 == 0 && onSegment(A, C, B)) {
+        intersection = QPointF(C);
         return true;
     }
     if (o2 == 0 && onSegment(A, D, B)) {
+        intersection = QPointF(D);
         return true;
     }
     if (o3 == 0 && onSegment(C, A, D)) {
+        intersection = QPointF(A);
         return true;
     }
     if (o4 == 0 && onSegment(C, B, D)) {
+        intersection = QPointF(B);
         return true;
     }
 
-    return false;
+    return false;  // Отрезки не пересекаются
 }
 
 double vectorProduct(QPointF p1, QPointF p2)

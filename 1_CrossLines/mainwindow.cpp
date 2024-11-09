@@ -28,9 +28,16 @@ void MainWindow::on_getResult_clicked()
             return;
         }
 
-        bool intersect = doIntersect(points[0], points[1], points[2], points[3]);
+        // Объявляем переменную для хранения точки пересечения
+        QPointF intersection;
+
+        // Проверяем пересечение и вычисляем точку пересечения
+        bool intersect = doIntersect(points[0], points[1], points[2], points[3], intersection);
         if (intersect) {
-            ui->textBrowser->setText("Отрезки пересекаются.");
+            QString result = QString("Отрезки пересекаются в точке (%1, %2).")
+                                 .arg(intersection.x())
+                                 .arg(intersection.y());
+            ui->textBrowser->setText(result);
         } else {
             ui->textBrowser->setText("Отрезки не пересекаются.");
         }
