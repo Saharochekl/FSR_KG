@@ -16,7 +16,19 @@ public:
     ~MainWindow();
 
 private:
+    enum TaskType {
+        Task1,  // Пересечение двух отрезков
+        Task2,  // Предикат поворота
+        Task3,  // Построение выпуклой оболочки
+        Task4,  // Триангуляция Делоне
+        Task5,  // Выпуклые многоугольники
+        Task6,  // Произвольные многоугольники
+        Task7   // Локализация точки
+    };
+    TaskType currentTaskType; // Переменная для хранения текущей задачи
+    QVector<QPoint> points; // Контейнер для хранения точек
     Ui::MainWindow *ui;
+
 private slots:
     void getMouseCoord(QPointF point);
 
@@ -30,6 +42,7 @@ private slots:
     void on_task4_clicked();
     void on_task5_clicked();
     void on_task6_clicked();
+    void on_task7_clicked();
 };
 
 #endif // MAINWINDOW_H
