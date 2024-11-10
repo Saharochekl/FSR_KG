@@ -62,17 +62,19 @@ void MainWindow::on_getResult_clicked()
             ui->textBrowser->setText("Точки не заданы полностью для предиката поворота.");
             return;
         }
-
+        QString tmp = QString("Size of points Vec(%1).")
+                          .arg(points.size());
+        ui->textBrowser->append(tmp);
         int o = orientation(points[0], points[1], points[2]);
         QString result;
         if (o == 0) {
             result = "Straight.";
         } else if (o == 1) {
-            result = "Right.";
-        } else {
             result = "Left.";
+        } else {
+            result = "Right.";
         }
-        ui->textBrowser->setText(result);
+        ui->textBrowser->append(result);
         break;
     }
     case Task3: {
@@ -153,7 +155,7 @@ void MainWindow::on_task2_clicked()
     ui->widget->setType(task2);
     currentTaskType = Task2;
     points.clear();
-    points.resize(3); // Предикат поворота требует 3 точки
+    //points.resize(3); // Предикат поворота требует 3 точки
     ui->textBrowser->setText("Выбрано: Предикат поворота");
 }
 
