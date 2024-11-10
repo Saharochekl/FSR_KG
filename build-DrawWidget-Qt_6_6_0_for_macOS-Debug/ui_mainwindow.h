@@ -1,22 +1,22 @@
+#pragma once
 /********************************************************************************
-** Form generated from reading UI file 'mainwindow.ui'
+** Form generated from reading UI file ''
 **
 ** Created by: Qt User Interface Compiler version 6.6.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
-#ifndef UI_MAINWINDOW_H
-#define UI_MAINWINDOW_H
-
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QRadioButton>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QTextBrowser>
+#include <QtWidgets/QTextEdit>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QWidget>
 #include "customdrawwidget.h"
@@ -39,6 +39,11 @@ public:
     QRadioButton *task5;
     QRadioButton *task6;
     QPushButton *getResult;
+    QTextEdit *Xcoord;
+    QTextEdit *Ycoord;
+    QPushButton *Add_point_manual;
+    QLabel *label;
+    QLabel *label_2;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -55,7 +60,7 @@ public:
         widget->setGeometry(QRect(70, 10, 861, 341));
         textBrowser = new QTextBrowser(centralWidget);
         textBrowser->setObjectName("textBrowser");
-        textBrowser->setGeometry(QRect(60, 340, 861, 192));
+        textBrowser->setGeometry(QRect(0, 340, 621, 192));
         red_Button = new QRadioButton(centralWidget);
         red_Button->setObjectName("red_Button");
         red_Button->setGeometry(QRect(70, 540, 95, 20));
@@ -86,6 +91,21 @@ public:
         getResult = new QPushButton(centralWidget);
         getResult->setObjectName("getResult");
         getResult->setGeometry(QRect(150, 570, 121, 28));
+        Xcoord = new QTextEdit(centralWidget);
+        Xcoord->setObjectName("Xcoord");
+        Xcoord->setGeometry(QRect(693, 340, 271, 31));
+        Ycoord = new QTextEdit(centralWidget);
+        Ycoord->setObjectName("Xcoord_2");
+        Ycoord->setGeometry(QRect(690, 400, 271, 31));
+        Add_point_manual = new QPushButton(centralWidget);
+        Add_point_manual->setObjectName("Add_point_manual");
+        Add_point_manual->setGeometry(QRect(650, 460, 311, 28));
+        label = new QLabel(centralWidget);
+        label->setObjectName("label");
+        label->setGeometry(QRect(670, 350, 41, 21));
+        label_2 = new QLabel(centralWidget);
+        label_2->setObjectName("label_2");
+        label_2->setGeometry(QRect(670, 410, 41, 21));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName("menuBar");
@@ -116,6 +136,9 @@ public:
         task5->setText(QCoreApplication::translate("MainWindow", "\320\237\320\265\321\200\320\265\321\201\320\265\321\207\320\265\320\275\320\270\321\217 \320\277\320\276\320\273\320\270\320\263\320\276\320\275\320\276\320\262 \320\270 \321\202\320\264", nullptr));
         task6->setText(QCoreApplication::translate("MainWindow", "\320\233\320\276\320\272\320\260\320\273\320\270\320\267\320\260\321\206\320\270\321\217 \321\202\320\276\321\207\320\272\320\270", nullptr));
         getResult->setText(QCoreApplication::translate("MainWindow", "\320\237\320\276\321\201\321\207\320\270\321\202\320\260\321\202\321\214", nullptr));
+        Add_point_manual->setText(QCoreApplication::translate("MainWindow", "Add Point", nullptr));
+        label->setText(QCoreApplication::translate("MainWindow", "X:", nullptr));
+        label_2->setText(QCoreApplication::translate("MainWindow", "Y:", nullptr));
     } // retranslateUi
 
 };
@@ -126,4 +149,3 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-#endif // UI_MAINWINDOW_H

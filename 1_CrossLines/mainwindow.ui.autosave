@@ -174,7 +174,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QTextEdit" name="Xcoord_2">
+   <widget class="QTextEdit" name="Ycoord">
     <property name="geometry">
      <rect>
       <x>690</x>

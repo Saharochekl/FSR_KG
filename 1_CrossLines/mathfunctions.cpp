@@ -1,13 +1,19 @@
 #include "mathfunctions.h"
 #include <algorithm>
 #include <iostream>
+#include "longdouble.h"
 
 int orientation(QPointF p, QPointF q, QPointF r) {
     //int val = (q.y() - p.y()) * (r.x() - q.x()) - (q.x() - p.x()) * (r.y() - q.y());
-    double val = (p.x()-q.x())*(r.y()-p.y()) - (r.x()-p.x())*(p.y()-q.y());
-    if (val == 0) {
+    LongDouble pqx = LongDouble(q.x()) - LongDouble(p.x());
+    LongDouble pry = LongDouble(r.y()) - LongDouble(p.y());
+    LongDouble pqy = LongDouble(q.y()) - LongDouble(p.y());
+    LongDouble prx = LongDouble(r.x()) - LongDouble(p.x());
+    //double val = (p.x()-q.x())*(r.y()-p.y()) - (r.x()-p.x())*(p.y()-q.y());
+    LongDouble val = (pqx * pry) - (pqy * prx);
+    if (val == LongDouble(0)) {
         return 0;  // На прямой
-    } else if (val > 0) {
+    } else if (val > LongDouble(0)) {
         return 1;  // Правый поворот
     } else {
         return 2;  // Левый поворот

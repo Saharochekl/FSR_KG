@@ -70,9 +70,9 @@ void MainWindow::on_getResult_clicked()
         if (o == 0) {
             result = "Straight.";
         } else if (o == 1) {
-            result = "Left.";
-        } else {
             result = "Right.";
+        } else {
+            result = "Left.";
         }
         ui->textBrowser->append(result);
         break;
@@ -155,7 +155,6 @@ void MainWindow::on_task2_clicked()
     ui->widget->setType(task2);
     currentTaskType = Task2;
     points.clear();
-    //points.resize(3); // Предикат поворота требует 3 точки
     ui->textBrowser->setText("Выбрано: Предикат поворота");
 }
 
