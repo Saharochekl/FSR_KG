@@ -43,7 +43,7 @@ public:
     void setType(int type) { typeTask = type; clearVector();}
 
     QVector<QPointF> vecPoint;
-    QVector<QPointF> vecPointOriginal;
+    QVector<QPointF> hullPoints;
     QVector<QPointF> Polygon1;
     QVector<QPointF> Polygon2;
     bool isFirstPolygon = true;

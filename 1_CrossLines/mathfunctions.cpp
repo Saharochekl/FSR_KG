@@ -2,6 +2,9 @@
 #include <algorithm>
 #include <iostream>
 #include "longdouble.h"
+#include <QVector>
+#include <QPointF>
+
 
 int orientation(QPointF p, QPointF q, QPointF r) {
 
@@ -107,6 +110,41 @@ double angleBetwenDeg(QPointF p1, QPointF p2, QPointF d1, QPointF d2)
     double cos_a = vectorProduct(vec1, vec2) / (norma_vec1 * norma_vec2);
 
     return acos(cos_a) * 180 / M_PI;
+}
+
+QVector<QPointF> jarvisConvexHull( QVector<QPointF> &points) {
+    QVector<QPointF> hull;
+    if (points.size() < 3) {
+        return hull; // Выпуклая оболочка невозможна, если меньше 3 точек
+    }
+
+    // Находим самую левую точку
+    int l = 0;
+    for (int i = 1; i < points.size(); i++) {
+        if (points[i].x() < points[l].x()) {
+            l = i;
+        }
+    }
+
+    int p = l, q;
+    do {
+        // Добавляем текущую точку в оболочку
+        hull.push_back(points[p]);
+
+        // Находим следующую точку, которая образует левый поворот
+        q = (p + 1) % points.size();
+        for (int i = 0; i < points.size(); i++) {
+            if (orientation(points[p], points[i], points[q]) == 2) {
+                q = i;
+            }
+        }
+
+        // Переходим к следующей точке
+        p = q;
+
+    } while (p != l); // Пока не вернулись к начальной точке
+
+    return hull;
 }
 
 

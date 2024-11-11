@@ -71,11 +71,21 @@ void MainWindow::on_getResult_clicked()
     }
     case Task3: {
         if (points.size() < 3) {
-            ui->textBrowser->setText("Для выпуклой оболочки нужно минимум 3 точки.");
+            ui->textBrowser->append("Недостаточно точек для построения выпуклой оболочки.");
             return;
         }
-        // Вызов функции построения выпуклой оболочки и отображение результата
-        ui->textBrowser->setText("Выпуклая оболочка построена.");
+
+        // Вызываем алгоритм Джарвиса для построения выпуклой оболочки
+        QVector<QPointF> hull = jarvisConvexHull(points);
+
+        // Сохраняем точки выпуклой оболочки в отдельный вектор
+        ui->widget->hullPoints = hull;
+
+        // Обновляем виджет для отображения новой оболочки
+        ui->widget->update();
+
+        // Отображаем информацию о построенной оболочке в textBrowser
+        ui->textBrowser->append("Выпуклая оболочка построена. Количество точек: " + QString::number(hull.size()));
         break;
     }
     case Task4:

@@ -113,9 +113,28 @@ void CustomDrawWidget::paintEvent(QPaintEvent *event)
         pen.setColor(m_color);
         pen.setWidth(1.5);
         painter.setPen(pen);
+
+        // Рисуем все точки
         for (auto point : vecPoint)
         {
-            painter.drawEllipse(point.x() * scale, point.y() * scale, 5,5);
+            painter.drawEllipse(point.x(), point.y(), 5, 5);
+        }
+
+        // Меняем цвет для выпуклой оболочки
+        QPen hullPen;
+        hullPen.setColor(Qt::blue); // Например, синий цвет для выпуклой оболочки
+        hullPen.setWidth(2);
+        painter.setPen(hullPen);
+
+        // Рисуем линии выпуклой оболочки
+        for (int i = 0; i < hullPoints.size(); ++i)
+        {
+            painter.drawEllipse(hullPoints[i].x(), hullPoints[i].y(), 5, 5);
+            if (i < hullPoints.size() - 1) {
+                painter.drawLine(hullPoints[i], hullPoints[i + 1]);
+            } else {
+                painter.drawLine(hullPoints[i], hullPoints[0]); // Соединяем последнюю точку с первой
+            }
         }
     }
     else if (typeTask == task5)
@@ -173,7 +192,9 @@ void CustomDrawWidget::mousePressEvent(QMouseEvent *pe)
             }
             vecPoint.push_back(newPoint);
             break;
-
+        case task3:
+            vecPoint.push_back(newPoint);
+            break;
         case task5:
             if (isFirstPolygon) {
                 Polygon1.push_back(newPoint);
