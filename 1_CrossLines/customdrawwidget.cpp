@@ -10,6 +10,11 @@ CustomDrawWidget::CustomDrawWidget(QWidget * parent) : QWidget(parent)
 
 }
 
+double CustomDrawWidget::normalizeValue(const LongDouble value, const LongDouble maxValue, double maxRange)
+{
+    return ((value / maxValue).toDouble() * maxRange);
+}
+
 void CustomDrawWidget::paintEvent(QPaintEvent *event)
 {
     if (typeTask == task1)
@@ -52,20 +57,63 @@ void CustomDrawWidget::paintEvent(QPaintEvent *event)
         pen.setWidth(1.5);
         painter.setPen(pen);
 
+
+        if (vecPoint.isEmpty()) {
+            return;
+        }
         int size_ = vecPoint.size();
+//        for (int i = 0; i < size_; ++i) {
+//            QPointF point = vecPoint[i];
+//            if (point.x() < 0 || point.x() > width() || point.y() < 0 || point.y() > height()/3) {
+//                // Нормализуем только точки, которые выходят за пределы виджета
+//                double normalizedX = (LongDouble(point.x()) / LongDouble(width())).toDouble();
+//                double normalizedY = (LongDouble(point.y()) / LongDouble(height()/3)).toDouble();
+//                point = QPointF(normalizedX, normalizedY);
+//            }
+
+//            // Масштабируем точки
+//            point *= scale;
+//            vecPoint[i] = point;
+//        }
+
+        double MaxX = 1, MaxY = 1;
+        for(int i = 0; i < size_; ++i){
+            QPointF point1 = vecPoint[i];
+            if(point1.x() > MaxX) {
+                MaxX = point1.x();
+            }
+            if(point1.y() > MaxY) {
+                MaxY = point1.y();
+            }
+        }
+        for (int i = 0; i < size_; ++i) {
+            QPointF point = vecPoint[i];
+
+            if (point.x() < 0 || point.x() > 850 || point.y() < 0 || point.y() > 300) {
+                // Нормализуем только точки, которые выходят за пределы виджета
+                double normalizedX = normalizeValue(LongDouble(point.x()), LongDouble(MaxX), 850);
+                double normalizedY = normalizeValue(LongDouble(point.y()), LongDouble(MaxY), 300);
+                point = QPointF(normalizedX, normalizedY);
+            }
+
+            // Масштабируем точки
+            //point *= scale;
+            vecPoint[i] = point;
+        }
+        // Отрисовываем точки и линии с учётом нового масштаба
         switch (size_)
         {
         case 0:
             break;
         case 1:
-            painter.drawEllipse(vecPoint[0].x() * scale, vecPoint[0].y() * scale, 5,5);
+            painter.drawEllipse(vecPoint[0].x() , vecPoint[0].y(), 5,5);
             break;
         case 2:
-            painter.drawLine(vecPoint[0] * scale, vecPoint[1] * scale);
+            painter.drawLine(vecPoint[0] , vecPoint[1]);
             break;
         case 3:
-            painter.drawLine(vecPoint[0] * scale, vecPoint[1] * scale);
-            painter.drawEllipse(vecPoint[2].x() * scale, vecPoint[2].y() * scale, 5,5);
+            painter.drawLine(vecPoint[0], vecPoint[1]);
+            painter.drawEllipse(vecPoint[2].x(), vecPoint[2].y(), 5, 5);
             break;
         }
 
@@ -120,7 +168,8 @@ void CustomDrawWidget::mousePressEvent(QMouseEvent *pe)
 {
    if (pe->button() == Qt::LeftButton)
    {
-        QPointF newPoint = pe->position() / scale;
+
+        QPointF newPoint = pe->position();
 
         switch (typeTask)
         {
@@ -200,7 +249,7 @@ void CustomDrawWidget::mouseMoveEvent(QMouseEvent * pe)
         if (typeTask == task1 or typeTask == task2 or typeTask == task3)
             if (m_id != -1)
             {
-                vecPoint[m_id] = pe->localPos() / scale;
+                vecPoint[m_id] = pe->position();
                 repaint();
             }
         if (typeTask == task5)

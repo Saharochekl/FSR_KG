@@ -174,7 +174,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QTextEdit" name="Xcoord_2">
+   <widget class="QTextEdit" name="Ycoord">
     <property name="geometry">
      <rect>
       <x>690</x>
@@ -187,7 +187,7 @@
    <widget class="QPushButton" name="Add_point_manual">
     <property name="geometry">
      <rect>
-      <x>650</x>
+      <x>660</x>
       <y>460</y>
       <width>311</width>
       <height>28</height>

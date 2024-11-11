@@ -1,11 +1,13 @@
-#pragma once
 /********************************************************************************
-** Form generated from reading UI file ''
+** Form generated from reading UI file 'mainwindow.ui'
 **
 ** Created by: Qt User Interface Compiler version 6.6.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
+
+#ifndef UI_MAINWINDOW_H
+#define UI_MAINWINDOW_H
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
@@ -95,11 +97,11 @@ public:
         Xcoord->setObjectName("Xcoord");
         Xcoord->setGeometry(QRect(693, 340, 271, 31));
         Ycoord = new QTextEdit(centralWidget);
-        Ycoord->setObjectName("Xcoord_2");
+        Ycoord->setObjectName("Ycoord");
         Ycoord->setGeometry(QRect(690, 400, 271, 31));
         Add_point_manual = new QPushButton(centralWidget);
         Add_point_manual->setObjectName("Add_point_manual");
-        Add_point_manual->setGeometry(QRect(650, 460, 311, 28));
+        Add_point_manual->setGeometry(QRect(660, 460, 311, 28));
         label = new QLabel(centralWidget);
         label->setObjectName("label");
         label->setGeometry(QRect(670, 350, 41, 21));
@@ -149,3 +151,4 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
+#endif // UI_MAINWINDOW_H

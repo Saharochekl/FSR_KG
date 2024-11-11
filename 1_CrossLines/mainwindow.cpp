@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include <iostream>
 #include "mathfunctions.h"
+#include "longdouble.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -11,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->widget, &CustomDrawWidget::dataChanged,this,&MainWindow::getMouseCoord);
     //connect(ui->widget, &CustomDrawWidget::dataChanged, this, &MainWindow::addPoint);
+    //connect(ui->Add_point_manual, &QPushButton::clicked, this, &MainWindow::on_Add_point_manual_clicked);
 
     ui->red_Button->setChecked(true);
 }
@@ -58,13 +60,13 @@ void MainWindow::on_getResult_clicked()
         break;
     }
     case Task2: {
+        QString tmp = QString("Size of points Vec(%1).")
+                          .arg(points.size());
+        ui->textBrowser->append(tmp);
         if (points.size() < 3) {
             ui->textBrowser->setText("Точки не заданы полностью для предиката поворота.");
             return;
         }
-        QString tmp = QString("Size of points Vec(%1).")
-                          .arg(points.size());
-        ui->textBrowser->append(tmp);
         int o = orientation(points[0], points[1], points[2]);
         QString result;
         if (o == 0) {
@@ -108,6 +110,36 @@ void MainWindow::getMouseCoord(QPointF point)
     ui->textBrowser->append(textOutPut);
 }
 
+void MainWindow::on_Add_point_manual_clicked()
+{
+    // Читаем значения x и y из текстовых полей
+    QString xStr = ui->Xcoord->toPlainText();  // Используем toPlainText(), так как это QTextEdit
+    QString yStr = ui->Ycoord->toPlainText();
+
+    // Преобразуем строковые значения в LongDouble
+    LongDouble x, y;
+
+    try {
+        x = LongDouble(xStr.toStdString());
+        y = LongDouble(yStr.toStdString());
+        ui->textBrowser->append("Добаление успешно, преобразование сделано");
+    } catch (const std::exception& e) {
+        ui->textBrowser->append("Ошибка: Неверный формат координат");
+        return;
+    }
+
+    // Создаём точку и добавляем её в вектор точек
+    QPointF newPoint(x.toDouble(), y.toDouble());  // Используем toDouble() для создания точки, которую можно отобразить на виджете
+    points.append(newPoint);
+    ui->widget->vecPoint.push_back(newPoint);
+
+    // Обновляем виджет для отображения новой точки
+    ui->widget->update();
+
+    // Выводим сообщение об успешном добавлении точки
+    ui->textBrowser->append(QString("Добавлена точка: (%1, %2)").arg(xStr).arg(yStr));
+}
+
 void MainWindow::on_red_Button_clicked()
 {
     ui->green_Button->setChecked(false);
@@ -144,7 +176,7 @@ void MainWindow::on_task3_clicked()
 {
     ui->widget->setType(task3);
     currentTaskType = Task3;
-    points.clear(); // Выпуклая оболочка требует произвольное количество точек
+    points.clear();
     ui->textBrowser->setText("Выбрано: Построение выпуклой оболочки");
 }
 

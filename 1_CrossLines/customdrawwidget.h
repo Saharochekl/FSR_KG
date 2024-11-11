@@ -5,6 +5,8 @@
 #include <QMouseEvent>
 #include <QPen>
 #include "mathfunctions.h"
+#include "longdouble.h"
+
 
 enum
 {
@@ -41,7 +43,7 @@ public:
     void setType(int type) { typeTask = type; clearVector();}
 
     QVector<QPointF> vecPoint;
-
+    QVector<QPointF> vecPointOriginal;
     QVector<QPointF> Polygon1;
     QVector<QPointF> Polygon2;
     bool isFirstPolygon = true;
@@ -57,6 +59,9 @@ public:
 
 signals:
     void dataChanged(QPointF point);
+private:
+    double normalizeValue(const LongDouble value, const LongDouble maxValue, double maxRange);
+    LongDouble maxCoordinate;
 };
 
 #endif // CUSTOMDRAWWIDGET_H
