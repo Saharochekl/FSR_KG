@@ -62,19 +62,6 @@ void CustomDrawWidget::paintEvent(QPaintEvent *event)
             return;
         }
         int size_ = vecPoint.size();
-//        for (int i = 0; i < size_; ++i) {
-//            QPointF point = vecPoint[i];
-//            if (point.x() < 0 || point.x() > width() || point.y() < 0 || point.y() > height()/3) {
-//                // Нормализуем только точки, которые выходят за пределы виджета
-//                double normalizedX = (LongDouble(point.x()) / LongDouble(width())).toDouble();
-//                double normalizedY = (LongDouble(point.y()) / LongDouble(height()/3)).toDouble();
-//                point = QPointF(normalizedX, normalizedY);
-//            }
-
-//            // Масштабируем точки
-//            point *= scale;
-//            vecPoint[i] = point;
-//        }
 
         double MaxX = 1, MaxY = 1;
         for(int i = 0; i < size_; ++i){
@@ -216,7 +203,7 @@ void CustomDrawWidget::mousePressEvent(QMouseEvent *pe)
 
                 for (int i = 0; i < vecPoint.size(); ++i)
                 {
-                    double distanceToCurrent = distance(vecPoint[i], pe->localPos() / scale);
+                    double distanceToCurrent = distance(vecPoint[i], pe->localPos());
                     if (distanceToCurrent < radius && distanceToCurrent < closestDistance)
                     {
                         closestDistance = distanceToCurrent;

@@ -11,20 +11,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     connect(ui->widget, &CustomDrawWidget::dataChanged,this,&MainWindow::getMouseCoord);
-    //connect(ui->widget, &CustomDrawWidget::dataChanged, this, &MainWindow::addPoint);
-    //connect(ui->Add_point_manual, &QPushButton::clicked, this, &MainWindow::on_Add_point_manual_clicked);
 
     ui->red_Button->setChecked(true);
 }
 
-//void MainWindow::addPoint(QPointF point) {
-//    // Добавляем точку в контейнер points
-//    points.append(point);
-
-//    // Отображаем текущие точки в TextBrowser для отладки
-//    QString pointInfo = QString("Добавлена точка: (%1, %2)").arg(point.x()).arg(point.y());
-//                            ui->textBrowser->append(pointInfo);
-//}
 
 
 MainWindow::~MainWindow()
