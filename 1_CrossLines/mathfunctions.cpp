@@ -1,13 +1,19 @@
 #include "mathfunctions.h"
 #include <algorithm>
 #include <iostream>
+#include "longdouble.h"
 
 int orientation(QPointF p, QPointF q, QPointF r) {
-    //int val = (q.y() - p.y()) * (r.x() - q.x()) - (q.x() - p.x()) * (r.y() - q.y());
-    double val = (p.x()-q.x())*(r.y()-p.y()) - (r.x()-p.x())*(p.y()-q.y());
-    if (val == 0) {
+
+    LongDouble pqx = LongDouble(q.x()) - LongDouble(p.x());
+    LongDouble pry = LongDouble(r.y()) - LongDouble(p.y());
+    LongDouble pqy = LongDouble(q.y()) - LongDouble(p.y());
+    LongDouble prx = LongDouble(r.x()) - LongDouble(p.x());
+
+    LongDouble val = (pqx * pry) - (pqy * prx);
+    if (val == LongDouble(0)) {
         return 0;  // На прямой
-    } else if (val > 0) {
+    } else if (val > LongDouble(0)) {
         return 1;  // Правый поворот
     } else {
         return 2;  // Левый поворот
@@ -29,7 +35,6 @@ bool doIntersect(QPointF A, QPointF B, QPointF C, QPointF D, QPointF& intersecti
     // Основное условие: отрезки пересекаются, если ориентации различны
     if (o1 != o2 && o3 != o4) {
         // Вычисляем точку пересечения
-        //std::cout << "ffff";
         double a1 = B.y() - A.y();
         double b1 = A.x() - B.x();
         double c1 = a1 * A.x() + b1 * A.y();

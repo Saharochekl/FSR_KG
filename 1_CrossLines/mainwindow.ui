@@ -27,9 +27,9 @@
    <widget class="QTextBrowser" name="textBrowser">
     <property name="geometry">
      <rect>
-      <x>60</x>
+      <x>0</x>
       <y>340</y>
-      <width>861</width>
+      <width>621</width>
       <height>192</height>
      </rect>
     </property>
@@ -162,6 +162,65 @@
     </property>
     <property name="text">
      <string>Посчитать</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="Xcoord">
+    <property name="geometry">
+     <rect>
+      <x>693</x>
+      <y>340</y>
+      <width>271</width>
+      <height>31</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="Ycoord">
+    <property name="geometry">
+     <rect>
+      <x>690</x>
+      <y>400</y>
+      <width>271</width>
+      <height>31</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="Add_point_manual">
+    <property name="geometry">
+     <rect>
+      <x>660</x>
+      <y>460</y>
+      <width>311</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Add Point</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>670</x>
+      <y>350</y>
+      <width>41</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>X:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>670</x>
+      <y>410</y>
+      <width>41</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Y:</string>
     </property>
    </widget>
   </widget>

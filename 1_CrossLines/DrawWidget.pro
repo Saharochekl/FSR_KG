@@ -25,6 +25,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+    longdouble.cpp \
         main.cpp \
         mainwindow.cpp \
     customdrawwidget.cpp \
@@ -32,6 +33,7 @@ SOURCES += \
     task_1.cpp
 
 HEADERS += \
+    longdouble.h \
         mainwindow.h \
     customdrawwidget.h \
     mathfunctions.h \
