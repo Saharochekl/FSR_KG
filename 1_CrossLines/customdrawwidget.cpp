@@ -33,18 +33,18 @@ void CustomDrawWidget::paintEvent(QPaintEvent *event)
         case 0:
             break;
         case 1:
-            painter.drawEllipse(vecPoint[0].x() * scale, vecPoint[0].y() * scale, 5,5);
+            painter.drawEllipse(vecPoint[0].x(), vecPoint[0].y() , 5,5);
             break;
         case 2:
-            painter.drawLine(vecPoint[0] * scale, vecPoint[1] * scale);
+            painter.drawLine(vecPoint[0], vecPoint[1]);
             break;
         case 3:
-            painter.drawLine(vecPoint[0] * scale, vecPoint[1] * scale);
-            painter.drawEllipse(vecPoint[2].x() * scale, vecPoint[2].y() * scale, 5,5);
+            painter.drawLine(vecPoint[0], vecPoint[1]);
+            painter.drawEllipse(vecPoint[2].x(), vecPoint[2].y(), 5,5);
             break;
         case 4:
-            painter.drawLine(vecPoint[0] * scale, vecPoint[1] * scale);
-            painter.drawLine(vecPoint[2] * scale, vecPoint[3] * scale);
+            painter.drawLine(vecPoint[0], vecPoint[1]);
+            painter.drawLine(vecPoint[2], vecPoint[3]);
             break;
         }
     }
