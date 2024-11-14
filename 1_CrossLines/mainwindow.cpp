@@ -94,9 +94,14 @@ void MainWindow::on_getResult_clicked()
             ui->textBrowser->append("Недостаточно точек для выполнения триангуляции.");
             return;
         }
+        QStringList logMessages;  // Логи рёбер
+        QVector<QPair<QPointF, QPointF>> triangulationEdges = getTriangulation(points, logMessages);
 
-        QVector<QPair<QPointF, QPointF>> triangulationEdges = getTriangulation(points);
-
+        // Выводим логированные сообщения
+        for (const QString &msg : logMessages) {
+            ui->textBrowser->append("Логи рёбер:");
+            ui->textBrowser->append(msg);
+        }
         // Устанавливаем рёбра триангуляции для отрисовки
         ui->widget->triangulationEdges = triangulationEdges;
         ui->widget->update();

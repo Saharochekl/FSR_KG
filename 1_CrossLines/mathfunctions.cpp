@@ -12,7 +12,7 @@
 using std::queue;
 using std::set;
 
-QVector<QPair<QPointF, QPointF>> getTriangulation(QVector<QPointF> &points) {
+QVector<QPair<QPointF, QPointF>> getTriangulation(QVector<QPointF> &points, QStringList &logMessages) {
     QVector<QPair<QPointF, QPointF>> edges; // Вектор рёбер триангуляции
     if (points.size() < 3) {
         return edges; // Триангуляция невозможна, если меньше 3 точек
@@ -31,10 +31,8 @@ QVector<QPair<QPointF, QPointF>> getTriangulation(QVector<QPointF> &points) {
     });
 
     queue<QPair<QPointF, QPointF>> processQueue;
-    std::set<QPair<QPointF, QPointF>, QPointFPairComparator> seenEdges;
-
-
     processQueue.push(qMakePair(points[0], points[1]));
+    std::set<QPair<QPointF, QPointF>, QPointFPairComparator> seenEdges;
     seenEdges.insert(qMakePair(points[0], points[1]));
 
     while (!processQueue.empty()) {
@@ -44,47 +42,62 @@ QVector<QPair<QPointF, QPointF>> getTriangulation(QVector<QPointF> &points) {
         // Поиск наиболее удаленной точки от текущего ребра
         QPointF maxPoint;
         double maxDistance = -1;
-
         for (auto &point : points) {
-            // Пропускаем точки, которые являются концами текущего ребра
-            if (point == edge.first || point == edge.second) {
-                continue;
-            }
-
-            // Вычисляем расстояние от точки до текущего ребра
             double distance = qAbs((edge.second.x() - edge.first.x()) * (edge.first.y() - point.y()) -
                                    (edge.first.x() - point.x()) * (edge.second.y() - edge.first.y())) /
                               sqrt(pow(edge.second.x() - edge.first.x(), 2) + pow(edge.second.y() - edge.first.y(), 2));
-
             if (distance > maxDistance) {
                 maxPoint = point;
                 maxDistance = distance;
             }
         }
 
-        // Добавляем рёбра к результату
-        if (maxDistance > 0) {
-            QPair<QPointF, QPointF> edge1 = qMakePair(edge.first, maxPoint);
-            QPair<QPointF, QPointF> edge2 = qMakePair(edge.second, maxPoint);
+        // Добавляем рёбра к результату, если они еще не были добавлены
+        if (maxDistance > 1e-6) { // Избегаем добавления рёбер с расстоянием, близким к нулю
+            if (seenEdges.find(qMakePair(edge.first, maxPoint)) == seenEdges.end() &&
+                seenEdges.find(qMakePair(maxPoint, edge.first)) == seenEdges.end()) {
+                edges.append(qMakePair(edge.first, maxPoint));
+                seenEdges.insert(qMakePair(edge.first, maxPoint));
+                processQueue.push(qMakePair(edge.first, maxPoint));
 
-            // Добавляем новое ребро, если оно еще не было обработано
-            if (seenEdges.find(edge1) == seenEdges.end()) {
-                processQueue.push(edge1);
-                seenEdges.insert(edge1);
-            }
-            if (seenEdges.find(edge2) == seenEdges.end()) {
-                processQueue.push(edge2);
-                seenEdges.insert(edge2);
+                // Логирование нового ребра
+                QString info = QString("Ребро: (%1, %2) -> (%3, %4)")
+                                   .arg(edge.first.x())
+                                   .arg(edge.first.y())
+                                   .arg(maxPoint.x())
+                                   .arg(maxPoint.y());
+                logMessages.append(info);
             }
 
-            // Добавляем текущее ребро в список рёбер триангуляции
-            edges.append(edge1);
-            edges.append(edge2);
+            if (seenEdges.find(qMakePair(edge.second, maxPoint)) == seenEdges.end() &&
+                seenEdges.find(qMakePair(maxPoint, edge.second)) == seenEdges.end()) {
+                edges.append(qMakePair(edge.second, maxPoint));
+                seenEdges.insert(qMakePair(edge.second, maxPoint));
+                processQueue.push(qMakePair(edge.second, maxPoint));
+
+                // Логирование нового ребра
+                QString info = QString("Ребро: (%1, %2) -> (%3, %4)")
+                                   .arg(edge.second.x())
+                                   .arg(edge.second.y())
+                                   .arg(maxPoint.x())
+                                   .arg(maxPoint.y());
+                logMessages.append(info);
+            }
         }
-        // Добавляем исходное ребро, если оно еще не было добавлено
-        if (seenEdges.find(edge) == seenEdges.end()) {
+
+        // Добавляем текущее ребро к результату, если оно еще не добавлено
+        if (seenEdges.find(edge) == seenEdges.end() &&
+            seenEdges.find(qMakePair(edge.second, edge.first)) == seenEdges.end()) {
             edges.append(edge);
             seenEdges.insert(edge);
+
+            // Логирование текущего ребра
+            QString info = QString("Ребро: (%1, %2) -> (%3, %4)")
+                               .arg(edge.first.x())
+                               .arg(edge.first.y())
+                               .arg(edge.second.x())
+                               .arg(edge.second.y());
+            logMessages.append(info);
         }
     }
 

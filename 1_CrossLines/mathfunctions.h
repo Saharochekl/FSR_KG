@@ -12,7 +12,7 @@ int orientation(QPointF p, QPointF q, QPointF r);
 bool onSegment(QPointF p, QPointF q, QPointF r);
 bool doIntersect(QPointF A, QPointF B, QPointF C, QPointF D, QPointF& intersection);
 QVector<QPointF> jarvisConvexHull( QVector<QPointF> &points);
-QVector<QPair<QPointF, QPointF>> getTriangulation(QVector<QPointF> &points);
+QVector<QPair<QPointF, QPointF>> getTriangulation(QVector<QPointF> &points, QStringList &logMessages);
 // Компаратор для сравнения пар точек QPointF
 struct QPointFPairComparator {
     bool operator()(const QPair<QPointF, QPointF> &lhs, const QPair<QPointF, QPointF> &rhs) const {

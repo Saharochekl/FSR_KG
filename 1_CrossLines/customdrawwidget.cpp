@@ -311,7 +311,7 @@ void CustomDrawWidget::wheelEvent(QMouseEvent * pe)
 void CustomDrawWidget::clearVector()
 {
     vecPoint.clear();
-    repaint();
+
     if(typeTask == task4){
         triangulationEdges.clear();
     }
@@ -321,6 +321,7 @@ void CustomDrawWidget::clearVector()
         Polygon1.clear();
         Polygon2.clear();
     }
+    repaint();
 }
 
 void CustomDrawWidget::getResultOfTasks()
