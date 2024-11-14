@@ -137,6 +137,31 @@ void CustomDrawWidget::paintEvent(QPaintEvent *event)
             }
         }
     }
+    else if (typeTask == task4) {
+        QPainter painter(this);
+        painter.setRenderHint(QPainter::Antialiasing, true);
+        QPen pen;
+        pen.setColor(m_color);
+        pen.setWidth(1.5);
+        painter.setPen(pen);
+
+        // Рисуем все точки
+        for (auto point : vecPoint)
+        {
+            painter.drawEllipse(point.x(), point.y(), 5, 5);
+        }
+
+        // Отрисовка рёбер триангуляции
+        QPen triangulationPen(Qt::blue);
+        triangulationPen.setWidth(2);
+        painter.setPen(triangulationPen);
+
+        for (auto &edge : triangulationEdges)
+        {
+            painter.drawLine(edge.first, edge.second);
+        }
+    }
+
     else if (typeTask == task5)
     {
         QPainter painter(this);
@@ -195,6 +220,9 @@ void CustomDrawWidget::mousePressEvent(QMouseEvent *pe)
         case task3:
             vecPoint.push_back(newPoint);
             break;
+        case task4:
+            vecPoint.push_back(newPoint);
+            break;
         case task5:
             if (isFirstPolygon) {
                 Polygon1.push_back(newPoint);
@@ -238,6 +266,8 @@ void CustomDrawWidget::mousePressEvent(QMouseEvent *pe)
 
    update();  // Обновление виджета для отображения новых изменений
 }
+
+
 void CustomDrawWidget::mouseDoubleClickEvent(QMouseEvent * pe)
 {
     if (pe->button() == Qt::RightButton)
@@ -282,7 +312,9 @@ void CustomDrawWidget::clearVector()
 {
     vecPoint.clear();
     repaint();
-
+    if(typeTask == task4){
+        triangulationEdges.clear();
+    }
     if (typeTask == task5)
     {
         isFirstPolygon = true;

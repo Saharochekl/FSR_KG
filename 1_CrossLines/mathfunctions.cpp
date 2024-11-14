@@ -4,6 +4,92 @@
 #include "longdouble.h"
 #include <QVector>
 #include <QPointF>
+#include <queue>
+#include <set>
+
+
+
+using std::queue;
+using std::set;
+
+QVector<QPair<QPointF, QPointF>> getTriangulation(QVector<QPointF> &points) {
+    QVector<QPair<QPointF, QPointF>> edges; // Вектор рёбер триангуляции
+    if (points.size() < 3) {
+        return edges; // Триангуляция невозможна, если меньше 3 точек
+    }
+
+    // Сортируем точки по y и x координатам
+    std::sort(points.begin(), points.end(), [](QPointF a, QPointF b) {
+        return (a.y() < b.y()) || ((a.y() == b.y()) && (a.x() < b.x()));
+    });
+
+    // Сортируем оставшиеся точки по полярному углу
+    std::sort(points.begin() + 1, points.end(), [&](QPointF a, QPointF b) {
+        double angleA = atan2(a.y() - points[0].y(), a.x() - points[0].x());
+        double angleB = atan2(b.y() - points[0].y(), b.x() - points[0].x());
+        return angleA < angleB;
+    });
+
+    queue<QPair<QPointF, QPointF>> processQueue;
+    std::set<QPair<QPointF, QPointF>, QPointFPairComparator> seenEdges;
+
+
+    processQueue.push(qMakePair(points[0], points[1]));
+    seenEdges.insert(qMakePair(points[0], points[1]));
+
+    while (!processQueue.empty()) {
+        QPair<QPointF, QPointF> edge = processQueue.front();
+        processQueue.pop();
+
+        // Поиск наиболее удаленной точки от текущего ребра
+        QPointF maxPoint;
+        double maxDistance = -1;
+
+        for (auto &point : points) {
+            // Пропускаем точки, которые являются концами текущего ребра
+            if (point == edge.first || point == edge.second) {
+                continue;
+            }
+
+            // Вычисляем расстояние от точки до текущего ребра
+            double distance = qAbs((edge.second.x() - edge.first.x()) * (edge.first.y() - point.y()) -
+                                   (edge.first.x() - point.x()) * (edge.second.y() - edge.first.y())) /
+                              sqrt(pow(edge.second.x() - edge.first.x(), 2) + pow(edge.second.y() - edge.first.y(), 2));
+
+            if (distance > maxDistance) {
+                maxPoint = point;
+                maxDistance = distance;
+            }
+        }
+
+        // Добавляем рёбра к результату
+        if (maxDistance > 0) {
+            QPair<QPointF, QPointF> edge1 = qMakePair(edge.first, maxPoint);
+            QPair<QPointF, QPointF> edge2 = qMakePair(edge.second, maxPoint);
+
+            // Добавляем новое ребро, если оно еще не было обработано
+            if (seenEdges.find(edge1) == seenEdges.end()) {
+                processQueue.push(edge1);
+                seenEdges.insert(edge1);
+            }
+            if (seenEdges.find(edge2) == seenEdges.end()) {
+                processQueue.push(edge2);
+                seenEdges.insert(edge2);
+            }
+
+            // Добавляем текущее ребро в список рёбер триангуляции
+            edges.append(edge1);
+            edges.append(edge2);
+        }
+        // Добавляем исходное ребро, если оно еще не было добавлено
+        if (seenEdges.find(edge) == seenEdges.end()) {
+            edges.append(edge);
+            seenEdges.insert(edge);
+        }
+    }
+
+    return edges;
+}
 
 
 int orientation(QPointF p, QPointF q, QPointF r) {

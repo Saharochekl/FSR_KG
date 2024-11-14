@@ -89,8 +89,22 @@ void MainWindow::on_getResult_clicked()
         break;
     }
     case Task4:
-        ui->textBrowser->setText("Задача триангуляции Делоне будет реализована позже.");
+    {
+        if (points.size() < 3) {
+            ui->textBrowser->append("Недостаточно точек для выполнения триангуляции.");
+            return;
+        }
+
+        QVector<QPair<QPointF, QPointF>> triangulationEdges = getTriangulation(points);
+
+        // Устанавливаем рёбра триангуляции для отрисовки
+        ui->widget->triangulationEdges = triangulationEdges;
+        ui->widget->update();
+
+        // Отображаем информацию о триангуляции
+        ui->textBrowser->append("Триангуляция выполнена. Количество рёбер: " + QString::number(triangulationEdges.size()));
         break;
+    }
     case Task5:
         ui->textBrowser->setText("Задача для работы с произвольными многоугольниками будет реализована позже.");
         break;
