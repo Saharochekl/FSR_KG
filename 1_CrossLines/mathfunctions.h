@@ -5,7 +5,45 @@
 #include <QPoint>
 #include <cmath>
 #include <vector>
+#include <QVector>
+#include <QSet>
+#include <limits>
 
+
+struct Edge {
+    QPointF p1, p2;
+
+    Edge(const QPointF& a, const QPointF& b) : p1(a), p2(b) {}
+
+    bool operator==(const Edge& other) const {
+        return ((p1 == other.p1 && p2 == other.p2) ||
+                (p1 == other.p2 && p2 == other.p1));
+    }
+};
+
+inline uint qHash(const QPointF &key, uint seed = 0) {
+    // Используем масштабирование для сохранения точности
+    qint64 x = qRound64(key.x() * 1000000);
+    qint64 y = qRound64(key.y() * 1000000);
+    return qHash(x, seed) ^ qHash(y, seed);
+}
+
+inline uint qHash(const Edge &key, uint seed = 0) {
+    return qHash(key.p1, seed) ^ qHash(key.p2, seed);
+}
+
+struct Triangle {
+    QPointF p1, p2, p3;
+    QPointF circumcenter;
+    double radiusSquared;
+
+    Triangle(const QPointF& a, const QPointF& b, const QPointF& c) : p1(a), p2(b), p3(c) {
+        calculateCircumcircle();
+    }
+
+    void calculateCircumcircle();
+    bool containsPoint(const QPointF& p) const;
+};
 
 double vectorProduct(QPointF p1, QPointF p2);
 double distance(QPointF p1, QPointF p2);
@@ -15,20 +53,25 @@ int orientation(QPointF p, QPointF q, QPointF r);
 bool onSegment(QPointF p, QPointF q, QPointF r);
 bool doIntersect(QPointF A, QPointF B, QPointF C, QPointF D, QPointF& intersection);
 QVector<QPointF> jarvisConvexHull( QVector<QPointF> &points);
-//QVector<QPair<QPointF, QPointF>> getTriangulation(QVector<QPointF> &points, QStringList &logMessages);
-// Компаратор для сравнения пар точек QPointF
-//struct QPointFPairComparator {
-//    bool operator()(const QPair<QPointF, QPointF> &lhs, const QPair<QPointF, QPointF> &rhs) const {
-//        if (lhs.first.x() != rhs.first.x())
-//            return lhs.first.x() < rhs.first.x();
-//        if (lhs.first.y() != rhs.first.y())
-//            return lhs.first.y() < rhs.first.y();
-//        if (lhs.second.x() != rhs.second.x())
-//            return lhs.second.x() < rhs.second.x();
-//        return lhs.second.y() < rhs.second.y();
-//    }
-//};
+QVector<QPair<QPointF, QPointF>> getTriangulation(QVector<QPointF> &points, QStringList &logMessages);
 
+QVector<Triangle> delaunayTriangulation(const QVector<QPointF>& points);
+
+//Компаратор для сравнения пар точек QPointF
+struct QPointFPairComparator {
+    bool operator()(const QPair<QPointF, QPointF> &lhs, const QPair<QPointF, QPointF> &rhs) const {
+        if (lhs.first.x() != rhs.first.x())
+            return lhs.first.x() < rhs.first.x();
+        if (lhs.first.y() != rhs.first.y())
+            return lhs.first.y() < rhs.first.y();
+        if (lhs.second.x() != rhs.second.x())
+            return lhs.second.x() < rhs.second.x();
+        return lhs.second.y() < rhs.second.y();
+    }
+};
+
+
+/*
 // Шаблон функции для возвращения знака числа
 template <typename T> int sgn(T val) {
     return (T(0) < val) - (val < T(0));
@@ -88,6 +131,6 @@ QPointF toQPointF(const point &p) {
 
 // Прототип функции для триангуляции
 std::vector<edge> getTriangulation(std::vector<point> &data, std::vector<triplet> &triplet_base);
-
+*/
 
 #endif // MATHFUNCTIONS_H

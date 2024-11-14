@@ -12,97 +12,29 @@
 using std::queue;
 using std::set;
 
-QVector<QPair<QPointF, QPointF>> getTriangulation(QVector<QPointF> &points, QStringList &logMessages) {
-    QVector<QPair<QPointF, QPointF>> edges; // Вектор рёбер триангуляции
-    if (points.size() < 3) {
-        return edges; // Триангуляция невозможна, если меньше 3 точек
+void Triangle::calculateCircumcircle() {
+    double ax = p1.x();
+    double ay = p1.y();
+    double bx = p2.x();
+    double by = p2.y();
+    double cx = p3.x();
+    double cy = p3.y();
+
+    double D = 2 * (ax*(by - cy) + bx*(cy - ay) + cx*(ay - by));
+    if (D == 0) {
+        // Точки коллинеарны
+        circumcenter = QPointF(std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity());
+        radiusSquared = std::numeric_limits<double>::infinity();
+        return;
     }
 
-    // Сортируем точки по y и x координатам
-    std::sort(points.begin(), points.end(), [](QPointF a, QPointF b) {
-        return (a.y() < b.y()) || ((a.y() == b.y()) && (a.x() < b.x()));
-    });
+    double Ux = ((ax*ax + ay*ay)*(by - cy) + (bx*bx + by*by)*(cy - ay) + (cx*cx + cy*cy)*(ay - by)) / D;
+    double Uy = ((ax*ax + ay*ay)*(cx - bx) + (bx*bx + by*by)*(ax - cx) + (cx*cx + cy*cy)*(bx - ax)) / D;
 
-    // Сортируем оставшиеся точки по полярному углу
-    std::sort(points.begin() + 1, points.end(), [&](QPointF a, QPointF b) {
-        double angleA = atan2(a.y() - points[0].y(), a.x() - points[0].x());
-        double angleB = atan2(b.y() - points[0].y(), b.x() - points[0].x());
-        return angleA < angleB;
-    });
-
-    queue<QPair<QPointF, QPointF>> processQueue;
-    processQueue.push(qMakePair(points[0], points[1]));
-    std::set<QPair<QPointF, QPointF>, QPointFPairComparator> seenEdges;
-    seenEdges.insert(qMakePair(points[0], points[1]));
-
-    while (!processQueue.empty()) {
-        QPair<QPointF, QPointF> edge = processQueue.front();
-        processQueue.pop();
-
-        // Поиск наиболее удаленной точки от текущего ребра
-        QPointF maxPoint;
-        double maxDistance = -1;
-        for (auto &point : points) {
-            double distance = qAbs((edge.second.x() - edge.first.x()) * (edge.first.y() - point.y()) -
-                                   (edge.first.x() - point.x()) * (edge.second.y() - edge.first.y())) /
-                              sqrt(pow(edge.second.x() - edge.first.x(), 2) + pow(edge.second.y() - edge.first.y(), 2));
-            if (distance > maxDistance) {
-                maxPoint = point;
-                maxDistance = distance;
-            }
-        }
-
-        // Добавляем рёбра к результату, если они еще не были добавлены
-        if (maxDistance > 1e-6) { // Избегаем добавления рёбер с расстоянием, близким к нулю
-            if (seenEdges.find(qMakePair(edge.first, maxPoint)) == seenEdges.end() &&
-                seenEdges.find(qMakePair(maxPoint, edge.first)) == seenEdges.end()) {
-                edges.append(qMakePair(edge.first, maxPoint));
-                seenEdges.insert(qMakePair(edge.first, maxPoint));
-                processQueue.push(qMakePair(edge.first, maxPoint));
-
-                // Логирование нового ребра
-                QString info = QString("Ребро: (%1, %2) -> (%3, %4)")
-                                   .arg(edge.first.x())
-                                   .arg(edge.first.y())
-                                   .arg(maxPoint.x())
-                                   .arg(maxPoint.y());
-                logMessages.append(info);
-            }
-
-            if (seenEdges.find(qMakePair(edge.second, maxPoint)) == seenEdges.end() &&
-                seenEdges.find(qMakePair(maxPoint, edge.second)) == seenEdges.end()) {
-                edges.append(qMakePair(edge.second, maxPoint));
-                seenEdges.insert(qMakePair(edge.second, maxPoint));
-                processQueue.push(qMakePair(edge.second, maxPoint));
-
-                // Логирование нового ребра
-                QString info = QString("Ребро: (%1, %2) -> (%3, %4)")
-                                   .arg(edge.second.x())
-                                   .arg(edge.second.y())
-                                   .arg(maxPoint.x())
-                                   .arg(maxPoint.y());
-                logMessages.append(info);
-            }
-        }
-
-        // Добавляем текущее ребро к результату, если оно еще не добавлено
-        if (seenEdges.find(edge) == seenEdges.end() &&
-            seenEdges.find(qMakePair(edge.second, edge.first)) == seenEdges.end()) {
-            edges.append(edge);
-            seenEdges.insert(edge);
-
-            // Логирование текущего ребра
-            QString info = QString("Ребро: (%1, %2) -> (%3, %4)")
-                               .arg(edge.first.x())
-                               .arg(edge.first.y())
-                               .arg(edge.second.x())
-                               .arg(edge.second.y());
-            logMessages.append(info);
-        }
-    }
-
-    return edges;
+    circumcenter = QPointF(Ux, Uy);
+    radiusSquared = (Ux - ax)*(Ux - ax) + (Uy - ay)*(Uy - ay);
 }
+
 
 
 int orientation(QPointF p, QPointF q, QPointF r) {
