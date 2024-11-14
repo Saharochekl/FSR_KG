@@ -95,11 +95,12 @@ void MainWindow::on_getResult_clicked()
             return;
         }
         QStringList logMessages;  // Логи рёбер
-        QVector<QPair<QPointF, QPointF>> triangulationEdges = getTriangulation(points, logMessages);
+
+        QVector<Edge> triangulationEdges = getTriangulation(points, logMessages);
 
         // Выводим логированные сообщения
+        ui->textBrowser->append("Логи рёбер:");
         for (const QString &msg : logMessages) {
-            ui->textBrowser->append("Логи рёбер:");
             ui->textBrowser->append(msg);
         }
         // Устанавливаем рёбра триангуляции для отрисовки

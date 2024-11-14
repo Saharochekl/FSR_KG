@@ -47,8 +47,7 @@ public:
     QVector<QPointF> Polygon1;
     QVector<QPointF> Polygon2;
     bool isFirstPolygon = true;
-    QVector<QPair<QPointF, QPointF>> triangulationEdges;
-
+    QVector<Edge> triangulationEdges;
     QColor m_color;
 
     int typeTask = notask;

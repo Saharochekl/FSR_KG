@@ -153,12 +153,12 @@ void CustomDrawWidget::paintEvent(QPaintEvent *event)
 
         // Отрисовка рёбер триангуляции
         QPen triangulationPen(Qt::blue);
-        triangulationPen.setWidth(2);
+        triangulationPen.setWidth(1);
         painter.setPen(triangulationPen);
 
-        for (auto &edge : triangulationEdges)
+        for (const Edge &edge : triangulationEdges)
         {
-            painter.drawLine(edge.first, edge.second);
+            painter.drawLine(edge.p1, edge.p2);
         }
     }
 

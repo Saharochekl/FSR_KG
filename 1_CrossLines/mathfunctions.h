@@ -40,7 +40,25 @@ struct Triangle {
     Triangle(const QPointF& a, const QPointF& b, const QPointF& c) : p1(a), p2(b), p3(c) {
         calculateCircumcircle();
     }
+    // Добавляем оператор ==
+    bool operator==(const Triangle& other) const {
+        // Сравниваем треугольники по их вершинам
+        // Поскольку порядок вершин может быть разным, нужно проверить все возможные перестановки
+        QVector<QPointF> thisPoints = {p1, p2, p3};
+        QVector<QPointF> otherPoints = {other.p1, other.p2, other.p3};
 
+        // Сортируем точки для корректного сравнения
+        std::sort(thisPoints.begin(), thisPoints.end(), [](const QPointF& a, const QPointF& b) {
+            return (a.x() < b.x()) || (a.x() == b.x() && a.y() < b.y());
+        });
+        std::sort(otherPoints.begin(), otherPoints.end(), [](const QPointF& a, const QPointF& b) {
+            return (a.x() < b.x()) || (a.x() == b.x() && a.y() < b.y());
+        });
+
+        return thisPoints[0] == otherPoints[0] &&
+               thisPoints[1] == otherPoints[1] &&
+               thisPoints[2] == otherPoints[2];
+    }
     void calculateCircumcircle();
     bool containsPoint(const QPointF& p) const;
 };
@@ -53,7 +71,7 @@ int orientation(QPointF p, QPointF q, QPointF r);
 bool onSegment(QPointF p, QPointF q, QPointF r);
 bool doIntersect(QPointF A, QPointF B, QPointF C, QPointF D, QPointF& intersection);
 QVector<QPointF> jarvisConvexHull( QVector<QPointF> &points);
-QVector<QPair<QPointF, QPointF>> getTriangulation(QVector<QPointF> &points, QStringList &logMessages);
+QVector<Edge> getTriangulation(const QVector<QPointF> &points, QStringList &logMessages);
 
 QVector<Triangle> delaunayTriangulation(const QVector<QPointF>& points);
 
