@@ -56,6 +56,8 @@ public:
     bool layMove = false;
 
     double scale;
+    QVector<QPolygonF> resultPolygons; // Результирующие многоугольники
+    bool operationPerformed = false;   // Флаг выполнения операции
 
 signals:
     void dataChanged(QPointF point);
