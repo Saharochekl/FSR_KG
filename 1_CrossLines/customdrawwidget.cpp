@@ -33,14 +33,14 @@ void CustomDrawWidget::paintEvent(QPaintEvent *event)
         case 0:
             break;
         case 1:
-            painter.drawEllipse(vecPoint[0].x(), vecPoint[0].y() , 5,5);
+            painter.drawEllipse(vecPoint[0].x()-2.5, vecPoint[0].y()-2.5, 5,5);
             break;
         case 2:
             painter.drawLine(vecPoint[0], vecPoint[1]);
             break;
         case 3:
             painter.drawLine(vecPoint[0], vecPoint[1]);
-            painter.drawEllipse(vecPoint[2].x(), vecPoint[2].y(), 5,5);
+            painter.drawEllipse(vecPoint[2].x()-2.5, vecPoint[2].y()-2.5, 5,5);
             break;
         case 4:
             painter.drawLine(vecPoint[0], vecPoint[1]);
@@ -93,14 +93,14 @@ void CustomDrawWidget::paintEvent(QPaintEvent *event)
         case 0:
             break;
         case 1:
-            painter.drawEllipse(vecPoint[0].x() , vecPoint[0].y(), 5,5);
+            painter.drawEllipse(vecPoint[0].x()-2.5 , vecPoint[0].y()-2.5, 5,5);
             break;
         case 2:
             painter.drawLine(vecPoint[0] , vecPoint[1]);
             break;
         case 3:
             painter.drawLine(vecPoint[0], vecPoint[1]);
-            painter.drawEllipse(vecPoint[2].x(), vecPoint[2].y(), 5, 5);
+            painter.drawEllipse(vecPoint[2].x()-2.5, vecPoint[2].y()-2.5, 5, 5);
             break;
         }
 
@@ -117,7 +117,7 @@ void CustomDrawWidget::paintEvent(QPaintEvent *event)
         // Рисуем все точки
         for (auto point : vecPoint)
         {
-            painter.drawEllipse(point.x(), point.y(), 5, 5);
+            painter.drawEllipse(point.x()-2.5, point.y()-2.5, 5, 5);
         }
 
         // Меняем цвет для выпуклой оболочки
@@ -129,7 +129,7 @@ void CustomDrawWidget::paintEvent(QPaintEvent *event)
         // Рисуем линии выпуклой оболочки
         for (int i = 0; i < hullPoints.size(); ++i)
         {
-            painter.drawEllipse(hullPoints[i].x(), hullPoints[i].y(), 5, 5);
+            painter.drawEllipse(hullPoints[i].x()-2.5, hullPoints[i].y()-2.5, 5, 5);
             if (i < hullPoints.size() - 1) {
                 painter.drawLine(hullPoints[i], hullPoints[i + 1]);
             } else {
@@ -148,7 +148,7 @@ void CustomDrawWidget::paintEvent(QPaintEvent *event)
         // Рисуем все точки
         for (auto point : vecPoint)
         {
-            painter.drawEllipse(point.x(), point.y(), 5, 5);
+            painter.drawEllipse(point.x()-2.5, point.y()-2.5, 5, 5);
         }
 
         // Отрисовка рёбер триангуляции
