@@ -224,12 +224,18 @@ void CustomDrawWidget::mousePressEvent(QMouseEvent *pe)
             vecPoint.push_back(newPoint);
             break;
         case task5:
+            if (operationPerformed) {
+                // Если операция уже выполнена, очищаем данные для новой операции
+                clearVector();
+                operationPerformed = false;
+            }
             if (isFirstPolygon) {
                 Polygon1.push_back(newPoint);
             } else {
                 Polygon2.push_back(newPoint);
             }
             break;
+
 
         default:
             break;

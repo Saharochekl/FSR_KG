@@ -233,3 +233,18 @@ void MainWindow::on_task6_clicked()
    points.clear();
    ui->textBrowser->setText("Выбрано: Локализация точки относительно многоугольника");
 }
+
+
+void MainWindow::on_newPoly_clicked()
+{
+   if (currentTaskType == Task5)
+   {
+        ui->widget->isFirstPolygon = false;
+        // Замыкаем первый многоугольник
+        if (!ui->widget->Polygon1.isEmpty()) {
+            ui->widget->Polygon1.append(ui->widget->Polygon1.first());
+        }
+        ui->widget->update();
+        ui->textBrowser->append("Первый многоугольник завершён. Рисуем второй многоугольник.");
+   }
+}

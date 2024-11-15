@@ -35,6 +35,31 @@ void Triangle::calculateCircumcircle() {
     radiusSquared = (Ux - ax)*(Ux - ax) + (Uy - ay)*(Uy - ay);
 }
 
+bool isConvex(const QVector<QPointF> &polygon) {
+    int n = polygon.size();
+    if (n < 3)
+        return false;
+
+    int sign = 0;
+    for (int i = 0; i < n; ++i) {
+        QPointF p0 = polygon[i];
+        QPointF p1 = polygon[(i + 1) % n];
+        QPointF p2 = polygon[(i + 2) % n];
+
+        double crossProduct = (p1.x() - p0.x()) * (p2.y() - p1.y()) - (p1.y() - p0.y()) * (p2.x() - p1.x());
+
+        if (crossProduct != 0) {
+            int currentSign = (crossProduct > 0) ? 1 : -1;
+            if (sign == 0) {
+                sign = currentSign;
+            } else if (sign != currentSign) {
+                return false; // Знак изменился, многоугольник невыпуклый
+            }
+        }
+    }
+    return true; // Все знаки одинаковы, многоугольник выпуклый
+}
+
 bool Triangle::containsPoint(const QPointF& p) const {
     double dx = p.x() - circumcenter.x();
     double dy = p.y() - circumcenter.y();
