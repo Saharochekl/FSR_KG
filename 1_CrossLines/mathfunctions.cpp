@@ -332,3 +332,106 @@ QVector<QPointF> jarvisConvexHull( QVector<QPointF> &points) {
 }
 
 
+QVector<QPointF> intersectConvexPolygons(const QVector<QPointF> &poly1, const QVector<QPointF> &poly2) {
+    QVector<QPointF> outputList = poly1;
+
+    for (int i = 0; i < poly2.size(); ++i) {
+        QPointF A = poly2[i];
+        QPointF B = poly2[(i + 1) % poly2.size()];
+
+        QVector<QPointF> inputList = outputList;
+        outputList.clear();
+
+        if (inputList.isEmpty())
+            break;
+
+        QPointF S = inputList.last();
+        for (const QPointF &E : inputList) {
+            int E_orientation = orientation(A, B, E);
+            int S_orientation = orientation(A, B, S);
+
+            if (E_orientation != 2) {
+                if (S_orientation == 2) {
+                    QPointF intersectionPoint;
+                    doIntersect(S, E, A, B, intersectionPoint);
+                    outputList.append(intersectionPoint);
+                }
+                outputList.append(E);
+            } else if (S_orientation != 2) {
+                QPointF intersectionPoint;
+                doIntersect(S, E, A, B, intersectionPoint);
+                outputList.append(intersectionPoint);
+            }
+            S = E;
+        }
+    }
+
+    return outputList;
+}
+
+
+QVector<QPointF> differenceConvexPolygons(const QVector<QPointF> &poly1, const QVector<QPointF> &poly2) {
+    // Когда-нибудь я это допишу
+    QVector<QPointF> intersection = intersectConvexPolygons(poly1, poly2);
+    if (intersection.isEmpty()) {
+        return poly1;
+    } else {
+        return QVector<QPointF>(); // Возвращаем пустой результат
+    }
+}
+
+QVector<QPointF> combiningConvexPolygons(const QVector<QPointF> &poly1, const QVector<QPointF> &poly2) {
+    QVector<QPointF> allPoints = poly1 + poly2;
+    return jarvisConvexHull(allPoints);
+    //Это не сработает, но когда-нибудь это будет дописано
+}
+
+Path qPolygonFToPath(const QPolygonF &polygon) {
+    Path path;
+    for (const QPointF &point : polygon) {
+        IntPoint intPoint(static_cast<cInt>(point.x() * 1000), static_cast<cInt>(point.y() * 1000));
+        path.push_back(intPoint);
+    }
+    return path;
+}
+
+QVector<QPolygonF> pathsToQPolygons(const Paths &paths) {
+    QVector<QPolygonF> polygons;
+    for (const Path &path : paths) {
+        QPolygonF polygon;
+        for (const IntPoint &point : path) {
+            QPointF qPoint(static_cast<double>(point.X) / 1000.0, static_cast<double>(point.Y) / 1000.0);
+            polygon << qPoint;
+        }
+        polygons.append(polygon);
+    }
+    return polygons;
+}
+
+
+QVector<QPolygonF> computeIntersection(const QPolygonF &poly1, const QPolygonF &poly2) {
+    Clipper clipper;
+    clipper.AddPath(qPolygonFToPath(poly1), ptSubject, true);
+    clipper.AddPath(qPolygonFToPath(poly2), ptClip, true);
+    Paths solution;
+    clipper.Execute(ctIntersection, solution, pftNonZero, pftNonZero);
+    return pathsToQPolygons(solution);
+}
+
+QVector<QPolygonF> computeUnion(const QPolygonF &poly1, const QPolygonF &poly2) {
+    Clipper clipper;
+    clipper.AddPath(qPolygonFToPath(poly1), ptSubject, true);
+    clipper.AddPath(qPolygonFToPath(poly2), ptClip, true);
+    Paths solution;
+    clipper.Execute(ctUnion, solution, pftNonZero, pftNonZero);
+    return pathsToQPolygons(solution);
+}
+
+QVector<QPolygonF> computeDifference(const QPolygonF &poly1, const QPolygonF &poly2) {
+    Clipper clipper;
+    clipper.AddPath(qPolygonFToPath(poly1), ptSubject, true);
+    clipper.AddPath(qPolygonFToPath(poly2), ptClip, true);
+    Paths solution;
+    clipper.Execute(ctDifference, solution, pftNonZero, pftNonZero);
+    return pathsToQPolygons(solution);
+}

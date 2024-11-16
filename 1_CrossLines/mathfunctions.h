@@ -8,6 +8,9 @@
 #include <QVector>
 #include <QSet>
 #include <limits>
+#include "QtGui/qpolygon.h"
+#include "clipper.hpp"
+using namespace ClipperLib;
 
 
 struct Edge {
@@ -75,9 +78,23 @@ bool doIntersect(QPointF A, QPointF B, QPointF C, QPointF D, QPointF& intersecti
 bool isConvex(const QVector<QPointF> &polygon);
 
 QVector<QPointF> jarvisConvexHull( QVector<QPointF> &points);
-QVector<Edge> getTriangulation(const QVector<QPointF> &points, QStringList &logMessages);
 
+QVector<Edge> getTriangulation(const QVector<QPointF> &points, QStringList &logMessages);
 QVector<Triangle> delaunayTriangulation(const QVector<QPointF>& points);
+
+QVector<QPointF> intersectConvexPolygons(const QVector<QPointF> &poly1, const QVector<QPointF> &poly2);
+QVector<QPointF> differenceConvexPolygons(const QVector<QPointF> &poly1, const QVector<QPointF> &poly2);
+QVector<QPointF> combiningConvexPolygons(const QVector<QPointF> &poly1, const QVector<QPointF> &poly2);
+
+
+Path qPolygonFToPath(const QPolygonF &polygon);
+
+// Функция для преобразования ClipperLib::Paths в QVector<QPolygonF>
+QVector<QPolygonF> pathsToQPolygons(const Paths &paths);
+QVector<QPolygonF> computeIntersection(const QPolygonF &poly1, const QPolygonF &poly2);
+QVector<QPolygonF> computeUnion(const QPolygonF &poly1, const QPolygonF &poly2);
+QVector<QPolygonF> computeDifference(const QPolygonF &poly1, const QPolygonF &poly2);
+
 
 //Компаратор для сравнения пар точек QPointF
 struct QPointFPairComparator {

@@ -56,13 +56,15 @@ SOURCES       = ../1_CrossLines/longdouble.cpp \
 		../1_CrossLines/main.cpp \
 		../1_CrossLines/mainwindow.cpp \
 		../1_CrossLines/customdrawwidget.cpp \
-		../1_CrossLines/mathfunctions.cpp moc_mainwindow.cpp \
+		../1_CrossLines/mathfunctions.cpp \
+		../1_CrossLines/clipper.cpp moc_mainwindow.cpp \
 		moc_customdrawwidget.cpp
 OBJECTS       = longdouble.o \
 		main.o \
 		mainwindow.o \
 		customdrawwidget.o \
 		mathfunctions.o \
+		clipper.o \
 		moc_mainwindow.o \
 		moc_customdrawwidget.o
 DIST          = /Users/zuha/Qt/6.6.0/macos/mkspecs/features/spec_pre.prf \
@@ -232,11 +234,13 @@ DIST          = /Users/zuha/Qt/6.6.0/macos/mkspecs/features/spec_pre.prf \
 		../1_CrossLines/DrawWidget.pro ../1_CrossLines/longdouble.h \
 		../1_CrossLines/mainwindow.h \
 		../1_CrossLines/customdrawwidget.h \
-		../1_CrossLines/mathfunctions.h ../1_CrossLines/longdouble.cpp \
+		../1_CrossLines/mathfunctions.h \
+		../1_CrossLines/clipper.hpp ../1_CrossLines/longdouble.cpp \
 		../1_CrossLines/main.cpp \
 		../1_CrossLines/mainwindow.cpp \
 		../1_CrossLines/customdrawwidget.cpp \
-		../1_CrossLines/mathfunctions.cpp
+		../1_CrossLines/mathfunctions.cpp \
+		../1_CrossLines/clipper.cpp
 QMAKE_TARGET  = DrawWidget
 DESTDIR       = 
 TARGET        = DrawWidget.app/Contents/MacOS/DrawWidget
@@ -622,8 +626,8 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents ../1_CrossLines/longdouble.h ../1_CrossLines/mainwindow.h ../1_CrossLines/customdrawwidget.h ../1_CrossLines/mathfunctions.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../1_CrossLines/longdouble.cpp ../1_CrossLines/main.cpp ../1_CrossLines/mainwindow.cpp ../1_CrossLines/customdrawwidget.cpp ../1_CrossLines/mathfunctions.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../1_CrossLines/longdouble.h ../1_CrossLines/mainwindow.h ../1_CrossLines/customdrawwidget.h ../1_CrossLines/mathfunctions.h ../1_CrossLines/clipper.hpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../1_CrossLines/longdouble.cpp ../1_CrossLines/main.cpp ../1_CrossLines/mainwindow.cpp ../1_CrossLines/customdrawwidget.cpp ../1_CrossLines/mathfunctions.cpp ../1_CrossLines/clipper.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../1_CrossLines/mainwindow.ui $(DISTDIR)/
 
 
@@ -798,6 +802,9 @@ mathfunctions.o: ../1_CrossLines/mathfunctions.cpp ../1_CrossLines/mathfunctions
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qset.h \
 		../1_CrossLines/longdouble.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mathfunctions.o ../1_CrossLines/mathfunctions.cpp
+
+clipper.o: ../1_CrossLines/clipper.cpp ../1_CrossLines/clipper.hpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o clipper.o ../1_CrossLines/clipper.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp

@@ -167,22 +167,42 @@ void CustomDrawWidget::paintEvent(QPaintEvent *event)
         QPainter painter(this);
         painter.setRenderHint(QPainter::Antialiasing, true);
         QPen pen;
-        pen.setColor(m_color);
+        pen.setColor(Qt::red);
         pen.setWidth(1.5);
         painter.setPen(pen);
 
-        for (auto point : Polygon1)
-        {
-            painter.drawEllipse(point.x() * scale, point.y() * scale, 5,5);
+        // Рисуем первый многоугольник
+        if (!Polygon1.isEmpty()) {
+            painter.drawPolyline(Polygon1);
+            for (const QPointF &point : Polygon1) {
+                painter.drawEllipse(point, 3, 3);
+            }
         }
 
-        QPen pen1;
-        pen1.setColor(Qt::blue);
-        pen1.setWidth(1.5);
-        painter.setPen(pen1);
-        for (auto point : Polygon2)
-        {
-            painter.drawEllipse(point.x() * scale, point.y() * scale, 5,5);
+        // Рисуем второй многоугольник
+        QPen pen2;
+        pen2.setColor(Qt::blue);
+        pen2.setWidth(1.5);
+        painter.setPen(pen2);
+
+        if (!Polygon2.isEmpty()) {
+            painter.drawPolyline(Polygon2);
+            for (const QPointF &point : Polygon2) {
+                painter.drawEllipse(point, 3, 3);
+            }
+        }
+
+        // Если операция выполнена, рисуем результат
+        if (operationPerformed) {
+            QBrush brush(Qt::green, Qt::SolidPattern);
+            painter.setBrush(brush);
+            QPen resultPen(Qt::green);
+            resultPen.setWidth(1.5);
+            painter.setPen(resultPen);
+
+            for (const QPolygonF &poly : resultPolygons) {
+                painter.drawPolygon(poly);
+            }
         }
 
     }

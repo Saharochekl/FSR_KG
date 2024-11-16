@@ -29,13 +29,15 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     customdrawwidget.cpp \
-    mathfunctions.cpp
+    mathfunctions.cpp \
+    clipper.cpp
 
 HEADERS += \
     longdouble.h \
         mainwindow.h \
     customdrawwidget.h \
-    mathfunctions.h
+    mathfunctions.h \
+    clipper.hpp
 
 FORMS += \
         mainwindow.ui

@@ -235,7 +235,7 @@ void MainWindow::on_task6_clicked()
 }
 
 
-void MainWindow::on_newPoly_clicked()
+void MainWindow::on_New_Poly_clicked()
 {
    if (currentTaskType == Task5)
    {
@@ -248,3 +248,104 @@ void MainWindow::on_newPoly_clicked()
         ui->textBrowser->append("Первый многоугольник завершён. Рисуем второй многоугольник.");
    }
 }
+
+void MainWindow::on_intersection_calc_clicked()
+{
+   if (currentTaskType == Task5)
+   {
+        // Замыкаем второй многоугольник
+        if (!ui->widget->Polygon2.isEmpty()) {
+            ui->widget->Polygon2.append(ui->widget->Polygon2.first());
+        }
+
+        QVector<QPointF> poly1 = ui->widget->Polygon1;
+        QVector<QPointF> poly2 = ui->widget->Polygon2;
+
+        bool convex1 = isConvex(poly1);
+        bool convex2 = isConvex(poly2);
+
+        if (convex1 && convex2) {
+            QVector<QPointF> result = intersectConvexPolygons(poly1, poly2);
+            ui->widget->resultPolygons.clear();
+            ui->widget->resultPolygons.append(QPolygonF(result));
+            ui->widget->operationPerformed = true;
+            ui->widget->update();
+            ui->textBrowser->append("Пересечение выпуклых многоугольников вычислено и отображено.");
+        } else {
+            // Используем Clipper для невыпуклых многоугольников
+            QVector<QPolygonF> result = computeIntersection(QPolygonF(poly1), QPolygonF(poly2));
+            ui->widget->resultPolygons = result;
+            ui->widget->operationPerformed = true;
+            ui->widget->update();
+            ui->textBrowser->append("Пересечение произвольных многоугольников вычислено и отображено.");
+        }
+   }
+}
+
+
+void MainWindow::on_combining_calc_clicked()
+{
+   if (currentTaskType == Task5)
+   {
+        if (!ui->widget->Polygon2.isEmpty()) {
+            ui->widget->Polygon2.append(ui->widget->Polygon2.first());
+        }
+
+        QVector<QPointF> poly1 = ui->widget->Polygon1;
+        QVector<QPointF> poly2 = ui->widget->Polygon2;
+
+        bool convex1 = isConvex(poly1);
+        bool convex2 = isConvex(poly2);
+
+        if (convex1 && convex2) {
+            QVector<QPointF> result = combiningConvexPolygons(poly1, poly2);
+            ui->widget->resultPolygons.clear();
+            ui->widget->resultPolygons.append(QPolygonF(result));
+            ui->widget->operationPerformed = true;
+            ui->widget->update();
+            ui->textBrowser->append("Объединение выпуклых многоугольников вычислено и отображено.");
+        } else {
+            QVector<QPolygonF> result = computeUnion(QPolygonF(poly1), QPolygonF(poly2));
+            ui->widget->resultPolygons = result;
+            ui->widget->operationPerformed = true;
+            ui->widget->update();
+            ui->textBrowser->append("Объединение произвольных многоугольников вычислено и отображено.");
+        }
+   }
+}
+
+void MainWindow::on_difference_calc_clicked()
+{
+   if (currentTaskType == Task5)
+   {
+        if (!ui->widget->Polygon2.isEmpty()) {
+            ui->widget->Polygon2.append(ui->widget->Polygon2.first());
+        }
+
+        QVector<QPointF> poly1 = ui->widget->Polygon1;
+        QVector<QPointF> poly2 = ui->widget->Polygon2;
+
+        bool convex1 = isConvex(poly1);
+        bool convex2 = isConvex(poly2);
+
+        if (convex1 && convex2) {
+            QVector<QPointF> result = differenceConvexPolygons(poly1, poly2);
+            if (!result.isEmpty()) {
+                ui->widget->resultPolygons.clear();
+                ui->widget->resultPolygons.append(QPolygonF(result));
+                ui->widget->operationPerformed = true;
+                ui->widget->update();
+                ui->textBrowser->append("Разность выпуклых многоугольников вычислена и отображена.");
+            } else {
+                ui->textBrowser->append("Разность выпуклых многоугольников не реализована. Используйте произвольные многоугольники.");
+            }
+        } else {
+            QVector<QPolygonF> result = computeDifference(QPolygonF(poly1), QPolygonF(poly2));
+            ui->widget->resultPolygons = result;
+            ui->widget->operationPerformed = true;
+            ui->widget->update();
+            ui->textBrowser->append("Разность произвольных многоугольников вычислена и отображена.");
+        }
+   }
+}
+
