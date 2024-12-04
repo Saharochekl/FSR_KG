@@ -15,14 +15,24 @@ using namespace ClipperLib;
 
 struct Edge {
     QPointF p1, p2;
+    int pred; // для пересечения
 
-    Edge(const QPointF& a, const QPointF& b) : p1(a), p2(b) {}
+    Edge() : pred(0) {}
+    Edge(const QPointF& a, const QPointF& b) : p1(a), p2(b), pred(0) {}
 
     bool operator==(const Edge& other) const {
         return ((p1 == other.p1 && p2 == other.p2) ||
                 (p1 == other.p2 && p2 == other.p1));
     }
 };
+
+
+// Статическая функция для вычисления расстояния между двумя точками
+inline double dist(const QPointF &A, const QPointF &B) {
+    double dx = A.x() - B.x();
+    double dy = A.y() - B.y();
+    return std::sqrt(dx*dx + dy*dy);
+}
 
 inline uint qHash(const QPointF &key, uint seed = 0) {
     // Используем масштабирование для сохранения точности
