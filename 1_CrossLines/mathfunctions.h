@@ -49,7 +49,8 @@ struct Triangle {
     QPointF p1, p2, p3;
     QPointF circumcenter;
     double radiusSquared;
-
+    Triangle() : p1(), p2(), p3(), circumcenter(std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity()),
+        radiusSquared(std::numeric_limits<double>::infinity()) {}
     Triangle(const QPointF& a, const QPointF& b, const QPointF& c) : p1(a), p2(b), p3(c) {
         calculateCircumcircle();
     }
@@ -80,18 +81,38 @@ double vectorProduct(QPointF p1, QPointF p2);
 double distance(QPointF p1, QPointF p2);
 double norma(QPointF vec);
 double angleBetwenDeg(QPointF p1, QPointF p2, QPointF d1, QPointF d2);
+double angle(QPointF A, QPointF B, QPointF C);
 
 int orientation(QPointF p, QPointF q, QPointF r);
+int pred(Edge s, QPointF c); //Предикат для пересечений, по факту костыль тот ещё
+int per(Edge seg1, Edge seg2); //Пересечение отрезков...
+int per_polygon(QVector <Edge> seg, QPointF A, QPointF B);
 
 bool onSegment(QPointF p, QPointF q, QPointF r);
 bool doIntersect(QPointF A, QPointF B, QPointF C, QPointF D, QPointF& intersection);
+bool in_figure(QVector <Edge> seg, QPointF A);
 bool isConvex(const QVector<QPointF> &polygon);
+bool check(Edge s0, QVector <Edge> s); //проверяем, записано ли уже ребро
+bool seg_in_figure(QVector <Edge> seg, Edge s);
+bool point_not_in_vec(QVector <QPointF> p, QPointF A);
 
-QVector<QPointF> jarvisConvexHull( QVector<QPointF> &points);
+
+QPointF nextpoint(QPointF A, QPointF B, int N, QVector <QPointF> mas);
+QPointF per_point(Edge seg1, Edge seg2);
 
 QVector<Edge> getTriangulation(const QVector<QPointF> &points, QStringList &logMessages);
-QVector<Triangle> delaunayTriangulation(const QVector<QPointF>& points);
+QVector <Edge> do_polygon(QVector <Edge> seg1);
+QVector <Edge> do_intersection(QVector <Edge> segA, QVector <Edge> segB);
+QVector <Edge> do_union(QVector <Edge> segA, QVector <Edge> segB);
+QVector <Edge> do_difference(QVector <Edge> segA, QVector <Edge> segB);
+QVector <Edge> do_differenceSem(QVector <Edge> segA, QVector <Edge> segB);
 
+QVector<Triangle> delaunayTriangulation(const QVector<QPointF>& points);
+QVector <Triangle> do_triang(QVector <QPointF> mas);
+QVector <Triangle> do_triang_poligon(QVector <Edge> seg);
+QVector <Triangle> do_intersection_trisngl(QVector <Edge> segA, QVector <Edge> segB);
+
+QVector<QPointF> jarvisConvexHull( QVector<QPointF> &points);
 QVector<QPointF> intersectConvexPolygons(const QVector<QPointF> &poly1, const QVector<QPointF> &poly2);
 QVector<QPointF> differenceConvexPolygons(const QVector<QPointF> &poly1, const QVector<QPointF> &poly2);
 QVector<QPointF> combiningConvexPolygons(const QVector<QPointF> &poly1, const QVector<QPointF> &poly2);

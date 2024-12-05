@@ -207,6 +207,34 @@ int orientation(QPointF p, QPointF q, QPointF r) {
     }
 }
 
+int pred(Edge s, QPointF c){
+    double pred = (s.p2.x() - s.p1.x())*(c.y() - s.p1.y()) - (c.x() - s.p1.x())*(s.p2.y() - s.p1.y());
+    if (pred < 0)
+        return -1; // Point is to the left of the segment
+    else if(pred > 0)
+        return 1; // Point is to the right of the segment
+    else
+        return 0; // Point is on the segment
+}
+
+int per(Edge seg1, Edge seg2){
+    double k1 = (seg1.p2.y() - seg1.p1.y())/(seg1.p2.x() - seg1.p1.x());
+    double k2 = (seg2.p2.y() - seg2.p1.y())/(seg2.p2.x() - seg2.p1.x());
+    double b1 = seg1.p1.y() - k1*seg1.p1.x();
+    double b2 = seg2.p1.y() - k2*seg2.p1.x();
+    if (abs(k1-k2) < 0.0000001)
+        return 0;
+    QPoint x;
+    x.setX((b2 - b1)/(k1-k2));
+    x.setY(k1 * x.x() + b1);
+    //cerr<<"x: "<<x<<endl;
+    if ((x.x() < fmin(seg1.p1.x(), seg1.p2.x())) || (x.x() < fmin(seg2.p1.x(), seg2.p2.x())) || (x.x() > fmax(seg1.p1.x(), seg1.p2.x())) || (x.x() > fmax(seg2.p1.x(), seg2.p2.x())))
+        return 0;
+    if ( (dist(x, seg1.p1) < 0.0000001) || (dist(x, seg2.p1) < 0.0000001) || (dist(x, seg1.p2) < 0.0000001) || (dist(x, seg2.p2) < 0.0000001))
+        return 0;
+    //cerr<<"x провереный: "<<x<<endl;
+    return 1;
+}
 bool onSegment(QPointF p, QPointF q, QPointF r) {
     return ((q.x() <= std::max(p.x(), r.x())) && (q.x() >= std::min(p.x(), r.x()))&&
             (q.y() <= std::max(p.y(), r.y())) && (q.y() >= std::min(p.y(), r.y())));
@@ -295,6 +323,113 @@ double angleBetwenDeg(QPointF p1, QPointF p2, QPointF d1, QPointF d2)
 
     return acos(cos_a) * 180 / M_PI;
 }
+
+// Function to calculate the angle ABC in radians
+double angle(QPointF A, QPointF B, QPointF C){
+    if ((C == A) || (C == B))
+        return 0; // No angle if points are overlapping
+    A = A - B; // Vector from B to A
+    C = C - B; // Vector from B to C
+    // Dot product divided by product of magnitudes gives cosine of the angle
+    double cosa = (A.x() * C.x() + A.y() * C.y())/(sqrt(pow(A.x(), 2) + pow(A.y(), 2))*sqrt(pow(C.x(), 2) + pow(C.y(), 2)));
+    return abs(acos(cosa)); // Return absolute value to ensure angle is positive
+}
+
+bool check(Edge s0, QVector <Edge> s){
+    bool flag = true; // Assume the segment is not in the list
+    Edge s1; // Create reverse segment for comparison
+    s1.p1 = s0.p2;
+    s1.p2 = s0.p1;
+    for(int i = 0; i < s.size(); i++)
+        if (s0 == s[i] || s1 == s[i]) // If either segment or its reverse is found
+            flag = false; // Segment is in the list
+    return flag; // Return true if segment is not in the list, false otherwise
+}
+
+
+QPointF nextpoint(QPointF A, QPointF B, int N, QVector <QPointF> mas){
+    QPointF P0 = mas[0]; // Initial point for comparison
+    double anglemax = angle(A, B, mas[0]); // Initial maximum angle
+    for(int i = 1; i < N; i++){
+        if (angle(A, B, mas[i]) > anglemax){ // If a larger angle is found
+            anglemax = angle(A, B, mas[i]);
+            P0 = mas[i]; // Update the point and maximum angle
+        }else if((angle(A, B, mas[i]) == anglemax) && (dist(B, mas[i]) < dist(B, P0))){
+            // If angle is the same but distance is shorter, update the point
+            anglemax = angle(A, B, mas[i]);
+            P0 = mas[i];
+        }
+    }
+    return P0; // Return the point that forms the largest angle
+}
+
+QVector <Triangle> do_triang(QVector <QPointF> mas){
+    int N = mas.size(); // Number of points
+    QPointF a = mas[0]; // Start with the first point
+    // Find the point with the smallest x (and y if x is the same)
+    for(int i = 1; i < N; i++){
+        if (mas[i].x() < a.x() || (mas[i].x() == a.x() && mas[i].y() < a.y()))
+            a = mas[i];
+    }
+    QPointF a0; // Create a new point slightly above 'a' to start triangulation
+
+    a0.setX(a.x());//Чёрная магия! работает – не трогать!!!!
+    a0.setY(a.y() + 10); //Чёрная магия! работает – не трогать!!!!
+
+    QPointF b = nextpoint(a0, a, N, mas); // Find next point to form a base segment
+
+    QVector <Edge> seg; // Vector to store segments of the triangulation
+    Edge s0; // Initial segment
+    s0.p1 = a;
+    s0.p2 = b;
+    seg.push_back(s0); // Add the initial segment to the vector
+
+    QVector <Edge> edges; // Vector to store edges being processed
+    s0.pred = -1; // Initial direction for triangulation
+    edges.push_back(s0);
+
+    QVector <Triangle> t; // Vector to store the resulting triangles
+    Triangle t0; // Initial triangle
+
+    // Loop through edges to form triangles
+    while(edges.size() > 0){
+        double minangel = -1; // Minimum angle for comparison
+        for (int i = 0; i < N; i++){
+            // If point forms a valid angle with the edge being processed
+            if((pred(edges[0], mas[i]) == -edges[0].pred) && (angle(edges[0].p1, mas[i], edges[0].p2) > minangel)){
+                minangel = angle(edges[0].p1, mas[i], edges[0].p2); // Update minimum angle
+                a = mas[i]; // Update point 'a' to the current point
+            }
+        }
+        // If a valid angle was found, form new edges and triangle
+        if (minangel != -1){
+            // Create two new segments from the edges of the triangle
+            s0.p1 = edges[0].p1;
+            s0.p2 = a;
+            s0.pred = pred(s0, edges[0].p2);
+            if (check(s0, edges) && check(s0, seg)){ // If new segments are valid
+                edges.push_back(s0); // Add to edges being processed
+                seg.push_back(s0); // Add to segments of the triangulation
+            }
+            s0.p1 = edges[0].p2;
+            s0.p2 = a;
+            s0.pred = pred(s0, edges[0].p1);
+            if (check(s0, edges) && check(s0, seg)){
+                edges.push_back(s0);
+                seg.push_back(s0);
+            }
+
+            // Form a new triangle and add it to the vector
+            t0.p1 = edges[0].p1;
+            t0.p2 = edges[0].p2;
+            t0.p3 = a;
+            t.push_back(t0);
+        }
+        edges.erase(edges.begin()); // Remove the processed edge
+    }
+    return t; // Return the vector of triangles
+}
+
 
 QVector<QPointF> jarvisConvexHull( QVector<QPointF> &points) {
     QVector<QPointF> hull;
@@ -435,3 +570,417 @@ QVector<QPolygonF> computeDifference(const QPolygonF &poly1, const QPolygonF &po
     clipper.Execute(ctDifference, solution, pftNonZero, pftNonZero);
     return pathsToQPolygons(solution);
 }
+
+
+
+
+QPointF per_point(Edge seg1, Edge seg2){
+    double k1 = (seg1.p2.y() - seg1.p1.y())/(seg1.p2.x() - seg1.p1.x());
+    double k2 = (seg2.p2.y() - seg2.p1.y())/(seg2.p2.x() - seg2.p1.x());
+    double b1 = seg1.p1.y() - k1*seg1.p1.x();
+    double b2 = seg2.p1.y() - k2*seg2.p1.x();
+    if (abs(k1-k2) < 0.0000001)
+        return QPointF(0, 0);
+    QPointF p;
+    p.setX((b2 - b1)/(k1-k2));
+    p.setY(k1 * p.x() + b1);
+    return p;
+}
+
+int per_polygon(QVector <Edge> seg, QPointF A, QPointF B){
+    int n = 0;
+    Edge s;
+    s.p1 = A;
+    s.p2 = B;
+    for (int i = 0; i < seg.size(); i++)
+        n = n + per(seg[i], s);
+    return n;
+}
+
+bool in_figure(QVector <Edge> seg, QPointF A){ //если лучь пересечет многоугольник нечетное число раз, то лежит в многоугольнике
+    bool flag = false;
+    QPointF B(0, 0);
+    //cerr<<"Пересечения: "<<per_polygon(seg, A, B)<<endl;
+    //cerr<<A.x<<" "<<A.y<<endl;
+    //cerr<<B.x<<" "<<B.y<<endl;
+    if (per_polygon(seg, A, B) % 2 == 1)
+        flag = true;
+    return flag;
+}
+
+bool seg_in_figure(QVector <Edge> seg, Edge s){
+    QPointF c;
+    c = (s.p1 + s.p2)/2;
+    return in_figure(seg, c);
+}
+
+bool point_not_in_vec(QVector <QPointF> p, QPointF A){
+    bool f = true;
+    for (int i = 0; i < p.size(); i++)
+        if (dist(A, p[i]) < 0.0000000000001)
+            f = false;
+    return f;
+}
+
+QVector <Edge> do_polygon(QVector <Edge> seg1){
+    QVector <Edge> seg;
+    QPointF a0;
+    QPointF a;
+    a = seg1[0].p2;
+    a0 = seg1[0].p1;
+    seg.push_back(seg1[0]);
+    seg1.erase(seg1.begin());
+
+    while (seg1.size() > 0){
+        while(dist(a0, a) > 0.000000001){
+            int k = 0;
+            while ((k < seg1.size()) && (dist(seg1[k].p1, a) > 0.000000001) && (dist(seg1[k].p2, a) > 0.000000001)) k++;
+
+            if ((k < seg1.size()) && dist(seg1[k].p1, a) <= 0.000000001){
+                seg.push_back(seg1[k]);
+                a = seg1[k].p2;
+                seg1.erase(seg1.begin() + k);
+            }
+
+            if ((k < seg1.size()) && dist(seg1[k].p2, a) <= 0.000000001){
+                seg.push_back(Edge(seg1[k].p2, seg1[k].p1));
+                a = seg1[k].p1;
+                seg1.erase(seg1.begin() + k);
+            }
+        }
+        if (seg1.size() > 0){
+            a = seg1[0].p2;
+            a0 = seg1[0].p1;
+            seg.push_back(seg1[0]);
+            seg1.erase(seg1.begin());
+        }
+    }
+    return seg;
+}
+
+//Триангуляция многоугольника - Работает, не тогатть
+QVector <Triangle> do_triang_poligon(QVector <Edge> seg){
+    QVector <Triangle> t;
+    QVector <QPointF> p;
+    QPointF c;
+    for (int i = 0; i < seg.size(); i++)
+        p.push_back(seg[i].p1);
+    //добавляем точки само-пересечения
+    for (int i = 0; i < seg.size() - 1; i++)
+        for (int j = i + 1; j < seg.size(); j++)
+            if (per(seg[i], seg[j]) == 1)
+                p.push_back(per_point(seg[i] , seg[j]));
+    t = do_triang(p);
+    //cerr<< t.size()<<endl;
+    int i = 0;
+    while (i < t.size()){
+        c = (t[i].p1 + t[i].p2)/2;
+        c = (c + t[i].p3)/2;
+        //cerr<<"("<<c.x<<", "<<c.y<<")"<<endl;
+        if (!in_figure(seg, c))
+            t.erase(t.begin() + i);
+        else
+            i++;
+        //cerr<<in_figure(seg, c)<<endl;
+    }
+    return t;
+}
+//Триангуляция многоугольника - Работает, не тогатть
+
+QVector <Triangle> do_intersection_trisngl(QVector <Edge> segA, QVector <Edge> segB){
+    QVector <Triangle> t;
+    QVector <QPointF> p;
+    QPointF c;
+    for (int i = 0; i < segA.size(); i++)
+        p.push_back(segA[i].p1);
+    for (int i = 0; i < segB.size(); i++)
+        p.push_back(segB[i].p1);
+
+    for (int i = 0; i < segA.size(); i++)
+        for (int j = 0; j < segB.size(); j++)
+            if (per(segA[i], segB[j]) == 1)
+                p.push_back(per_point(segA[i] , segB[j]));
+
+    t = do_triang(p);
+    //cerr<< t.size()<<endl;
+    int i = 0;
+    while (i < t.size()){
+        c = (t[i].p1 + t[i].p2)/2;
+        c = (c + t[i].p3)/2;
+        //cerr<<"("<<c.x<<", "<<c.y<<")"<<endl;
+        if (!in_figure(segA, c) || !in_figure(segB, c))
+            t.erase(t.begin() + i);
+        else
+            i++;
+        //cerr<<in_figure(seg, c)<<endl;
+    }
+    return t;
+}
+
+QVector <Edge> do_intersection(QVector <Edge> segA, QVector <Edge> segB){
+    //vector <triangl> tA = do_triang_poligon(segA);
+    //vector <triangl> tB = do_triang_poligon(segB);
+    //в segA делим все отрезки в точках пересечения
+    QVector <Edge> segAA;
+    for (int i = 0; i < segA.size(); i++){
+        QVector <QPointF> pper;
+        pper.push_back(segA[i].p2);
+        for (int j = 0; j < segB.size(); j++)
+            if (per(segA[i], segB[j]) == 1)
+                pper.push_back(per_point(segA[i] , segB[j]));
+        QPointF a = segA[i].p1;
+        while (pper.size() > 0){
+            double min_dist = dist(a, pper[0]);
+            int k = 0;
+            for (int j = 1; j < pper.size(); j++)
+                if (dist(a, pper[j]) < min_dist){
+                    k = j;
+                    min_dist = dist(a, pper[j]);
+                }
+            segAA.push_back(Edge(a, pper[k]));
+            a = pper[k];
+            pper.erase(pper.begin() + k);
+        }
+    }
+
+    //в segB делим все отрезки в точках пересечения
+    QVector <Edge> segBB;
+    for (int i = 0; i < segB.size(); i++){
+        QVector <QPointF> pper;
+        pper.push_back(segB[i].p2);
+        for (int j = 0; j < segA.size(); j++)
+            if (per(segB[i], segA[j]) == 1)
+                pper.push_back(per_point(segB[i] , segA[j]));
+        QPointF a = segB[i].p1;
+        while (pper.size() > 0){
+            double min_dist = dist(a, pper[0]);
+            int k = 0;
+            for (int j = 1; j < pper.size(); j++)
+                if (dist(a, pper[j]) < min_dist){
+                    k = j;
+                    min_dist = dist(a, pper[j]);
+                }
+            segBB.push_back(Edge(a, pper[k]));
+            a = pper[k];
+            pper.erase(pper.begin() + k);
+        }
+    }
+
+    QVector <Edge> seg;
+
+    for (int i = 0; i < segAA.size(); i++){
+        if (seg_in_figure(segB, segAA[i]))
+            seg.push_back(segAA[i]);
+    }
+
+    for (int i = 0; i < segBB.size(); i++){
+        if (seg_in_figure(segA, segBB[i]))
+            seg.push_back(segBB[i]);
+    }
+
+    seg = do_polygon(seg);
+
+    return seg;
+}
+
+QVector <Edge> do_union(QVector <Edge> segA, QVector <Edge> segB){
+    QVector <Edge> segAA;
+    for (int i = 0; i < segA.size(); i++){
+        QVector <QPointF> pper;
+        pper.push_back(segA[i].p2);
+        for (int j = 0; j < segB.size(); j++)
+            if (per(segA[i], segB[j]) == 1)
+                pper.push_back(per_point(segA[i] , segB[j]));
+        QPointF a = segA[i].p1;
+        while (pper.size() > 0){
+            double min_dist = dist(a, pper[0]);
+            int k = 0;
+            for (int j = 1; j < pper.size(); j++)
+                if (dist(a, pper[j]) < min_dist){
+                    k = j;
+                    min_dist = dist(a, pper[j]);
+                }
+            segAA.push_back(Edge(a, pper[k]));
+            a = pper[k];
+            pper.erase(pper.begin() + k);
+        }
+    }
+
+    //в segB делим все отрезки в точках пересечения
+    QVector <Edge>  segBB;
+    for (int i = 0; i < segB.size(); i++){
+        QVector <QPointF> pper;
+        pper.push_back(segB[i].p2);
+        for (int j = 0; j < segA.size(); j++)
+            if (per(segB[i], segA[j]) == 1)
+                pper.push_back(per_point(segB[i] , segA[j]));
+        QPointF a = segB[i].p1;
+        while (pper.size() > 0){
+            double min_dist = dist(a, pper[0]);
+            int k = 0;
+            for (int j = 1; j < pper.size(); j++)
+                if (dist(a, pper[j]) < min_dist){
+                    k = j;
+                    min_dist = dist(a, pper[j]);
+                }
+            segBB.push_back(Edge(a, pper[k]));
+            a = pper[k];
+            pper.erase(pper.begin() + k);
+        }
+    }
+
+    QVector <Edge> seg;
+
+    for (int i = 0; i < segAA.size(); i++){
+        if (!seg_in_figure(segB, segAA[i]))
+            seg.push_back(segAA[i]);
+    }
+
+    for (int i = 0; i < segBB.size(); i++){
+        if (!seg_in_figure(segA, segBB[i]))
+            seg.push_back(segBB[i]);
+    }
+
+    seg = do_polygon(seg);
+
+    return seg;
+}
+
+//A без B
+QVector <Edge> do_difference(QVector <Edge> segA, QVector <Edge> segB){
+    QVector <Edge> segAA;
+    for (int i = 0; i < segA.size(); i++){
+        QVector <QPointF> pper;
+        pper.push_back(segA[i].p2);
+        for (int j = 0; j < segB.size(); j++)
+            if (per(segA[i], segB[j]) == 1)
+                pper.push_back(per_point(segA[i] , segB[j]));
+        QPointF a = segA[i].p1;
+        while (pper.size() > 0){
+            double min_dist = dist(a, pper[0]);
+            int k = 0;
+            for (int j = 1; j < pper.size(); j++)
+                if (dist(a, pper[j]) < min_dist){
+                    k = j;
+                    min_dist = dist(a, pper[j]);
+                }
+            segAA.push_back(Edge(a, pper[k]));
+            a = pper[k];
+            pper.erase(pper.begin() + k);
+        }
+    }
+
+    //в segB делим все отрезки в точках пересечения
+    QVector <Edge> segBB;
+    for (int i = 0; i < segB.size(); i++){
+        QVector <QPointF> pper;
+        pper.push_back(segB[i].p2);
+        for (int j = 0; j < segA.size(); j++)
+            if (per(segB[i], segA[j]) == 1)
+                pper.push_back(per_point(segB[i] , segA[j]));
+        QPointF a = segB[i].p1;
+        while (pper.size() > 0){
+            double min_dist = dist(a, pper[0]);
+            int k = 0;
+            for (int j = 1; j < pper.size(); j++)
+                if (dist(a, pper[j]) < min_dist){
+                    k = j;
+                    min_dist = dist(a, pper[j]);
+                }
+            segBB.push_back(Edge(a, pper[k]));
+            a = pper[k];
+            pper.erase(pper.begin() + k);
+        }
+    }
+
+    QVector <Edge> seg;
+
+    for (int i = 0; i < segAA.size(); i++){
+        if (!seg_in_figure(segB, segAA[i]))
+            seg.push_back(segAA[i]);
+    }
+
+    for (int i = 0; i < segBB.size(); i++){
+        if (seg_in_figure(segA, segBB[i]))
+            seg.push_back(segBB[i]);
+    }
+
+    seg = do_polygon(seg);
+
+    return seg;
+}
+
+//Семетрическая разность
+QVector <Edge> do_differenceSem(QVector <Edge> segA, QVector <Edge> segB){
+    QVector <Edge> segAA;
+    for (int i = 0; i < segA.size(); i++){
+        QVector <QPointF> pper;
+        pper.push_back(segA[i].p2);
+        for (int j = 0; j < segB.size(); j++)
+            if (per(segA[i], segB[j]) == 1)
+                pper.push_back(per_point(segA[i] , segB[j]));
+        QPointF a = segA[i].p1;
+        while (pper.size() > 0){
+            double min_dist = dist(a, pper[0]);
+            int k = 0;
+            for (int j = 1; j < pper.size(); j++)
+                if (dist(a, pper[j]) < min_dist){
+                    k = j;
+                    min_dist = dist(a, pper[j]);
+                }
+            segAA.push_back(Edge(a, pper[k]));
+            a = pper[k];
+            pper.erase(pper.begin() + k);
+        }
+    }
+
+    //в segB делим все отрезки в точках пересечения
+    QVector <Edge> segBB;
+    for (int i = 0; i < segB.size(); i++){
+        QVector <QPointF> pper;
+        pper.push_back(segB[i].p2);
+        for (int j = 0; j < segA.size(); j++)
+            if (per(segB[i], segA[j]) == 1)
+                pper.push_back(per_point(segB[i] , segA[j]));
+        QPointF a = segB[i].p1;
+        while (pper.size() > 0){
+            double min_dist = dist(a, pper[0]);
+            int k = 0;
+            for (int j = 1; j < pper.size(); j++)
+                if (dist(a, pper[j]) < min_dist){
+                    k = j;
+                    min_dist = dist(a, pper[j]);
+                }
+            segBB.push_back(Edge(a, pper[k]));
+            a = pper[k];
+            pper.erase(pper.begin() + k);
+        }
+    }
+
+    QVector <Edge> seg;
+
+    for (int i = 0; i < segAA.size(); i++){
+        if (!seg_in_figure(segB, segAA[i]))
+            seg.push_back(segAA[i]);
+    }
+
+    for (int i = 0; i < segBB.size(); i++){
+        if (seg_in_figure(segA, segBB[i]))
+            seg.push_back(segBB[i]);
+    }
+
+    for (int i = 0; i < segAA.size(); i++){
+        if (seg_in_figure(segB, segAA[i]))
+            seg.push_back(segAA[i]);
+    }
+
+    for (int i = 0; i < segBB.size(); i++){
+        if (!seg_in_figure(segA, segBB[i]))
+            seg.push_back(segBB[i]);
+    }
+
+    seg = do_polygon(seg);
+
+    return seg;
+}
+

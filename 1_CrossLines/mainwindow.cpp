@@ -260,25 +260,49 @@ void MainWindow::on_intersection_calc_clicked()
 
         QVector<QPointF> poly1 = ui->widget->Polygon1;
         QVector<QPointF> poly2 = ui->widget->Polygon2;
-
-        bool convex1 = isConvex(poly1);
-        bool convex2 = isConvex(poly2);
-
-        if (convex1 && convex2) {
-            QVector<QPointF> result = intersectConvexPolygons(poly1, poly2);
-            ui->widget->resultPolygons.clear();
-            ui->widget->resultPolygons.append(QPolygonF(result));
-            ui->widget->operationPerformed = true;
-            ui->widget->update();
-            ui->textBrowser->append("Пересечение выпуклых многоугольников вычислено и отображено.");
-        } else {
-            // Используем Clipper для невыпуклых многоугольников
-            QVector<QPolygonF> result = computeIntersection(QPolygonF(poly1), QPolygonF(poly2));
-            ui->widget->resultPolygons = result;
-            ui->widget->operationPerformed = true;
-            ui->widget->update();
-            ui->textBrowser->append("Пересечение произвольных многоугольников вычислено и отображено.");
+        QVector<Edge> segA;
+        for (int i = 0; i < poly1.size(); i++) {
+            segA.append(Edge(poly1[i], poly1[(i+1)%poly1.size()]));
         }
+
+        QVector<Edge> segB;
+        for (int i = 0; i < poly2.size(); i++) {
+            segB.append(Edge(poly2[i], poly2[(i+1)%poly2.size()]));
+        }
+        QVector<Edge> resultEdges = do_intersection(segA, segB);
+        QVector<QPointF> resultPoly;
+        if (!resultEdges.isEmpty()) {
+            // Предполагаем, что ребра образуют замкнутый многоугольник
+            // Начинаем с resultEdges[0].p1
+            resultPoly.append(resultEdges[0].p1);
+            for (int i = 0; i < resultEdges.size(); i++) {
+                resultPoly.append(resultEdges[i].p2);
+            }
+        }
+        ui->widget->resultPolygons.clear();
+        ui->widget->resultPolygons.append(QPolygonF(resultPoly));
+        ui->widget->operationPerformed = true;
+        ui->widget->update();
+        ui->textBrowser->append("Пересечение многоугольников (чужой код) вычислено и отображено.");
+
+//        bool convex1 = isConvex(poly1);
+//        bool convex2 = isConvex(poly2);
+
+//        if (convex1 && convex2) {
+//            QVector<QPointF> result = intersectConvexPolygons(poly1, poly2);
+//            ui->widget->resultPolygons.clear();
+//            ui->widget->resultPolygons.append(QPolygonF(result));
+//            ui->widget->operationPerformed = true;
+//            ui->widget->update();
+//            ui->textBrowser->append("Пересечение выпуклых многоугольников вычислено и отображено.");
+//        } else {
+//            // Используем Clipper для невыпуклых многоугольников
+//            QVector<QPolygonF> result = computeIntersection(QPolygonF(poly1), QPolygonF(poly2));
+//            ui->widget->resultPolygons = result;
+//            ui->widget->operationPerformed = true;
+//            ui->widget->update();
+//            ui->textBrowser->append("Пересечение произвольных многоугольников вычислено и отображено.");
+//        }
    }
 }
 
