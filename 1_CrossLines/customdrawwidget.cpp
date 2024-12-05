@@ -194,8 +194,8 @@ void CustomDrawWidget::paintEvent(QPaintEvent *event)
 
         // Если операция выполнена, рисуем результат
         if (operationPerformed) {
-            QBrush brush(Qt::green, Qt::SolidPattern);
-            painter.setBrush(brush);
+            //QBrush brush(Qt::green, Qt::SolidPattern);
+            //painter.setBrush(brush);
             QPen resultPen(Qt::green);
             resultPen.setWidth(1.5);
             painter.setPen(resultPen);
@@ -346,6 +346,7 @@ void CustomDrawWidget::clearVector()
         isFirstPolygon = true;
         Polygon1.clear();
         Polygon2.clear();
+        resultPolygons.clear();
     }
     repaint();
 }

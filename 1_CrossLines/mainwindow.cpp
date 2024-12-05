@@ -283,7 +283,7 @@ void MainWindow::on_intersection_calc_clicked()
         ui->widget->resultPolygons.append(QPolygonF(resultPoly));
         ui->widget->operationPerformed = true;
         ui->widget->update();
-        ui->textBrowser->append("Пересечение многоугольников (чужой код) вычислено и отображено.");
+        ui->textBrowser->append("Пересечение многоугольников вычислено и отображено.");
 
 //        bool convex1 = isConvex(poly1);
 //        bool convex2 = isConvex(poly2);
@@ -318,23 +318,48 @@ void MainWindow::on_combining_calc_clicked()
         QVector<QPointF> poly1 = ui->widget->Polygon1;
         QVector<QPointF> poly2 = ui->widget->Polygon2;
 
-        bool convex1 = isConvex(poly1);
-        bool convex2 = isConvex(poly2);
-
-        if (convex1 && convex2) {
-            QVector<QPointF> result = combiningConvexPolygons(poly1, poly2);
-            ui->widget->resultPolygons.clear();
-            ui->widget->resultPolygons.append(QPolygonF(result));
-            ui->widget->operationPerformed = true;
-            ui->widget->update();
-            ui->textBrowser->append("Объединение выпуклых многоугольников вычислено и отображено.");
-        } else {
-            QVector<QPolygonF> result = computeUnion(QPolygonF(poly1), QPolygonF(poly2));
-            ui->widget->resultPolygons = result;
-            ui->widget->operationPerformed = true;
-            ui->widget->update();
-            ui->textBrowser->append("Объединение произвольных многоугольников вычислено и отображено.");
+        QVector<Edge> segA;
+        for (int i = 0; i < poly1.size(); i++) {
+            segA.append(Edge(poly1[i], poly1[(i+1)%poly1.size()]));
         }
+
+        QVector<Edge> segB;
+        for (int i = 0; i < poly2.size(); i++) {
+            segB.append(Edge(poly2[i], poly2[(i+1)%poly2.size()]));
+        }
+        QVector<Edge> resultEdges = do_union(segA, segB);
+        QVector<QPointF> resultPoly;
+        if (!resultEdges.isEmpty()) {
+            // Предполагаем, что ребра образуют замкнутый многоугольник
+            // Начинаем с resultEdges[0].p1
+            resultPoly.append(resultEdges[0].p1);
+            for (int i = 0; i < resultEdges.size(); i++) {
+                resultPoly.append(resultEdges[i].p2);
+            }
+        }
+        ui->widget->resultPolygons.clear();
+        ui->widget->resultPolygons.append(QPolygonF(resultPoly));
+        ui->widget->operationPerformed = true;
+        ui->widget->update();
+        ui->textBrowser->append("Пересечение многоугольников вычислено и отображено.");
+
+//        bool convex1 = isConvex(poly1);
+//        bool convex2 = isConvex(poly2);
+
+//        if (convex1 && convex2) {
+//            QVector<QPointF> result = combiningConvexPolygons(poly1, poly2);
+//            ui->widget->resultPolygons.clear();
+//            ui->widget->resultPolygons.append(QPolygonF(result));
+//            ui->widget->operationPerformed = true;
+//            ui->widget->update();
+//            ui->textBrowser->append("Объединение выпуклых многоугольников вычислено и отображено.");
+//        } else {
+//            QVector<QPolygonF> result = computeUnion(QPolygonF(poly1), QPolygonF(poly2));
+//            ui->widget->resultPolygons = result;
+//            ui->widget->operationPerformed = true;
+//            ui->widget->update();
+//            ui->textBrowser->append("Объединение произвольных многоугольников вычислено и отображено.");
+//        }
    }
 }
 
@@ -349,27 +374,52 @@ void MainWindow::on_difference_calc_clicked()
         QVector<QPointF> poly1 = ui->widget->Polygon1;
         QVector<QPointF> poly2 = ui->widget->Polygon2;
 
-        bool convex1 = isConvex(poly1);
-        bool convex2 = isConvex(poly2);
-
-        if (convex1 && convex2) {
-            QVector<QPointF> result = differenceConvexPolygons(poly1, poly2);
-            if (!result.isEmpty()) {
-                ui->widget->resultPolygons.clear();
-                ui->widget->resultPolygons.append(QPolygonF(result));
-                ui->widget->operationPerformed = true;
-                ui->widget->update();
-                ui->textBrowser->append("Разность выпуклых многоугольников вычислена и отображена.");
-            } else {
-                ui->textBrowser->append("Разность выпуклых многоугольников не реализована. Используйте произвольные многоугольники.");
-            }
-        } else {
-            QVector<QPolygonF> result = computeDifference(QPolygonF(poly1), QPolygonF(poly2));
-            ui->widget->resultPolygons = result;
-            ui->widget->operationPerformed = true;
-            ui->widget->update();
-            ui->textBrowser->append("Разность произвольных многоугольников вычислена и отображена.");
+        QVector<Edge> segA;
+        for (int i = 0; i < poly1.size(); i++) {
+            segA.append(Edge(poly1[i], poly1[(i+1)%poly1.size()]));
         }
+
+        QVector<Edge> segB;
+        for (int i = 0; i < poly2.size(); i++) {
+            segB.append(Edge(poly2[i], poly2[(i+1)%poly2.size()]));
+        }
+        QVector<Edge> resultEdges = do_difference(segA, segB);
+        QVector<QPointF> resultPoly;
+        if (!resultEdges.isEmpty()) {
+            // Предполагаем, что ребра образуют замкнутый многоугольник
+            // Начинаем с resultEdges[0].p1
+            resultPoly.append(resultEdges[0].p1);
+            for (int i = 0; i < resultEdges.size(); i++) {
+                resultPoly.append(resultEdges[i].p2);
+            }
+        }
+        ui->widget->resultPolygons.clear();
+        ui->widget->resultPolygons.append(QPolygonF(resultPoly));
+        ui->widget->operationPerformed = true;
+        ui->widget->update();
+        ui->textBrowser->append("Пересечение многоугольников вычислено и отображено.");
+
+//        bool convex1 = isConvex(poly1);
+//        bool convex2 = isConvex(poly2);
+
+//        if (convex1 && convex2) {
+//            QVector<QPointF> result = differenceConvexPolygons(poly1, poly2);
+//            if (!result.isEmpty()) {
+//                ui->widget->resultPolygons.clear();
+//                ui->widget->resultPolygons.append(QPolygonF(result));
+//                ui->widget->operationPerformed = true;
+//                ui->widget->update();
+//                ui->textBrowser->append("Разность выпуклых многоугольников вычислена и отображена.");
+//            } else {
+//                ui->textBrowser->append("Разность выпуклых многоугольников не реализована. Используйте произвольные многоугольники.");
+//            }
+//        } else {
+//            QVector<QPolygonF> result = computeDifference(QPolygonF(poly1), QPolygonF(poly2));
+//            ui->widget->resultPolygons = result;
+//            ui->widget->operationPerformed = true;
+//            ui->widget->update();
+//            ui->textBrowser->append("Разность произвольных многоугольников вычислена и отображена.");
+//        }
    }
 }
 
