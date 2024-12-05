@@ -597,7 +597,7 @@ int per_polygon(QVector <Edge> seg, QPointF A, QPointF B){
     return n;
 }
 
-bool in_figure(QVector <Edge> seg, QPointF A){ //если лучь пересечет многоугольник нечетное число раз, то лежит в многоугольнике
+bool in_figure(QVector <Edge> seg, QPointF A){ //если луч пересечет многоугольник нечетное число раз, то лежит в многоугольнике
     bool flag = false;
     QPointF B(0, 0);
     //cerr<<"Пересечения: "<<per_polygon(seg, A, B)<<endl;

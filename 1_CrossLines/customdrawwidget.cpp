@@ -206,6 +206,30 @@ void CustomDrawWidget::paintEvent(QPaintEvent *event)
         }
 
     }
+    else if (typeTask == task6){
+        QPainter painter(this);
+        painter.setRenderHint(QPainter::Antialiasing, true);
+        QPen pen;
+        pen.setColor(Qt::red);
+        pen.setWidth(1.5);
+        painter.setPen(pen);
+
+        // Рисуем многоугольник
+        if (!Polygon1.isEmpty()) {
+            painter.drawPolyline(Polygon1);
+            for (const QPointF &point : Polygon1) {
+                painter.drawEllipse(point, 3, 3);
+            }
+        }
+        QPen pen2;
+        pen2.setColor(Qt::green);
+        pen2.setWidth(1.5);
+        painter.setPen(pen2);
+        if (!vecPoint.isEmpty()) {
+            painter.drawEllipse(vecPoint[0].x()-2.5 , vecPoint[0].y()-2.5, 5,5);
+        }
+
+    }
 }
 
 void CustomDrawWidget::changedColor(QColor color)
@@ -256,7 +280,18 @@ void CustomDrawWidget::mousePressEvent(QMouseEvent *pe)
             }
             break;
 
-
+        case task6:
+            if (operationPerformed) {
+                // Если операция уже выполнена, очищаем данные для новой операции
+                clearVector();
+                operationPerformed = false;
+            }
+            if (isFirstPolygon) {
+                Polygon1.push_back(newPoint);
+            } else {
+                vecPoint.push_back(newPoint);
+            }
+            break;
         default:
             break;
         }
@@ -347,6 +382,10 @@ void CustomDrawWidget::clearVector()
         Polygon1.clear();
         Polygon2.clear();
         resultPolygons.clear();
+    }
+    if (typeTask == task6)
+    {
+        Polygon1.clear();
     }
     repaint();
 }

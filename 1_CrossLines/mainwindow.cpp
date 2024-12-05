@@ -112,10 +112,39 @@ void MainWindow::on_getResult_clicked()
         break;
     }
     case Task5:
-        ui->textBrowser->setText("Задача для работы с произвольными многоугольниками будет реализована позже.");
+        ui->textBrowser->setText("Задача для работы с произвольными многоугольниками.");
         break;
     case Task6:
-        ui->textBrowser->setText("Задача локализации точки будет реализована позже.");
+        ui->textBrowser->setText("Задача локализации точки.");
+        if (ui->widget->Polygon1.size() < 3) {
+            ui->textBrowser->append("Недостаточно точек для многоугольника.");
+            return;
+        }
+
+        ui->widget->Polygon1.append(ui->widget->Polygon1.first());
+        ui->widget->update();
+        ui->textBrowser->append("Многоугольник завершён. Ставим точку.");
+        if (ui->widget->vecPoint.isEmpty()) {
+            ui->textBrowser->append("Точка не задана.");
+            return;
+        }
+        QVector<QPointF> polyPoints = ui->widget->Polygon1;
+        QPointF A = ui->widget->vecPoint[0];
+        QVector<Edge> seg;
+        for (int i = 0; i < polyPoints.size(); i++) {
+            seg.append(Edge(polyPoints[i], polyPoints[(i+1)%polyPoints.size()]));
+        }
+        if(!point_not_in_vec(polyPoints, A)){
+            ui->textBrowser->append("Точка на одной из граней многоугольника");
+            ui->widget->operationPerformed = true;
+        }else if(in_figure(seg, A)){
+            ui->textBrowser->append("Точка внутри многоугольника");
+            ui->widget->operationPerformed = true;
+
+        }else{
+            ui->textBrowser->append("Точка снаружи многоугольника");
+            ui->widget->operationPerformed = true;
+        }
         break;
     }
 }
@@ -249,6 +278,21 @@ void MainWindow::on_New_Poly_clicked()
    }
 }
 
+void MainWindow::on_Add_point_clicked()
+{
+   if(currentTaskType == Task6)
+   {
+        ui->widget->isFirstPolygon = false;
+        // Замыкаем первый многоугольник
+        if (!ui->widget->Polygon1.isEmpty()) {
+            ui->widget->Polygon1.append(ui->widget->Polygon1.first());
+        }
+        ui->widget->update();
+        ui->textBrowser->append("Многоугольник завершён. Ставим точку.");
+
+   }
+}
+
 void MainWindow::on_intersection_calc_clicked()
 {
    if (currentTaskType == Task5)
@@ -285,24 +329,6 @@ void MainWindow::on_intersection_calc_clicked()
         ui->widget->update();
         ui->textBrowser->append("Пересечение многоугольников вычислено и отображено.");
 
-//        bool convex1 = isConvex(poly1);
-//        bool convex2 = isConvex(poly2);
-
-//        if (convex1 && convex2) {
-//            QVector<QPointF> result = intersectConvexPolygons(poly1, poly2);
-//            ui->widget->resultPolygons.clear();
-//            ui->widget->resultPolygons.append(QPolygonF(result));
-//            ui->widget->operationPerformed = true;
-//            ui->widget->update();
-//            ui->textBrowser->append("Пересечение выпуклых многоугольников вычислено и отображено.");
-//        } else {
-//            // Используем Clipper для невыпуклых многоугольников
-//            QVector<QPolygonF> result = computeIntersection(QPolygonF(poly1), QPolygonF(poly2));
-//            ui->widget->resultPolygons = result;
-//            ui->widget->operationPerformed = true;
-//            ui->widget->update();
-//            ui->textBrowser->append("Пересечение произвольных многоугольников вычислено и отображено.");
-//        }
    }
 }
 
@@ -399,27 +425,7 @@ void MainWindow::on_difference_calc_clicked()
         ui->widget->update();
         ui->textBrowser->append("Пересечение многоугольников вычислено и отображено.");
 
-//        bool convex1 = isConvex(poly1);
-//        bool convex2 = isConvex(poly2);
 
-//        if (convex1 && convex2) {
-//            QVector<QPointF> result = differenceConvexPolygons(poly1, poly2);
-//            if (!result.isEmpty()) {
-//                ui->widget->resultPolygons.clear();
-//                ui->widget->resultPolygons.append(QPolygonF(result));
-//                ui->widget->operationPerformed = true;
-//                ui->widget->update();
-//                ui->textBrowser->append("Разность выпуклых многоугольников вычислена и отображена.");
-//            } else {
-//                ui->textBrowser->append("Разность выпуклых многоугольников не реализована. Используйте произвольные многоугольники.");
-//            }
-//        } else {
-//            QVector<QPolygonF> result = computeDifference(QPolygonF(poly1), QPolygonF(poly2));
-//            ui->widget->resultPolygons = result;
-//            ui->widget->operationPerformed = true;
-//            ui->widget->update();
-//            ui->textBrowser->append("Разность произвольных многоугольников вычислена и отображена.");
-//        }
    }
 }
 

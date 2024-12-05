@@ -50,6 +50,7 @@ public:
     QPushButton *intersection_calc;
     QPushButton *combining_calc;
     QPushButton *difference_calc;
+    QPushButton *Add_point;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -81,19 +82,19 @@ public:
         task1->setGeometry(QRect(220, 540, 171, 20));
         task3 = new QRadioButton(centralWidget);
         task3->setObjectName("task3");
-        task3->setGeometry(QRect(410, 540, 151, 20));
+        task3->setGeometry(QRect(220, 580, 151, 20));
         task2 = new QRadioButton(centralWidget);
         task2->setObjectName("task2");
         task2->setGeometry(QRect(730, 350, 141, 20));
         task4 = new QRadioButton(centralWidget);
         task4->setObjectName("task4");
-        task4->setGeometry(QRect(220, 570, 95, 20));
+        task4->setGeometry(QRect(220, 560, 95, 20));
         task5 = new QRadioButton(centralWidget);
         task5->setObjectName("task5");
         task5->setGeometry(QRect(720, 510, 201, 20));
         task6 = new QRadioButton(centralWidget);
         task6->setObjectName("task6");
-        task6->setGeometry(QRect(300, 570, 151, 20));
+        task6->setGeometry(QRect(430, 540, 151, 20));
         getResult = new QPushButton(centralWidget);
         getResult->setObjectName("getResult");
         getResult->setGeometry(QRect(80, 570, 121, 28));
@@ -124,6 +125,9 @@ public:
         difference_calc = new QPushButton(centralWidget);
         difference_calc->setObjectName("difference_calc");
         difference_calc->setGeometry(QRect(800, 580, 151, 28));
+        Add_point = new QPushButton(centralWidget);
+        Add_point->setObjectName("Add_point");
+        Add_point->setGeometry(QRect(430, 570, 151, 28));
         MainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName("menuBar");
@@ -161,6 +165,7 @@ public:
         intersection_calc->setText(QCoreApplication::translate("MainWindow", "\320\237\320\265\321\200\320\265\321\201\320\265\321\207\320\265\320\275\320\270\320\265", nullptr));
         combining_calc->setText(QCoreApplication::translate("MainWindow", "\320\236\320\261\321\212\320\265\320\264\320\270\320\275\320\265\320\275\320\270\320\265", nullptr));
         difference_calc->setText(QCoreApplication::translate("MainWindow", "\320\240\320\260\320\267\320\275\320\276\321\201\321\202\321\214", nullptr));
+        Add_point->setText(QCoreApplication::translate("MainWindow", "\320\237\320\276\321\201\321\202\320\260\320\262\320\270\321\202\321\214 \321\202\320\276\321\207\320\272\321\203", nullptr));
     } // retranslateUi
 
 };

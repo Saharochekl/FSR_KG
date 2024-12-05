@@ -89,8 +89,8 @@
    <widget class="QRadioButton" name="task3">
     <property name="geometry">
      <rect>
-      <x>410</x>
-      <y>540</y>
+      <x>220</x>
+      <y>580</y>
       <width>151</width>
       <height>20</height>
      </rect>
@@ -116,7 +116,7 @@
     <property name="geometry">
      <rect>
       <x>220</x>
-      <y>570</y>
+      <y>560</y>
       <width>95</width>
       <height>20</height>
      </rect>
@@ -141,8 +141,8 @@
    <widget class="QRadioButton" name="task6">
     <property name="geometry">
      <rect>
-      <x>300</x>
-      <y>570</y>
+      <x>430</x>
+      <y>540</y>
       <width>151</width>
       <height>20</height>
      </rect>
@@ -273,6 +273,19 @@
     </property>
     <property name="text">
      <string>Разность</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="Add_point">
+    <property name="geometry">
+     <rect>
+      <x>430</x>
+      <y>570</y>
+      <width>151</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Поставить точку</string>
     </property>
    </widget>
   </widget>
