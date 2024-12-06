@@ -63,7 +63,7 @@ signals:
     void dataChanged(QPointF point);
 private:
     double normalizeValue(const LongDouble value, const LongDouble maxValue, double maxRange);
-    LongDouble maxCoordinate;
+    //LongDouble maxCoordinate;
 };
 
 #endif // CUSTOMDRAWWIDGET_H
