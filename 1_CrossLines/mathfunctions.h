@@ -8,9 +8,10 @@
 #include <QVector>
 #include <QSet>
 #include <limits>
+#include <algorithm>
 #include "QtGui/qpolygon.h"
-#include "clipper.hpp"
-using namespace ClipperLib;
+//#include "clipper.hpp"
+using namespace std;
 
 
 struct Edge {
@@ -118,27 +119,27 @@ QVector<QPointF> differenceConvexPolygons(const QVector<QPointF> &poly1, const Q
 QVector<QPointF> combiningConvexPolygons(const QVector<QPointF> &poly1, const QVector<QPointF> &poly2);
 
 
-Path qPolygonFToPath(const QPolygonF &polygon);
+//Path qPolygonFToPath(const QPolygonF &polygon);
 
 // Функция для преобразования ClipperLib::Paths в QVector<QPolygonF>
-QVector<QPolygonF> pathsToQPolygons(const Paths &paths);
+//QVector<QPolygonF> pathsToQPolygons(const Paths &paths);
 QVector<QPolygonF> computeIntersection(const QPolygonF &poly1, const QPolygonF &poly2);
 QVector<QPolygonF> computeUnion(const QPolygonF &poly1, const QPolygonF &poly2);
 QVector<QPolygonF> computeDifference(const QPolygonF &poly1, const QPolygonF &poly2);
 
 
 //Компаратор для сравнения пар точек QPointF
-struct QPointFPairComparator {
-    bool operator()(const QPair<QPointF, QPointF> &lhs, const QPair<QPointF, QPointF> &rhs) const {
-        if (lhs.first.x() != rhs.first.x())
-            return lhs.first.x() < rhs.first.x();
-        if (lhs.first.y() != rhs.first.y())
-            return lhs.first.y() < rhs.first.y();
-        if (lhs.second.x() != rhs.second.x())
-            return lhs.second.x() < rhs.second.x();
-        return lhs.second.y() < rhs.second.y();
-    }
-};
+//struct QPointFPairComparator {
+//    bool operator()(const QPair<QPointF, QPointF> &lhs, const QPair<QPointF, QPointF> &rhs) const {
+//        if (lhs.first.x() != rhs.first.x())
+//            return lhs.first.x() < rhs.first.x();
+//        if (lhs.first.y() != rhs.first.y())
+//            return lhs.first.y() < rhs.first.y();
+//        if (lhs.second.x() != rhs.second.x())
+//            return lhs.second.x() < rhs.second.x();
+//        return lhs.second.y() < rhs.second.y();
+//    }
+//};
 
 
 #endif // MATHFUNCTIONS_H
