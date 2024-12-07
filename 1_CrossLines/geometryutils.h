@@ -7,16 +7,6 @@
 #include <QSet>
 #include <algorithm>
 
-
-
-inline uint qHash(const QPointF &key, uint seed = 0) {
-    // Используем масштабирование для сохранения точности
-    qint64 x = qRound64(key.x() * 1000000);
-    qint64 y = qRound64(key.y() * 1000000);
-    //return qHash(x, seed) ^ qHash(y, seed);
-    return qHash(x, seed) ^ (qHash(y, seed) << 1);
-}
-
 struct Edge {
     QPointF p1, p2;
     int pred; // для пересечения
@@ -70,14 +60,14 @@ inline double dist(const QPointF &A, const QPointF &B) {
     return std::sqrt(dx*dx + dy*dy);
 }
 
-//inline bool operator<(const QPointF &lhs, const QPointF &rhs) {
-//    if (lhs.x() < rhs.x()) return true;
-//    if (lhs.x() == rhs.x() && lhs.y() < rhs.y()) return true;
-//    return false;
-//}
 
 
-
+inline uint qHash(const QPointF &key, uint seed = 0) {
+    // Используем масштабирование для сохранения точности
+    qint64 x = qRound64(key.x() * 1000000);
+    qint64 y = qRound64(key.y() * 1000000);
+    return qHash(x, seed) ^ qHash(y, seed);
+}
 
 inline uint qHash(const Edge &key, uint seed = 0) {
     return qHash(key.p1, seed) ^ qHash(key.p2, seed);

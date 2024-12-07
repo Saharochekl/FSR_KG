@@ -355,7 +355,7 @@ void MainWindow::on_combining_calc_clicked()
         for (int i = 0; i < poly2.size(); i++) {
             segB.append(Edge(poly2[i], poly2[(i+1)%poly2.size()]));
         }
-        QVector<Edge> resultEdges = do_union(segA, segB);
+        QVector<Edge> resultEdges = do_union(segA, segB, poly1[0], poly2[0]);
         QVector<QPointF> resultPoly;
         if (!resultEdges.isEmpty()) {
             // Предполагаем, что ребра образуют замкнутый многоугольник

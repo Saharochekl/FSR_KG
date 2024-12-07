@@ -68,7 +68,7 @@ QPointF per_point(Edge seg1, Edge seg2){
     return p;
 }
 
-/*
+
 QVector <Edge> do_polygon(QVector <Edge> seg1){
     QVector <Edge> seg;
     QPointF a0;
@@ -104,8 +104,8 @@ QVector <Edge> do_polygon(QVector <Edge> seg1){
     }
     return seg;
 }
-*/
 
+/*
 // Вспомогательная функция для сравнения углов
 static double angleToRef(const QPointF &origin, const QPointF &refDir, const QPointF &pt) {
     // Угол между refDir и вектором (origin->pt)
@@ -236,7 +236,7 @@ QVector<Edge> do_polygon(QVector<Edge> edges) {
 
     return result;
 }
-
+*/
 
 QVector <Edge> do_intersection(QVector <Edge> segA, QVector <Edge> segB){
 
@@ -302,7 +302,7 @@ QVector <Edge> do_intersection(QVector <Edge> segA, QVector <Edge> segB){
     return seg;
 }
 
-QVector <Edge> do_union(QVector <Edge> segA, QVector <Edge> segB){
+QVector <Edge> do_union(QVector <Edge> segA, QVector <Edge> segB, QPointF firstP1, QPointF firstP2){
     QVector <Edge> segAA;
     for (int i = 0; i < segA.size(); i++){
         QVector <QPointF> pper;
@@ -361,6 +361,15 @@ QVector <Edge> do_union(QVector <Edge> segA, QVector <Edge> segB){
     }
 
     seg = do_polygon(seg);
+
+    QVector<Edge> filteredSeg;
+    for (auto &e : seg) {
+        bool connectFirstPoints = (dist(e.p1, firstP1) < 0.0001 && dist(e.p2, firstP2) < 0.0001) ||
+                                  (dist(e.p1, firstP2) < 0.0001 && dist(e.p2, firstP1) < 0.0001);
+        if (!connectFirstPoints) {
+            filteredSeg.push_back(e);
+        }
+    }
 
     return seg;
 }
