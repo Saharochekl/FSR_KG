@@ -17,7 +17,6 @@
  QVector <Edge> do_intersection(QVector <Edge> segA, QVector <Edge> segB);
  QVector <Edge> do_union(QVector <Edge> segA, QVector <Edge> segB);
  QVector <Edge> do_difference(QVector <Edge> segA, QVector <Edge> segB);
- QVector <Edge> do_differenceSem(QVector <Edge> segA, QVector <Edge> segB);
 
 
 

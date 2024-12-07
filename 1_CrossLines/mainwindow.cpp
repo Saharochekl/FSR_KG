@@ -371,23 +371,6 @@ void MainWindow::on_combining_calc_clicked()
         ui->widget->update();
         ui->textBrowser->append("Пересечение многоугольников вычислено и отображено.");
 
-//        bool convex1 = isConvex(poly1);
-//        bool convex2 = isConvex(poly2);
-
-//        if (convex1 && convex2) {
-//            QVector<QPointF> result = combiningConvexPolygons(poly1, poly2);
-//            ui->widget->resultPolygons.clear();
-//            ui->widget->resultPolygons.append(QPolygonF(result));
-//            ui->widget->operationPerformed = true;
-//            ui->widget->update();
-//            ui->textBrowser->append("Объединение выпуклых многоугольников вычислено и отображено.");
-//        } else {
-//            QVector<QPolygonF> result = computeUnion(QPolygonF(poly1), QPolygonF(poly2));
-//            ui->widget->resultPolygons = result;
-//            ui->widget->operationPerformed = true;
-//            ui->widget->update();
-//            ui->textBrowser->append("Объединение произвольных многоугольников вычислено и отображено.");
-//        }
    }
 }
 
