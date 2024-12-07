@@ -60,6 +60,8 @@ inline double dist(const QPointF &A, const QPointF &B) {
     return std::sqrt(dx*dx + dy*dy);
 }
 
+
+
 inline uint qHash(const QPointF &key, uint seed = 0) {
     // Используем масштабирование для сохранения точности
     qint64 x = qRound64(key.x() * 1000000);
@@ -80,7 +82,8 @@ inline uint qHash(const Edge &key, uint seed = 0) {
  double norma(QPointF vec);
  double angle(QPointF A, QPointF B, QPointF C);
  double angleBetwenDeg(QPointF p1, QPointF p2, QPointF d1, QPointF d2);
- double orientation(QPointF p, QPointF q, QPointF r);
+
+ int orientation(QPointF p, QPointF q, QPointF r);
 
  QVector<QPointF> jarvisConvexHull( QVector<QPointF> &points);
 

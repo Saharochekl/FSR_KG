@@ -1,3 +1,6 @@
+#include "geometryutils.h"
+#include "polygonops.h"
+#include "triangulation.h"
 #include "customdrawwidget.h"
 #include <QPainter>
 #include <iostream>
@@ -313,7 +316,7 @@ void CustomDrawWidget::mousePressEvent(QMouseEvent *pe)
 
                 for (int i = 0; i < vecPoint.size(); ++i)
                 {
-                    double distanceToCurrent = distance(vecPoint[i], pe->localPos());
+                    double distanceToCurrent = dist(vecPoint[i], pe->localPos());
                     if (distanceToCurrent < radius && distanceToCurrent < closestDistance)
                     {
                         closestDistance = distanceToCurrent;

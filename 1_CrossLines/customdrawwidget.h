@@ -4,7 +4,9 @@
 #include <QWidget>
 #include <QMouseEvent>
 #include <QPen>
-#include "mathfunctions.h"
+#include "geometryutils.h"
+#include "polygonops.h"
+#include "triangulation.h"
 #include "longdouble.h"
 
 

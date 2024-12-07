@@ -52,19 +52,23 @@ OBJECTS_DIR   = ./
 
 ####### Files
 
-SOURCES       = ../1_CrossLines/longdouble.cpp \
+SOURCES       = ../1_CrossLines/geometryutils.cpp \
+		../1_CrossLines/longdouble.cpp \
 		../1_CrossLines/main.cpp \
 		../1_CrossLines/mainwindow.cpp \
 		../1_CrossLines/customdrawwidget.cpp \
-		../1_CrossLines/mathfunctions.cpp \
-		../1_CrossLines/clipper.cpp moc_mainwindow.cpp \
+		../1_CrossLines/clipper.cpp \
+		../1_CrossLines/polygonops.cpp \
+		../1_CrossLines/triangulation.cpp moc_mainwindow.cpp \
 		moc_customdrawwidget.cpp
-OBJECTS       = longdouble.o \
+OBJECTS       = geometryutils.o \
+		longdouble.o \
 		main.o \
 		mainwindow.o \
 		customdrawwidget.o \
-		mathfunctions.o \
 		clipper.o \
+		polygonops.o \
+		triangulation.o \
 		moc_mainwindow.o \
 		moc_customdrawwidget.o
 DIST          = /Users/zuha/Qt/6.6.0/macos/mkspecs/features/spec_pre.prf \
@@ -231,16 +235,20 @@ DIST          = /Users/zuha/Qt/6.6.0/macos/mkspecs/features/spec_pre.prf \
 		/Users/zuha/Qt/6.6.0/macos/mkspecs/features/exceptions.prf \
 		/Users/zuha/Qt/6.6.0/macos/mkspecs/features/yacc.prf \
 		/Users/zuha/Qt/6.6.0/macos/mkspecs/features/lex.prf \
-		../1_CrossLines/DrawWidget.pro ../1_CrossLines/longdouble.h \
+		../1_CrossLines/DrawWidget.pro ../1_CrossLines/geometryutils.h \
+		../1_CrossLines/longdouble.h \
 		../1_CrossLines/mainwindow.h \
 		../1_CrossLines/customdrawwidget.h \
-		../1_CrossLines/mathfunctions.h \
-		../1_CrossLines/clipper.hpp ../1_CrossLines/longdouble.cpp \
+		../1_CrossLines/clipper.hpp \
+		../1_CrossLines/polygonops.h \
+		../1_CrossLines/triangulation.h ../1_CrossLines/geometryutils.cpp \
+		../1_CrossLines/longdouble.cpp \
 		../1_CrossLines/main.cpp \
 		../1_CrossLines/mainwindow.cpp \
 		../1_CrossLines/customdrawwidget.cpp \
-		../1_CrossLines/mathfunctions.cpp \
-		../1_CrossLines/clipper.cpp
+		../1_CrossLines/clipper.cpp \
+		../1_CrossLines/polygonops.cpp \
+		../1_CrossLines/triangulation.cpp
 QMAKE_TARGET  = DrawWidget
 DESTDIR       = 
 TARGET        = DrawWidget.app/Contents/MacOS/DrawWidget
@@ -626,8 +634,8 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents ../1_CrossLines/longdouble.h ../1_CrossLines/mainwindow.h ../1_CrossLines/customdrawwidget.h ../1_CrossLines/mathfunctions.h ../1_CrossLines/clipper.hpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../1_CrossLines/longdouble.cpp ../1_CrossLines/main.cpp ../1_CrossLines/mainwindow.cpp ../1_CrossLines/customdrawwidget.cpp ../1_CrossLines/mathfunctions.cpp ../1_CrossLines/clipper.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../1_CrossLines/geometryutils.h ../1_CrossLines/longdouble.h ../1_CrossLines/mainwindow.h ../1_CrossLines/customdrawwidget.h ../1_CrossLines/clipper.hpp ../1_CrossLines/polygonops.h ../1_CrossLines/triangulation.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../1_CrossLines/geometryutils.cpp ../1_CrossLines/longdouble.cpp ../1_CrossLines/main.cpp ../1_CrossLines/mainwindow.cpp ../1_CrossLines/customdrawwidget.cpp ../1_CrossLines/clipper.cpp ../1_CrossLines/polygonops.cpp ../1_CrossLines/triangulation.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../1_CrossLines/mainwindow.ui $(DISTDIR)/
 
 
@@ -668,14 +676,15 @@ moc_mainwindow.cpp: ../1_CrossLines/mainwindow.h \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtGui.framework/Headers/qevent.h \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtGui.framework/Headers/QPen \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtGui.framework/Headers/qpen.h \
-		../1_CrossLines/mathfunctions.h \
+		../1_CrossLines/geometryutils.h \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QPointF \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qpoint.h \
-		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QPoint \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QVector \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qvector.h \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QSet \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qset.h \
+		../1_CrossLines/polygonops.h \
+		../1_CrossLines/triangulation.h \
 		../1_CrossLines/longdouble.h \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtWidgets.framework/Headers/QMainWindow \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtWidgets.framework/Headers/qmainwindow.h \
@@ -689,14 +698,15 @@ moc_customdrawwidget.cpp: ../1_CrossLines/customdrawwidget.h \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtGui.framework/Headers/qevent.h \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtGui.framework/Headers/QPen \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtGui.framework/Headers/qpen.h \
-		../1_CrossLines/mathfunctions.h \
+		../1_CrossLines/geometryutils.h \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QPointF \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qpoint.h \
-		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QPoint \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QVector \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qvector.h \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QSet \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qset.h \
+		../1_CrossLines/polygonops.h \
+		../1_CrossLines/triangulation.h \
 		../1_CrossLines/longdouble.h \
 		/Users/zuha/Qt/6.6.0/macos/libexec/moc
 	/Users/zuha/Qt/6.6.0/macos/libexec/moc $(DEFINES) -D__APPLE__ -D__GNUC__=4 -D__APPLE_CC__ -D__cplusplus=199711L -D__APPLE_CC__=6000 -D__clang__ -D__clang_major__=15 -D__clang_minor__=0 -D__clang_patchlevel__=0 -D__GNUC__=4 -D__GNUC_MINOR__=2 -D__GNUC_PATCHLEVEL__=1 -I/Users/zuha/Qt/6.6.0/macos/mkspecs/macx-clang -I'/Users/zuha/Desktop/FKI/3 курс/5 семестр 2024/FSR_KG/1_CrossLines' -I/Users/zuha/Qt/6.6.0/macos/lib/QtWidgets.framework/Headers -I/Users/zuha/Qt/6.6.0/macos/lib/QtGui.framework/Headers -I/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers -I. -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1 -I/Library/Developer/CommandLineTools/usr/lib/clang/15.0.0/include -I/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include -I/Library/Developer/CommandLineTools/usr/include -F/Users/zuha/Qt/6.6.0/macos/lib ../1_CrossLines/customdrawwidget.h -o moc_customdrawwidget.cpp
@@ -724,6 +734,16 @@ compiler_clean: compiler_moc_header_clean compiler_uic_clean
 
 ####### Compile
 
+geometryutils.o: ../1_CrossLines/geometryutils.cpp ../1_CrossLines/geometryutils.h \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QPointF \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qpoint.h \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QVector \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qvector.h \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QSet \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qset.h \
+		../1_CrossLines/longdouble.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o geometryutils.o ../1_CrossLines/geometryutils.cpp
+
 longdouble.o: ../1_CrossLines/longdouble.cpp ../1_CrossLines/longdouble.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o longdouble.o ../1_CrossLines/longdouble.cpp
 
@@ -735,14 +755,15 @@ main.o: ../1_CrossLines/main.cpp ../1_CrossLines/mainwindow.h \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtGui.framework/Headers/qevent.h \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtGui.framework/Headers/QPen \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtGui.framework/Headers/qpen.h \
-		../1_CrossLines/mathfunctions.h \
+		../1_CrossLines/geometryutils.h \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QPointF \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qpoint.h \
-		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QPoint \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QVector \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qvector.h \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QSet \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qset.h \
+		../1_CrossLines/polygonops.h \
+		../1_CrossLines/triangulation.h \
 		../1_CrossLines/longdouble.h \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtWidgets.framework/Headers/QMainWindow \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtWidgets.framework/Headers/qmainwindow.h \
@@ -758,53 +779,65 @@ mainwindow.o: ../1_CrossLines/mainwindow.cpp ../1_CrossLines/mainwindow.h \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtGui.framework/Headers/qevent.h \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtGui.framework/Headers/QPen \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtGui.framework/Headers/qpen.h \
-		../1_CrossLines/mathfunctions.h \
+		../1_CrossLines/geometryutils.h \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QPointF \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qpoint.h \
-		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QPoint \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QVector \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qvector.h \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QSet \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qset.h \
+		../1_CrossLines/polygonops.h \
+		../1_CrossLines/triangulation.h \
 		../1_CrossLines/longdouble.h \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtWidgets.framework/Headers/QMainWindow \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtWidgets.framework/Headers/qmainwindow.h \
 		ui_mainwindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../1_CrossLines/mainwindow.cpp
 
-customdrawwidget.o: ../1_CrossLines/customdrawwidget.cpp ../1_CrossLines/customdrawwidget.h \
+customdrawwidget.o: ../1_CrossLines/customdrawwidget.cpp ../1_CrossLines/geometryutils.h \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QPointF \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qpoint.h \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QVector \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qvector.h \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QSet \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qset.h \
+		../1_CrossLines/polygonops.h \
+		../1_CrossLines/triangulation.h \
+		../1_CrossLines/customdrawwidget.h \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtWidgets.framework/Headers/QWidget \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtWidgets.framework/Headers/qwidget.h \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtGui.framework/Headers/QMouseEvent \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtGui.framework/Headers/qevent.h \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtGui.framework/Headers/QPen \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtGui.framework/Headers/qpen.h \
-		../1_CrossLines/mathfunctions.h \
-		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QPointF \
-		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qpoint.h \
-		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QPoint \
-		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QVector \
-		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qvector.h \
-		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QSet \
-		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qset.h \
 		../1_CrossLines/longdouble.h \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtGui.framework/Headers/QPainter \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtGui.framework/Headers/qpainter.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o customdrawwidget.o ../1_CrossLines/customdrawwidget.cpp
 
-mathfunctions.o: ../1_CrossLines/mathfunctions.cpp ../1_CrossLines/mathfunctions.h \
+clipper.o: ../1_CrossLines/clipper.cpp ../1_CrossLines/clipper.hpp
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o clipper.o ../1_CrossLines/clipper.cpp
+
+polygonops.o: ../1_CrossLines/polygonops.cpp ../1_CrossLines/polygonops.h \
+		../1_CrossLines/geometryutils.h \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QPointF \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qpoint.h \
-		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QPoint \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QVector \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qvector.h \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QSet \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qset.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o polygonops.o ../1_CrossLines/polygonops.cpp
+
+triangulation.o: ../1_CrossLines/triangulation.cpp ../1_CrossLines/triangulation.h \
+		../1_CrossLines/geometryutils.h \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QPointF \
+		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qpoint.h \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QVector \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qvector.h \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/QSet \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtCore.framework/Headers/qset.h \
-		../1_CrossLines/longdouble.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mathfunctions.o ../1_CrossLines/mathfunctions.cpp
-
-clipper.o: ../1_CrossLines/clipper.cpp ../1_CrossLines/clipper.hpp
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o clipper.o ../1_CrossLines/clipper.cpp
+		../1_CrossLines/polygonops.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o triangulation.o ../1_CrossLines/triangulation.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp

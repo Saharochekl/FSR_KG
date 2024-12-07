@@ -1,7 +1,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <iostream>
-#include "mathfunctions.h"
+#include "geometryutils.h"
+#include "polygonops.h"
+#include "triangulation.h"
 #include "longdouble.h"
 
 MainWindow::MainWindow(QWidget *parent) :
