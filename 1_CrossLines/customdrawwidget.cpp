@@ -375,7 +375,9 @@ void CustomDrawWidget::wheelEvent(QMouseEvent * pe)
 void CustomDrawWidget::clearVector()
 {
     vecPoint.clear();
-
+    if(typeTask == task3){
+        hullPoints.clear();
+    }
     if(typeTask == task4){
         triangulationEdges.clear();
     }
@@ -388,6 +390,7 @@ void CustomDrawWidget::clearVector()
     }
     if (typeTask == task6)
     {
+        isFirstPolygon = true;
         Polygon1.clear();
     }
     repaint();
