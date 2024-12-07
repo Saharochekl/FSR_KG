@@ -4,7 +4,9 @@
 #include <QWidget>
 #include <QMouseEvent>
 #include <QPen>
-#include "mathfunctions.h"
+#include "geometryutils.h"
+#include "polygonops.h"
+#include "triangulation.h"
 #include "longdouble.h"
 
 
@@ -56,12 +58,13 @@ public:
     bool layMove = false;
 
     double scale;
+    QVector<QPolygonF> resultPolygons; // Результирующие многоугольники
+    bool operationPerformed = false;   // Флаг выполнения операции
 
 signals:
     void dataChanged(QPointF point);
 private:
     double normalizeValue(const LongDouble value, const LongDouble maxValue, double maxRange);
-    LongDouble maxCoordinate;
 };
 
 #endif // CUSTOMDRAWWIDGET_H

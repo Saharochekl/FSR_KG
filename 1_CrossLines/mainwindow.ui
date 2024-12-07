@@ -17,9 +17,9 @@
    <widget class="CustomDrawWidget" name="widget" native="true">
     <property name="geometry">
      <rect>
-      <x>70</x>
-      <y>10</y>
-      <width>861</width>
+      <x>0</x>
+      <y>0</y>
+      <width>981</width>
       <height>341</height>
      </rect>
     </property>
@@ -37,7 +37,7 @@
    <widget class="QRadioButton" name="red_Button">
     <property name="geometry">
      <rect>
-      <x>70</x>
+      <x>0</x>
       <y>540</y>
       <width>95</width>
       <height>20</height>
@@ -50,7 +50,7 @@
    <widget class="QRadioButton" name="green_Button">
     <property name="geometry">
      <rect>
-      <x>70</x>
+      <x>0</x>
       <y>570</y>
       <width>95</width>
       <height>20</height>
@@ -63,7 +63,7 @@
    <widget class="QPushButton" name="pushButton_deletePoints">
     <property name="geometry">
      <rect>
-      <x>150</x>
+      <x>80</x>
       <y>540</y>
       <width>121</width>
       <height>28</height>
@@ -76,7 +76,7 @@
    <widget class="QRadioButton" name="task1">
     <property name="geometry">
      <rect>
-      <x>290</x>
+      <x>220</x>
       <y>540</y>
       <width>171</width>
       <height>20</height>
@@ -89,8 +89,8 @@
    <widget class="QRadioButton" name="task3">
     <property name="geometry">
      <rect>
-      <x>610</x>
-      <y>540</y>
+      <x>220</x>
+      <y>580</y>
       <width>151</width>
       <height>20</height>
      </rect>
@@ -102,8 +102,8 @@
    <widget class="QRadioButton" name="task2">
     <property name="geometry">
      <rect>
-      <x>460</x>
-      <y>540</y>
+      <x>730</x>
+      <y>350</y>
       <width>141</width>
       <height>20</height>
      </rect>
@@ -115,8 +115,8 @@
    <widget class="QRadioButton" name="task4">
     <property name="geometry">
      <rect>
-      <x>290</x>
-      <y>570</y>
+      <x>220</x>
+      <y>560</y>
       <width>95</width>
       <height>20</height>
      </rect>
@@ -128,21 +128,21 @@
    <widget class="QRadioButton" name="task5">
     <property name="geometry">
      <rect>
-      <x>370</x>
-      <y>570</y>
+      <x>720</x>
+      <y>510</y>
       <width>201</width>
       <height>20</height>
      </rect>
     </property>
     <property name="text">
-     <string>Пересечения полигонов и тд</string>
+     <string>Пересечения полигонов </string>
     </property>
    </widget>
    <widget class="QRadioButton" name="task6">
     <property name="geometry">
      <rect>
-      <x>590</x>
-      <y>570</y>
+      <x>430</x>
+      <y>540</y>
       <width>151</width>
       <height>20</height>
      </rect>
@@ -154,7 +154,7 @@
    <widget class="QPushButton" name="getResult">
     <property name="geometry">
      <rect>
-      <x>150</x>
+      <x>80</x>
       <y>570</y>
       <width>121</width>
       <height>28</height>
@@ -167,8 +167,8 @@
    <widget class="QTextEdit" name="Xcoord">
     <property name="geometry">
      <rect>
-      <x>693</x>
-      <y>340</y>
+      <x>690</x>
+      <y>380</y>
       <width>271</width>
       <height>31</height>
      </rect>
@@ -178,7 +178,7 @@
     <property name="geometry">
      <rect>
       <x>690</x>
-      <y>400</y>
+      <y>420</y>
       <width>271</width>
       <height>31</height>
      </rect>
@@ -200,8 +200,8 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>670</x>
-      <y>350</y>
+      <x>667</x>
+      <y>390</y>
       <width>41</width>
       <height>21</height>
      </rect>
@@ -214,13 +214,78 @@
     <property name="geometry">
      <rect>
       <x>670</x>
-      <y>410</y>
+      <y>430</y>
       <width>41</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
      <string>Y:</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="New_Poly">
+    <property name="geometry">
+     <rect>
+      <x>640</x>
+      <y>540</y>
+      <width>151</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Новый многоугольник</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="intersection_calc">
+    <property name="geometry">
+     <rect>
+      <x>800</x>
+      <y>540</y>
+      <width>151</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Пересечение</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="combining_calc">
+    <property name="geometry">
+     <rect>
+      <x>640</x>
+      <y>580</y>
+      <width>151</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Объединение</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="difference_calc">
+    <property name="geometry">
+     <rect>
+      <x>800</x>
+      <y>580</y>
+      <width>151</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Разность</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="Add_point">
+    <property name="geometry">
+     <rect>
+      <x>430</x>
+      <y>570</y>
+      <width>151</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Поставить точку</string>
     </property>
    </widget>
   </widget>

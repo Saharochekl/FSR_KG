@@ -25,17 +25,21 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+    geometryutils.cpp \
     longdouble.cpp \
         main.cpp \
         mainwindow.cpp \
     customdrawwidget.cpp \
-    mathfunctions.cpp
+    polygonops.cpp \
+    triangulation.cpp
 
 HEADERS += \
+    geometryutils.h \
     longdouble.h \
         mainwindow.h \
     customdrawwidget.h \
-    mathfunctions.h
+    polygonops.h \
+    triangulation.h
 
 FORMS += \
         mainwindow.ui

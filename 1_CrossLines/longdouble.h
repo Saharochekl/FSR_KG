@@ -2,7 +2,7 @@
 #define LONGDOUBLE_H
 #include <string>
 #include <iostream>
-
+#include <stdexcept>
 
 class LongDouble {
 public:

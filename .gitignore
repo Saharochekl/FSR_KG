@@ -15,4 +15,4 @@ build/
 
 # Игнорировать индексные файлы, создаваемые IDE (например, Qt Creator)
 *.idx
-.qtc_clangd/
+.qtc_clangd/build-DrawWidget-Qt_6_6_0_for_macOS-Debug/DrawWidget.app/Contents/MacOS/DrawWidget

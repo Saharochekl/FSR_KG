@@ -41,6 +41,11 @@ private slots:
     void on_task4_clicked();
     void on_task5_clicked();
     void on_task6_clicked();
+    void on_New_Poly_clicked();
+    void on_Add_point_clicked();
+    void on_intersection_calc_clicked();
+    void on_difference_calc_clicked();
+    void on_combining_calc_clicked();
 };
 
 #endif // MAINWINDOW_H

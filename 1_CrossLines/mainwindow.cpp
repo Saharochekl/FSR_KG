@@ -1,7 +1,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <iostream>
-#include "mathfunctions.h"
+#include "geometryutils.h"
+#include "polygonops.h"
+#include "triangulation.h"
 #include "longdouble.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -112,10 +114,39 @@ void MainWindow::on_getResult_clicked()
         break;
     }
     case Task5:
-        ui->textBrowser->setText("Задача для работы с произвольными многоугольниками будет реализована позже.");
+        ui->textBrowser->setText("Задача для работы с произвольными многоугольниками.");
         break;
     case Task6:
-        ui->textBrowser->setText("Задача локализации точки будет реализована позже.");
+        ui->textBrowser->setText("Задача локализации точки.");
+        if (ui->widget->Polygon1.size() < 3) {
+            ui->textBrowser->append("Недостаточно точек для многоугольника.");
+            return;
+        }
+
+        ui->widget->Polygon1.append(ui->widget->Polygon1.first());
+        ui->widget->update();
+        ui->textBrowser->append("Многоугольник завершён. Ставим точку.");
+        if (ui->widget->vecPoint.isEmpty()) {
+            ui->textBrowser->append("Точка не задана.");
+            return;
+        }
+        QVector<QPointF> polyPoints = ui->widget->Polygon1;
+        QPointF A = ui->widget->vecPoint[0];
+        QVector<Edge> seg;
+        for (int i = 0; i < polyPoints.size(); i++) {
+            seg.append(Edge(polyPoints[i], polyPoints[(i+1)%polyPoints.size()]));
+        }
+        if(!point_not_in_vec(polyPoints, A)){
+            ui->textBrowser->append("Точка на одной из граней многоугольника");
+            ui->widget->operationPerformed = true;
+        }else if(in_figure(seg, A)){
+            ui->textBrowser->append("Точка внутри многоугольника");
+            ui->widget->operationPerformed = true;
+
+        }else{
+            ui->textBrowser->append("Точка снаружи многоугольника");
+            ui->widget->operationPerformed = true;
+        }
         break;
     }
 }
@@ -233,3 +264,153 @@ void MainWindow::on_task6_clicked()
    points.clear();
    ui->textBrowser->setText("Выбрано: Локализация точки относительно многоугольника");
 }
+
+
+void MainWindow::on_New_Poly_clicked()
+{
+   if (currentTaskType == Task5)
+   {
+        ui->widget->isFirstPolygon = false;
+        // Замыкаем первый многоугольник
+        if (!ui->widget->Polygon1.isEmpty()) {
+            ui->widget->Polygon1.append(ui->widget->Polygon1.first());
+        }
+        ui->widget->update();
+        ui->textBrowser->append("Первый многоугольник завершён. Рисуем второй многоугольник.");
+   }
+}
+
+void MainWindow::on_Add_point_clicked()
+{
+   if(currentTaskType == Task6)
+   {
+        ui->widget->isFirstPolygon = false;
+        // Замыкаем первый многоугольник
+        if (!ui->widget->Polygon1.isEmpty()) {
+            ui->widget->Polygon1.append(ui->widget->Polygon1.first());
+        }
+        ui->widget->update();
+        ui->textBrowser->append("Многоугольник завершён. Ставим точку.");
+
+   }
+}
+
+void MainWindow::on_intersection_calc_clicked()
+{
+   if (currentTaskType == Task5)
+   {
+        // Замыкаем второй многоугольник
+        if (!ui->widget->Polygon2.isEmpty()) {
+            ui->widget->Polygon2.append(ui->widget->Polygon2.first());
+        }
+
+        QVector<QPointF> poly1 = ui->widget->Polygon1;
+        QVector<QPointF> poly2 = ui->widget->Polygon2;
+        QVector<Edge> segA;
+        for (int i = 0; i < poly1.size(); i++) {
+            segA.append(Edge(poly1[i], poly1[(i+1)%poly1.size()]));
+        }
+
+        QVector<Edge> segB;
+        for (int i = 0; i < poly2.size(); i++) {
+            segB.append(Edge(poly2[i], poly2[(i+1)%poly2.size()]));
+        }
+        QVector<Edge> resultEdges = do_intersection(segA, segB);
+        QVector<QPointF> resultPoly;
+        if (!resultEdges.isEmpty()) {
+            // Предполагаем, что ребра образуют замкнутый многоугольник
+            // Начинаем с resultEdges[0].p1
+            resultPoly.append(resultEdges[0].p1);
+            for (int i = 0; i < resultEdges.size(); i++) {
+                resultPoly.append(resultEdges[i].p2);
+            }
+        }
+        ui->widget->resultPolygons.clear();
+        ui->widget->resultPolygons.append(QPolygonF(resultPoly));
+        ui->widget->operationPerformed = true;
+        ui->widget->update();
+        ui->textBrowser->append("Пересечение многоугольников вычислено и отображено.");
+
+   }
+}
+
+
+void MainWindow::on_combining_calc_clicked()
+{
+   if (currentTaskType == Task5)
+   {
+        if (!ui->widget->Polygon2.isEmpty()) {
+            ui->widget->Polygon2.append(ui->widget->Polygon2.first());
+        }
+
+        QVector<QPointF> poly1 = ui->widget->Polygon1;
+        QVector<QPointF> poly2 = ui->widget->Polygon2;
+
+        QVector<Edge> segA;
+        for (int i = 0; i < poly1.size(); i++) {
+            segA.append(Edge(poly1[i], poly1[(i+1)%poly1.size()]));
+        }
+
+        QVector<Edge> segB;
+        for (int i = 0; i < poly2.size(); i++) {
+            segB.append(Edge(poly2[i], poly2[(i+1)%poly2.size()]));
+        }
+        QVector<Edge> resultEdges = do_union(segA, segB, poly1[0], poly2[0]);
+        QVector<QPointF> resultPoly;
+        if (!resultEdges.isEmpty()) {
+            // Предполагаем, что ребра образуют замкнутый многоугольник
+            // Начинаем с resultEdges[0].p1
+            resultPoly.append(resultEdges[0].p1);
+            for (int i = 0; i < resultEdges.size(); i++) {
+                resultPoly.append(resultEdges[i].p2);
+            }
+        }
+        ui->widget->resultPolygons.clear();
+        ui->widget->resultPolygons.append(QPolygonF(resultPoly));
+        ui->widget->operationPerformed = true;
+        ui->widget->update();
+        ui->textBrowser->append("Пересечение многоугольников вычислено и отображено.");
+
+   }
+}
+
+void MainWindow::on_difference_calc_clicked()
+{
+   if (currentTaskType == Task5)
+   {
+        if (!ui->widget->Polygon2.isEmpty()) {
+            ui->widget->Polygon2.append(ui->widget->Polygon2.first());
+        }
+
+        QVector<QPointF> poly1 = ui->widget->Polygon1;
+        QVector<QPointF> poly2 = ui->widget->Polygon2;
+
+        QVector<Edge> segA;
+        for (int i = 0; i < poly1.size(); i++) {
+            segA.append(Edge(poly1[i], poly1[(i+1)%poly1.size()]));
+        }
+
+        QVector<Edge> segB;
+        for (int i = 0; i < poly2.size(); i++) {
+            segB.append(Edge(poly2[i], poly2[(i+1)%poly2.size()]));
+        }
+        QVector<Edge> resultEdges = do_difference(segA, segB);
+        QVector<QPointF> resultPoly;
+        if (!resultEdges.isEmpty()) {
+            // Предполагаем, что ребра образуют замкнутый многоугольник
+            // Начинаем с resultEdges[0].p1
+            resultPoly.append(resultEdges[0].p1);
+            for (int i = 0; i < resultEdges.size(); i++) {
+                resultPoly.append(resultEdges[i].p2);
+            }
+        }
+        ui->widget->resultPolygons.clear();
+        ui->widget->resultPolygons.append(QPolygonF(resultPoly));
+        ui->widget->operationPerformed = true;
+        ui->widget->update();
+        ui->textBrowser->append("Пересечение многоугольников вычислено и отображено.");
+
+
+   }
+}
+
