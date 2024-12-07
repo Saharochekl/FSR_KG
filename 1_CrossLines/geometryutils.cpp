@@ -3,7 +3,35 @@
 
 
 
+void Triangle::calculateCircumcircle() {
+    double ax = p1.x();
+    double ay = p1.y();
+    double bx = p2.x();
+    double by = p2.y();
+    double cx = p3.x();
+    double cy = p3.y();
 
+    double D = 2 * (ax*(by - cy) + bx*(cy - ay) + cx*(ay - by));
+    if (D == 0) {
+        // Точки коллинеарны
+        circumcenter = QPointF(std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity());
+        radiusSquared = std::numeric_limits<double>::infinity();
+        return;
+    }
+
+    double Ux = ((ax*ax + ay*ay)*(by - cy) + (bx*bx + by*by)*(cy - ay) + (cx*cx + cy*cy)*(ay - by)) / D;
+    double Uy = ((ax*ax + ay*ay)*(cx - bx) + (bx*bx + by*by)*(ax - cx) + (cx*cx + cy*cy)*(bx - ax)) / D;
+
+    circumcenter = QPointF(Ux, Uy);
+    radiusSquared = (Ux - ax)*(Ux - ax) + (Uy - ay)*(Uy - ay);
+}
+
+bool Triangle::containsPoint(const QPointF& p) const {
+    double dx = p.x() - circumcenter.x();
+    double dy = p.y() - circumcenter.y();
+    double distSquared = dx*dx + dy*dy;
+    return distSquared <= radiusSquared;
+}
 
 bool doIntersect(QPointF A, QPointF B, QPointF C, QPointF D, QPointF& intersection)
 {    // Вычисляем ориентации для четырёх комбинаций точек
