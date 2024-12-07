@@ -30,7 +30,6 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     customdrawwidget.cpp \
-    clipper.cpp \
     polygonops.cpp \
     triangulation.cpp
 
@@ -39,7 +38,6 @@ HEADERS += \
     longdouble.h \
         mainwindow.h \
     customdrawwidget.h \
-    clipper.hpp \
     polygonops.h \
     triangulation.h
 

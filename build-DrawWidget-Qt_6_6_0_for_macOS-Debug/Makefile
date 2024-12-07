@@ -57,7 +57,6 @@ SOURCES       = ../1_CrossLines/geometryutils.cpp \
 		../1_CrossLines/main.cpp \
 		../1_CrossLines/mainwindow.cpp \
 		../1_CrossLines/customdrawwidget.cpp \
-		../1_CrossLines/clipper.cpp \
 		../1_CrossLines/polygonops.cpp \
 		../1_CrossLines/triangulation.cpp moc_mainwindow.cpp \
 		moc_customdrawwidget.cpp
@@ -66,7 +65,6 @@ OBJECTS       = geometryutils.o \
 		main.o \
 		mainwindow.o \
 		customdrawwidget.o \
-		clipper.o \
 		polygonops.o \
 		triangulation.o \
 		moc_mainwindow.o \
@@ -239,14 +237,12 @@ DIST          = /Users/zuha/Qt/6.6.0/macos/mkspecs/features/spec_pre.prf \
 		../1_CrossLines/longdouble.h \
 		../1_CrossLines/mainwindow.h \
 		../1_CrossLines/customdrawwidget.h \
-		../1_CrossLines/clipper.hpp \
 		../1_CrossLines/polygonops.h \
 		../1_CrossLines/triangulation.h ../1_CrossLines/geometryutils.cpp \
 		../1_CrossLines/longdouble.cpp \
 		../1_CrossLines/main.cpp \
 		../1_CrossLines/mainwindow.cpp \
 		../1_CrossLines/customdrawwidget.cpp \
-		../1_CrossLines/clipper.cpp \
 		../1_CrossLines/polygonops.cpp \
 		../1_CrossLines/triangulation.cpp
 QMAKE_TARGET  = DrawWidget
@@ -634,8 +630,8 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents ../1_CrossLines/geometryutils.h ../1_CrossLines/longdouble.h ../1_CrossLines/mainwindow.h ../1_CrossLines/customdrawwidget.h ../1_CrossLines/clipper.hpp ../1_CrossLines/polygonops.h ../1_CrossLines/triangulation.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../1_CrossLines/geometryutils.cpp ../1_CrossLines/longdouble.cpp ../1_CrossLines/main.cpp ../1_CrossLines/mainwindow.cpp ../1_CrossLines/customdrawwidget.cpp ../1_CrossLines/clipper.cpp ../1_CrossLines/polygonops.cpp ../1_CrossLines/triangulation.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../1_CrossLines/geometryutils.h ../1_CrossLines/longdouble.h ../1_CrossLines/mainwindow.h ../1_CrossLines/customdrawwidget.h ../1_CrossLines/polygonops.h ../1_CrossLines/triangulation.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../1_CrossLines/geometryutils.cpp ../1_CrossLines/longdouble.cpp ../1_CrossLines/main.cpp ../1_CrossLines/mainwindow.cpp ../1_CrossLines/customdrawwidget.cpp ../1_CrossLines/polygonops.cpp ../1_CrossLines/triangulation.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../1_CrossLines/mainwindow.ui $(DISTDIR)/
 
 
@@ -814,9 +810,6 @@ customdrawwidget.o: ../1_CrossLines/customdrawwidget.cpp ../1_CrossLines/geometr
 		/Users/zuha/Qt/6.6.0/macos/lib/QtGui.framework/Headers/QPainter \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtGui.framework/Headers/qpainter.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o customdrawwidget.o ../1_CrossLines/customdrawwidget.cpp
-
-clipper.o: ../1_CrossLines/clipper.cpp ../1_CrossLines/clipper.hpp
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o clipper.o ../1_CrossLines/clipper.cpp
 
 polygonops.o: ../1_CrossLines/polygonops.cpp ../1_CrossLines/polygonops.h \
 		../1_CrossLines/geometryutils.h \
