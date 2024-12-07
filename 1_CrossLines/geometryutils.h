@@ -81,7 +81,7 @@ inline uint qHash(const Edge &key, uint seed = 0) {
  double vectorProduct(QPointF p1, QPointF p2);
  double norma(QPointF vec);
  double angle(QPointF A, QPointF B, QPointF C);
- double angleBetwenDeg(QPointF p1, QPointF p2, QPointF d1, QPointF d2);
+ //double angleBetwenDeg(QPointF p1, QPointF p2, QPointF d1, QPointF d2);
 
  int orientation(QPointF p, QPointF q, QPointF r);
 

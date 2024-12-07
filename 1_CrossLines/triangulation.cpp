@@ -11,7 +11,7 @@ bool check(Edge s0, QVector <Edge> s){
     return flag; // Return true if segment is not in the list, false otherwise
 }
 
-
+/*
 QPointF nextpoint(QPointF A, QPointF B, int N, QVector <QPointF> mas){
     QPointF P0 = mas[0]; // Initial point for comparison
     double anglemax = angle(A, B, mas[0]); // Initial maximum angle
@@ -27,7 +27,7 @@ QPointF nextpoint(QPointF A, QPointF B, int N, QVector <QPointF> mas){
     }
     return P0; // Return the point that forms the largest angle
 }
-
+*/
 
 QVector<Triangle> delaunayTriangulation(const QVector<QPointF>& points) { //Сама триангуляция
     // Создаем супер-треугольник
@@ -119,6 +119,8 @@ QVector<Triangle> delaunayTriangulation(const QVector<QPointF>& points) { //Са
     return finalTriangulation;
 }
 
+
+/*
 QVector <Triangle> do_triang(QVector <QPointF> mas){
     int N = mas.size(); // Number of points
     QPointF a = mas[0]; // Start with the first point
@@ -244,7 +246,7 @@ QVector <Triangle> do_intersection_trisngl(QVector <Edge> segA, QVector <Edge> s
     return t;
 }
 
-
+*/
 
 QVector<Edge> getTriangulation(const QVector<QPointF> &points, QStringList &logMessages) { //Подготовка и вызов
     QVector<Edge> edges;

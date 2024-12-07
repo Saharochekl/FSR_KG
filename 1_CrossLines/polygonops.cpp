@@ -24,6 +24,7 @@ bool seg_in_figure(QVector <Edge> seg, Edge s){
     return in_figure(seg, c);
 }
 
+/*
 int pred(Edge s, QPointF c){
     double pred = (s.p2.x() - s.p1.x())*(c.y() - s.p1.y()) - (c.x() - s.p1.x())*(s.p2.y() - s.p1.y());
     if (pred < 0)
@@ -33,6 +34,7 @@ int pred(Edge s, QPointF c){
     else
         return 0; // Point is on the segment
 }
+*/
 
 int per(Edge seg1, Edge seg2){
     double k1 = (seg1.p2.y() - seg1.p1.y())/(seg1.p2.x() - seg1.p1.x());

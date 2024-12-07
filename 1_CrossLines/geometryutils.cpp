@@ -114,6 +114,7 @@ double angle(QPointF A, QPointF B, QPointF C){
     return abs(acos(cosa)); // Return absolute value to ensure angle is positive
 }
 
+/*
 double angleBetwenDeg(QPointF p1, QPointF p2, QPointF d1, QPointF d2)
 {
     QPointF vec1 = p2 - p1;
@@ -126,6 +127,7 @@ double angleBetwenDeg(QPointF p1, QPointF p2, QPointF d1, QPointF d2)
 
     return acos(cos_a) * 180 / M_PI;
 }
+*/
 
 int orientation(QPointF p, QPointF q, QPointF r) {
 
