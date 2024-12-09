@@ -272,7 +272,8 @@ void MainWindow::on_New_Poly_clicked()
    {
         ui->widget->isFirstPolygon = false;
         // Замыкаем первый многоугольник
-        if (!ui->widget->Polygon1.isEmpty()) {
+        int N = ui->widget->Polygon1.size();
+        if (N > 1 && ui->widget->Polygon1.first() != ui->widget->Polygon1.last()) {
             ui->widget->Polygon1.append(ui->widget->Polygon1.first());
         }
         ui->widget->update();
@@ -301,24 +302,40 @@ void MainWindow::on_intersection_calc_clicked()
    {
         // Замыкаем второй многоугольник
         if (!ui->widget->Polygon2.isEmpty()) {
-            ui->widget->Polygon2.append(ui->widget->Polygon2.first());
+            int M = ui->widget->Polygon2.size();
+            if (M > 1 && ui->widget->Polygon2.first() != ui->widget->Polygon2.last()) {
+                ui->widget->Polygon2.append(ui->widget->Polygon2.first());
+            }
         }
-
-        QVector<QPointF> poly1 = ui->widget->Polygon1;
-        QVector<QPointF> poly2 = ui->widget->Polygon2;
         QVector<Edge> segA;
-        for (int i = 0; i < poly1.size(); i++) {
-            segA.append(Edge(poly1[i], poly1[(i+1)%poly1.size()]));
+        QVector<Edge> segB;
+
+        QVector<QPointF> &poly1 = ui->widget->Polygon1;
+        QVector<QPointF> &poly2 = ui->widget->Polygon2;
+
+        int NA = poly1.size();
+        if (NA > 1 && ui->widget->triangulationEdges.isEmpty()) {
+            // Комментарий: не проверяем triangulationEdges без надобности, просто формируем отрезки
+            segA.clear();
+            for (int i = 0; i < NA - 1; ++i) {
+                segA.append(Edge(poly1[i], poly1[i+1]));
+            }
         }
 
-        QVector<Edge> segB;
-        for (int i = 0; i < poly2.size(); i++) {
-            segB.append(Edge(poly2[i], poly2[(i+1)%poly2.size()]));
+        int NB = poly2.size();
+        if (NB > 1) {
+            segB.clear();
+            for (int i = 0; i < NB - 1; ++i) {
+                segB.append(Edge(poly2[i], poly2[i+1]));
+            }
         }
+
         QVector<Edge> resultEdges = do_intersection(segA, segB);
+
+        // Если resultEdges не пуст, формируем результат:
         QVector<QPointF> resultPoly;
         if (!resultEdges.isEmpty()) {
-            // Предполагаем, что ребра образуют замкнутый многоугольник
+            // Чужой код: предположение, что resultEdges образуют замкнутый многоугольник.
             // Начинаем с resultEdges[0].p1
             resultPoly.append(resultEdges[0].p1);
             for (int i = 0; i < resultEdges.size(); i++) {
@@ -330,7 +347,6 @@ void MainWindow::on_intersection_calc_clicked()
         ui->widget->operationPerformed = true;
         ui->widget->update();
         ui->textBrowser->append("Пересечение многоугольников вычислено и отображено.");
-
    }
 }
 
@@ -339,26 +355,42 @@ void MainWindow::on_combining_calc_clicked()
 {
    if (currentTaskType == Task5)
    {
+        // Замыкаем второй многоугольник
         if (!ui->widget->Polygon2.isEmpty()) {
-            ui->widget->Polygon2.append(ui->widget->Polygon2.first());
+            int M = ui->widget->Polygon2.size();
+            if (M > 1 && ui->widget->Polygon2.first() != ui->widget->Polygon2.last()) {
+                ui->widget->Polygon2.append(ui->widget->Polygon2.first());
+            }
         }
-
-        QVector<QPointF> poly1 = ui->widget->Polygon1;
-        QVector<QPointF> poly2 = ui->widget->Polygon2;
-
         QVector<Edge> segA;
-        for (int i = 0; i < poly1.size(); i++) {
-            segA.append(Edge(poly1[i], poly1[(i+1)%poly1.size()]));
+        QVector<Edge> segB;
+
+        QVector<QPointF> &poly1 = ui->widget->Polygon1;
+        QVector<QPointF> &poly2 = ui->widget->Polygon2;
+
+        int NA = poly1.size();
+        if (NA > 1 && ui->widget->triangulationEdges.isEmpty()) {
+            // Комментарий: не проверяем triangulationEdges без надобности, просто формируем отрезки
+            segA.clear();
+            for (int i = 0; i < NA - 1; ++i) {
+                segA.append(Edge(poly1[i], poly1[i+1]));
+            }
         }
 
-        QVector<Edge> segB;
-        for (int i = 0; i < poly2.size(); i++) {
-            segB.append(Edge(poly2[i], poly2[(i+1)%poly2.size()]));
+        int NB = poly2.size();
+        if (NB > 1) {
+            segB.clear();
+            for (int i = 0; i < NB - 1; ++i) {
+                segB.append(Edge(poly2[i], poly2[i+1]));
+            }
         }
+
         QVector<Edge> resultEdges = do_union(segA, segB, poly1[0], poly2[0]);
+
+        // Если resultEdges не пуст, формируем результат:
         QVector<QPointF> resultPoly;
         if (!resultEdges.isEmpty()) {
-            // Предполагаем, что ребра образуют замкнутый многоугольник
+            // Чужой код: предположение, что resultEdges образуют замкнутый многоугольник.
             // Начинаем с resultEdges[0].p1
             resultPoly.append(resultEdges[0].p1);
             for (int i = 0; i < resultEdges.size(); i++) {
@@ -378,26 +410,42 @@ void MainWindow::on_difference_calc_clicked()
 {
    if (currentTaskType == Task5)
    {
+        // Замыкаем второй многоугольник
         if (!ui->widget->Polygon2.isEmpty()) {
-            ui->widget->Polygon2.append(ui->widget->Polygon2.first());
+            int M = ui->widget->Polygon2.size();
+            if (M > 1 && ui->widget->Polygon2.first() != ui->widget->Polygon2.last()) {
+                ui->widget->Polygon2.append(ui->widget->Polygon2.first());
+            }
         }
-
-        QVector<QPointF> poly1 = ui->widget->Polygon1;
-        QVector<QPointF> poly2 = ui->widget->Polygon2;
-
         QVector<Edge> segA;
-        for (int i = 0; i < poly1.size(); i++) {
-            segA.append(Edge(poly1[i], poly1[(i+1)%poly1.size()]));
+        QVector<Edge> segB;
+
+        QVector<QPointF> &poly1 = ui->widget->Polygon1;
+        QVector<QPointF> &poly2 = ui->widget->Polygon2;
+
+        int NA = poly1.size();
+        if (NA > 1 && ui->widget->triangulationEdges.isEmpty()) {
+            // Комментарий: не проверяем triangulationEdges без надобности, просто формируем отрезки
+            segA.clear();
+            for (int i = 0; i < NA - 1; ++i) {
+                segA.append(Edge(poly1[i], poly1[i+1]));
+            }
         }
 
-        QVector<Edge> segB;
-        for (int i = 0; i < poly2.size(); i++) {
-            segB.append(Edge(poly2[i], poly2[(i+1)%poly2.size()]));
+        int NB = poly2.size();
+        if (NB > 1) {
+            segB.clear();
+            for (int i = 0; i < NB - 1; ++i) {
+                segB.append(Edge(poly2[i], poly2[i+1]));
+            }
         }
+
         QVector<Edge> resultEdges = do_difference(segA, segB);
+
+        // Если resultEdges не пуст, формируем результат:
         QVector<QPointF> resultPoly;
         if (!resultEdges.isEmpty()) {
-            // Предполагаем, что ребра образуют замкнутый многоугольник
+            // Чужой код: предположение, что resultEdges образуют замкнутый многоугольник.
             // Начинаем с resultEdges[0].p1
             resultPoly.append(resultEdges[0].p1);
             for (int i = 0; i < resultEdges.size(); i++) {
