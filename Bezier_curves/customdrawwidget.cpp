@@ -1,3 +1,4 @@
+
 #include "bezierutils.h"
 #include "customdrawwidget.h"
 #include <QPainter>
@@ -18,38 +19,61 @@ double CustomDrawWidget::normalizeValue(const LongDouble value, const LongDouble
 
 void CustomDrawWidget::paintEvent(QPaintEvent *event)
 {
-    if (typeTask == task1)
-    {
-        QPainter painter(this);
-        painter.setRenderHint(QPainter::Antialiasing, true);
-        QPen pen;
-        pen.setColor(m_color);
-        pen.setWidth(1.5);
-        painter.setPen(pen);
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing, true);
 
-        int size_ = vecPoint.size();
+    QPen pen(Qt::red, 2);
+    painter.setPen(pen);
 
-        switch (size_)
-        {
-        case 0:
-            break;
-        case 1:
-            painter.drawEllipse(vecPoint[0].x()-2.5, vecPoint[0].y()-2.5, 5,5);
-            break;
-        case 2:
-            painter.drawLine(vecPoint[0], vecPoint[1]);
-            break;
-        case 3:
-            painter.drawLine(vecPoint[0], vecPoint[1]);
-            painter.drawEllipse(vecPoint[2].x()-2.5, vecPoint[2].y()-2.5, 5,5);
-            break;
-        case 4:
-            painter.drawLine(vecPoint[0], vecPoint[1]);
-            painter.drawLine(vecPoint[2], vecPoint[3]);
-            break;
-        }
+    // Рисуем изначальную ломаную кривую
+    for (int i = 0; i < vecPoint.size() - 1; ++i) {
+        painter.drawLine(vecPoint[i], vecPoint[i + 1]);
     }
 
+    // Отображение контрольных точек
+    QBrush pointBrush(Qt::green);
+    for (const QPointF& point : vecPoint) {
+        painter.setBrush(pointBrush);
+        painter.drawEllipse(point, 3, 3);
+    }
+
+    if (isLinearChecked) {
+        QVector<QPointF> LinearCurve = generateLinearBezier(vecPoint);
+        QPen pen2;
+        pen2.setColor(Qt::blue);
+        pen2.setWidth(1.5);
+        painter.setPen(pen2);
+        for (int i = 0; i < LinearCurve.size() - 1; ++i) {
+            painter.drawLine(LinearCurve[i], LinearCurve[i + 1]);
+        }
+    }
+    if(isQuadraticChecked)
+    {
+        QVector<QPointF> QuadraticCurve = generateQuadraticBezier(vecPoint, 100);
+        QPen pen2;
+        pen2.setColor(Qt::green);
+        pen2.setWidth(1.5);
+        painter.setPen(pen2);
+        for (int i = 0; i < QuadraticCurve.size() - 1; ++i) {
+            painter.drawLine(QuadraticCurve[i], QuadraticCurve[i + 1]);
+        }
+    }
+    if(isCubicChecked)
+    {
+        QVector<QPointF> CubicCurve = generateCubicBezier(vecPoint);
+        painter.setPen(QPen("orange"));
+        for (int i = 0; i < CubicCurve.size() - 1; ++i) {
+            painter.drawLine(CubicCurve[i], CubicCurve[i + 1]);
+        }
+    }
+    if(isManualChecked)
+    {
+        QVector<QPointF> ManualCurve = generateManualBezier(vecPoint, degree);
+        painter.setPen(QPen(Qt::green, 2));
+        for (int i = 0; i < ManualCurve.size() - 1; ++i) {
+            painter.drawLine(ManualCurve[i], ManualCurve[i + 1]);
+        }
+    }
 }
 
 void CustomDrawWidget::changedColor(QColor color)
@@ -65,9 +89,9 @@ void CustomDrawWidget::mousePressEvent(QMouseEvent *pe)
     {
 
         QPointF newPoint = pe->position();
-        if (vecPoint.size() >= 4) {
-            vecPoint.clear();
-        }
+//        if (vecPoint.size() >= 4) {
+//            vecPoint.clear();
+//        }
         vecPoint.push_back(newPoint);
 
         // Эмитируем сигнал для передачи новой точки
@@ -103,34 +127,34 @@ void CustomDrawWidget::mousePressEvent(QMouseEvent *pe)
 }
 
 
-void CustomDrawWidget::mouseDoubleClickEvent(QMouseEvent * pe)
-{
-    if (pe->button() == Qt::RightButton)
-    {
-        if (typeTask == task5)
-        {
-            isFirstPolygon = false;
-        }
-    }
-}
+//void CustomDrawWidget::mouseDoubleClickEvent(QMouseEvent * pe)
+//{
+//    if (pe->button() == Qt::RightButton)
+//    {
+//        if (typeTask == task5)
+//        {
+//            isFirstPolygon = false;
+//        }
+//    }
+//}
 
 
-void CustomDrawWidget::mouseMoveEvent(QMouseEvent * pe)
-{
-    if (layMove == true)
-    {
-        if (typeTask == task1 or typeTask == task2 or typeTask == task3)
-            if (m_id != -1)
-            {
-                vecPoint[m_id] = pe->position();
-                repaint();
-            }
-        if (typeTask == task5)
-        {
+//void CustomDrawWidget::mouseMoveEvent(QMouseEvent * pe)
+//{
+//    if (layMove == true)
+//    {
+//        if (typeTask == task1 or typeTask == task2 or typeTask == task3)
+//            if (m_id != -1)
+//            {
+//                vecPoint[m_id] = pe->position();
+//                repaint();
+//            }
+//        if (typeTask == task5)
+//        {
 
-        }
-    }
-}
+//        }
+//    }
+//}
 void CustomDrawWidget::mouseReleaseEvent(QMouseEvent * pe)
 {
     if (pe->button() == Qt::RightButton)
@@ -138,14 +162,23 @@ void CustomDrawWidget::mouseReleaseEvent(QMouseEvent * pe)
         layMove = false;
     }
 }
-void CustomDrawWidget::wheelEvent(QMouseEvent * pe)
-{
+//void CustomDrawWidget::wheelEvent(QMouseEvent * pe)
+//{
 
+//}
+
+void CustomDrawWidget::setDegree(int d){
+    if (d > 0) {
+        degree = d;
+        update(); // Перерисовать виджет
+    }
 }
 
 void CustomDrawWidget::clearVector()
 {
     vecPoint.clear();
+    Polygon1.clear();
+    resultPolygons.clear();
 //    if(typeTask == task3){
 //        hullPoints.clear();
 //    }

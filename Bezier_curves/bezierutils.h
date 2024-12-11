@@ -60,4 +60,10 @@ struct Triangle {
 };
 
 
+QVector<QPointF> generateLinearBezier(const QVector<QPointF>& points, int segments = 100);
+QVector<QPointF> generateQuadraticBezier(const QVector<QPointF>& points, int segments = 100);
+QVector<QPointF> generateCubicBezier(const QVector<QPointF>& points, int segments = 100);
+QVector<QPointF> generateManualBezier(const QVector<QPointF>& points, int degree, int segments = 100);
+
+
 #endif // BEZIERUTILS_H

@@ -30,6 +30,7 @@ public:
 
 private:
     long double value;  // Переменная для хранения значения с высокой точностью
+
 };
 
 #endif // LONGDOUBLE_H

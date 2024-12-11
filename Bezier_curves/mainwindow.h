@@ -16,36 +16,22 @@ public:
     ~MainWindow();
 
 private:
-    enum TaskType {
-        Task1,  // Пересечение двух отрезков
-        Task2,  // Предикат поворота
-        Task3,  // Построение выпуклой оболочки
-        Task4,  // Триангуляция Делоне
-        Task5,  // Пересечениеn произвольных многоугольников
-        Task6   // Локализация точки относительно многоугольника
-    };
-    TaskType currentTaskType; // Переменная для хранения текущей задачи
+    bool isLinearChecked = false;
+    bool isQuadraticChecked = false;
+    bool isCubicChecked = false;
+    bool isManualChecked = false;
+
     QVector<QPointF> points; // Контейнер для хранения точек
     Ui::MainWindow *ui;
 
 private slots:
     void getMouseCoord(QPointF point);
-    void on_Add_point_manual_clicked();
-    void on_red_Button_clicked();
-    void on_green_Button_clicked();
-    void on_pushButton_deletePoints_clicked();
-    void on_task1_clicked();
-    void on_task3_clicked();
-    void on_getResult_clicked();
-    void on_task2_clicked();
-    void on_task4_clicked();
-    void on_task5_clicked();
-    void on_task6_clicked();
-    void on_New_Poly_clicked();
-    void on_Add_point_clicked();
-    void on_intersection_calc_clicked();
-    void on_difference_calc_clicked();
-    void on_combining_calc_clicked();
+    void on_Draw_curve_clicked();
+    void on_Deletepoints_clicked();
+    void onCheckboxStateChanged(int state);
+   // void on_getResult_clicked();
+
+
 };
 
 #endif // MAINWINDOW_H
