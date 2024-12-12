@@ -33,11 +33,11 @@ void MainWindow::on_Draw_curve_clicked()
         ui->textBrowser->append("Для кривой нужно хотя бы 2 точки! ");
         return;
     }
-    //int degree = 4; // Степень по умолчанию
+    int inputDegree = 4; // Степень по умолчанию
     if (isManualChecked) {
         bool ok;
-        int inputDegree = ui->Pow_of_curve->toPlainText().toInt(&ok);
-        if (ok && inputDegree > 1) {
+        inputDegree = ui->Pow_of_curve->toPlainText().toInt(&ok);
+        if (ok && inputDegree > 1 && inputDegree >= (points.size()-1)) {
             ui->widget->setDegree(inputDegree);
             ui->textBrowser->append("Степень установлена: " + QString::number(inputDegree));
         } else {
@@ -46,23 +46,31 @@ void MainWindow::on_Draw_curve_clicked()
         ui->textBrowser->append("Отображена кривая с заданной степенью " + QString::number(inputDegree));
     }
 
-    //ui->textBrowser->append("Выбрана степень: " + QString::number(degree));
 
-    // Пока что просто вызываем repaint для обновления
-    ui->widget->repaint();
 
 
     if(isLinearChecked){
         ui->textBrowser->append("Отображена линейная кривая");
     }
     if(isQuadraticChecked){
+        if(points.size() < 3){
+            ui->textBrowser->append("Для квадратиченой кривой нужно хотя бы 3 точки! ");
+            return;
+        }
         ui->textBrowser->append("Отображена квадратичная кривая");
 
     }
     if(isCubicChecked){
+        if(points.size() < 4){
+            ui->textBrowser->append("Для кубической кривой нужно хотя бы 4 точки! ");
+            return;
+        }
         ui->textBrowser->append("Отображена кубическая кривая");
 
     }
+    // Пока что просто вызываем repaint для обновления
+    ui->widget->repaint();
+
 }
 
 void MainWindow::on_Deletepoints_clicked()

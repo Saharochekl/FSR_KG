@@ -69,7 +69,7 @@ void CustomDrawWidget::paintEvent(QPaintEvent *event)
     if(isManualChecked)
     {
         QVector<QPointF> ManualCurve = generateManualBezier(vecPoint, degree);
-        painter.setPen(QPen(Qt::green, 2));
+        painter.setPen(QPen(Qt::white, 2));
         for (int i = 0; i < ManualCurve.size() - 1; ++i) {
             painter.drawLine(ManualCurve[i], ManualCurve[i + 1]);
         }
@@ -89,9 +89,7 @@ void CustomDrawWidget::mousePressEvent(QMouseEvent *pe)
     {
 
         QPointF newPoint = pe->position();
-//        if (vecPoint.size() >= 4) {
-//            vecPoint.clear();
-//        }
+
         vecPoint.push_back(newPoint);
 
         // Эмитируем сигнал для передачи новой точки
@@ -127,34 +125,7 @@ void CustomDrawWidget::mousePressEvent(QMouseEvent *pe)
 }
 
 
-//void CustomDrawWidget::mouseDoubleClickEvent(QMouseEvent * pe)
-//{
-//    if (pe->button() == Qt::RightButton)
-//    {
-//        if (typeTask == task5)
-//        {
-//            isFirstPolygon = false;
-//        }
-//    }
-//}
 
-
-//void CustomDrawWidget::mouseMoveEvent(QMouseEvent * pe)
-//{
-//    if (layMove == true)
-//    {
-//        if (typeTask == task1 or typeTask == task2 or typeTask == task3)
-//            if (m_id != -1)
-//            {
-//                vecPoint[m_id] = pe->position();
-//                repaint();
-//            }
-//        if (typeTask == task5)
-//        {
-
-//        }
-//    }
-//}
 void CustomDrawWidget::mouseReleaseEvent(QMouseEvent * pe)
 {
     if (pe->button() == Qt::RightButton)
@@ -162,10 +133,6 @@ void CustomDrawWidget::mouseReleaseEvent(QMouseEvent * pe)
         layMove = false;
     }
 }
-//void CustomDrawWidget::wheelEvent(QMouseEvent * pe)
-//{
-
-//}
 
 void CustomDrawWidget::setDegree(int d){
     if (d > 0) {
@@ -179,24 +146,7 @@ void CustomDrawWidget::clearVector()
     vecPoint.clear();
     Polygon1.clear();
     resultPolygons.clear();
-//    if(typeTask == task3){
-//        hullPoints.clear();
-//    }
-//    if(typeTask == task4){
-//        triangulationEdges.clear();
-//    }
-//    if (typeTask == task5)
-//    {
-//        isFirstPolygon = true;
-//        Polygon1.clear();
-//        Polygon2.clear();
-//        resultPolygons.clear();
-//    }
-//    if (typeTask == task6)
-//    {
-//        isFirstPolygon = true;
-//        Polygon1.clear();
-//    }
+
     repaint();
 }
 
