@@ -340,5 +340,143 @@ struct Plane4v : public Object
     }
 };
 
+struct Star : public Object{
+    std::vector<Plane3v> planes; // Грани звезды
+    std::vector<Vec3f> vertices;   // Вершины
+    Vec3f center;               // Центр звезды
+    double scale;               // Масштаб звезды
+    double rotationAngle;       // Угол вращения вокруг оси Z
+    Star(): Object(Color()) { } // dummy object
+    Star(const Vec3f& c, double s, Color col)
+        :  Object(col) {
+        // Определяем вершины
+        vertices = {
+            Vec3f(-0.198617, 0.000000, 0.198617),
+            Vec3f(0.200833, 0.000000, 0.198195),
+            Vec3f(-0.197404, 0.000000, -0.202679),
+            Vec3f(0.198195, 0.000000, -0.200833),
+            Vec3f(-0.599098, 0.000000, 0.000000),
+            Vec3f(0.596460, 0.000000, 0.000000),
+            Vec3f(0.000000, 0.000000, 0.603001),
+            Vec3f(0.000000, 0.000000, -0.599098),
+            Vec3f(0.000000, 0.000000, 0.000000),
+            Vec3f(0.000000, 0.098429, 0.000000),
+            Vec3f(0.000000, -0.101898, 0.000000)
+        };
+
+
+
+        // Определяем грани (треугольники)
+        planes = {
+            Plane3v(vertices[6]* s + c, vertices[10]* s + c, vertices[0]* s + c, col),
+            Plane3v(vertices[6]* s + c, vertices[1]* s + c, vertices[10]* s + c, col),
+            Plane3v(vertices[3]* s + c, vertices[10]* s + c, vertices[5]* s + c, col),
+            Plane3v(vertices[5]* s + c, vertices[10]* s + c, vertices[1]* s + c, col),
+            Plane3v(vertices[9]* s + c, vertices[4]* s + c, vertices[2]* s + c, col),
+            Plane3v(vertices[2]* s + c, vertices[7]* s + c, vertices[9]* s + c, col),
+            Plane3v(vertices[7]* s + c, vertices[3]* s + c, vertices[9]* s + c, col),
+            Plane3v(vertices[3]* s + c, vertices[5]* s + c, vertices[9]* s + c, col),
+            Plane3v(vertices[5]* s + c, vertices[1]* s + c, vertices[9]* s + c, col),
+            Plane3v(vertices[9]* s + c, vertices[6]* s + c, vertices[0]* s + c, col),
+            Plane3v(vertices[6]* s + c, vertices[9]* s + c, vertices[1]* s + c, col),
+            Plane3v(vertices[4]* s + c, vertices[9]* s + c, vertices[0]* s + c, col),
+            Plane3v(vertices[7]* s + c, vertices[10]* s + c, vertices[3]* s + c, col),
+            Plane3v(vertices[2]* s + c, vertices[10]* s + c, vertices[7]* s + c, col),
+            Plane3v(vertices[4]* s + c, vertices[10]* s + c, vertices[2]* s + c, col),
+            Plane3v(vertices[0]* s + c, vertices[10]* s + c, vertices[4]* s + c, col)
+        };
+
+    }
+    // Переопределение метода от Object (необходимо для сцены)
+    virtual double is_intersect(const Ray& r) const override {
+        double minT = -1.0;
+        int intersectedPlaneIndex = -1;
+        for (size_t i = 0; i < planes.size(); ++i) {
+            double t = planes[i].is_intersect(r);
+            if (t > 0 && (minT < 0 || t < minT)) {
+                minT = t;
+                intersectedPlaneIndex = i; // Сохраняем индекс пересечённой грани
+                std::cout << "Ray: (" << r.beg.x << ", " << r.beg.y << ", " << r.beg.z
+                          << ") -> (" << r.dir.x << ", " << r.dir.y << ", " << r.dir.z << ")\n";
+                std::cout << "Nearest intersection at t = " << minT
+                          << ", with plane index: " << intersectedPlaneIndex << "\n";
+            }
+
+        }
+
+        return minT;
+    }
+
+    virtual Vec3f get_normal(const Vec3f& v) const override {
+        for (const auto& plane : planes) {
+            if (plane.is_intersect(Ray(v, Vec3f(0, 0, 1))) > 0) {
+                return plane.get_normal(v).Normilize();
+            }
+        }
+        return Vec3f(0, 0, 0); // Если точка не принадлежит ни одной грани
+    }
+
+    // Перемещение центра звезды
+    void moving(const Vec3f& delta) {
+        for (auto& vertex : vertices) {
+            vertex = vertex + delta;
+        }
+        center = center + delta;
+    }
+
+    // Масштабирование звезды
+    void scaling(double factor) {
+        for (auto& vertex : vertices) {
+            vertex = center + (vertex - center) * factor;
+        }
+    }
+
+    // Вращение вокруг осей
+    void rotating(double angleX, double angleY, double angleZ) {
+        for (auto& vertex : vertices) {
+            // Приводим вершину к локальной системе координат звезды
+            Vec3f localVertex = vertex - center;
+
+            // Вращение вокруг оси X
+            double sinX = sin(angleX);
+            double cosX = cos(angleX);
+            localVertex = Vec3f(
+                localVertex.x,
+                localVertex.y * cosX - localVertex.z * sinX,
+                localVertex.y * sinX + localVertex.z * cosX
+                );
+
+            // Вращение вокруг оси Y
+            double sinY = sin(angleY);
+            double cosY = cos(angleY);
+            localVertex = Vec3f(
+                localVertex.x * cosY + localVertex.z * sinY,
+                localVertex.y,
+                -localVertex.x * sinY + localVertex.z * cosY
+                );
+
+            // Вращение вокруг оси Z
+            double sinZ = sin(angleZ);
+            double cosZ = cos(angleZ);
+            localVertex = Vec3f(
+                localVertex.x * cosZ - localVertex.y * sinZ,
+                localVertex.x * sinZ + localVertex.y * cosZ,
+                localVertex.z
+                );
+
+            // Возвращаем вершину в глобальную систему координат
+            vertex = center + localVertex;
+        }
+    }
+
+    // Вывод состояния звезды
+    void printState() const {
+        std::cout << "Center: (" << center.x << ", " << center.y << ", " << center.z << ")\n";
+        std::cout << "Vertices:\n";
+        for (const auto& vertex : vertices) {
+            std::cout << "  (" << vertex.x << ", " << vertex.y << ", " << vertex.z << ")\n";
+        }
+    }
+};
 
 #endif // OBJECTS_H

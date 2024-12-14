@@ -11,14 +11,14 @@ CONFIG += c++17
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
-    scene.cpp \
-    trasingwidget.cpp
+    qraytracingwidget.cpp \
+    scene.cpp
 
 HEADERS += \
     mainwindow.h \
     objects.h \
-    scene.h \
-    trasingwidget.h
+    qraytracingwidget.h \
+    scene.h
 
 FORMS += \
     mainwindow.ui
