@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->Qadratic_curve, &QCheckBox::stateChanged, this, &MainWindow::onCheckboxStateChanged);
     connect(ui->Cubiccurve, &QCheckBox::stateChanged, this, &MainWindow::onCheckboxStateChanged);
     connect(ui->Manual_curve, &QCheckBox::stateChanged, this, &MainWindow::onCheckboxStateChanged);
-
+    connect(ui->numP_curve, &QCheckBox::stateChanged, this, &MainWindow::onCheckboxStateChanged);
 }
 
 
@@ -120,6 +120,11 @@ void MainWindow::onCheckboxStateChanged(int state) {
         ui->textBrowser->append("Выбрана кривая заданной степени");
     }
 
+    if (senderCheckBox == ui->numP_curve) {
+        isnumP_curveChecked = (state == Qt::Checked);
+        ui->widget->isnumP_curveChecked = isnumP_curveChecked; // Обновляем правильное состояние
+        ui->textBrowser->append("Выбрана кривая по точкам");
+    }
     ui->widget->update(); // Перерисовываем виджет
 }
 

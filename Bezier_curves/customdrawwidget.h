@@ -41,6 +41,7 @@ public:
     bool isQuadraticChecked = false;
     bool isCubicChecked = false;
     bool isManualChecked = false;
+    bool isnumP_curveChecked = false;
 
     double scale;
     QVector<QPolygonF> resultPolygons; // Результирующие многоугольники

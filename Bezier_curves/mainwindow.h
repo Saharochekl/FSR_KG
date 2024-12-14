@@ -20,6 +20,7 @@ private:
     bool isQuadraticChecked = false;
     bool isCubicChecked = false;
     bool isManualChecked = false;
+    bool isnumP_curveChecked = false;
 
     QVector<QPointF> points; // Контейнер для хранения точек
     Ui::MainWindow *ui;

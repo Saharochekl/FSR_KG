@@ -3,16 +3,30 @@
 #include <QPointF>
 #include <math.h>
 #include <cmath>
+#include <vector>
+#include <map>
+#include <utility>
+#include <iostream>
+#include <cassert>
+
 #include <QVector>
 #include <QSet>
 #include <algorithm>
 
-class bezierutils
-{
-public:
-    bezierutils();
+// Структура, представляющая один терм полинома вида coef * (1 - t)^a * t^b
+struct Term {
+    double coef;
+    int a;
+    int b;
 };
 
+struct Condition {
+    int derivativeOrder;
+    double tValue;
+    double knownValueX;
+    double knownValueY;
+
+};
 
 struct Edge {
     QPointF p1, p2;
@@ -27,43 +41,28 @@ struct Edge {
     }
 };
 
-struct Triangle {
-    QPointF p1, p2, p3;
-    QPointF circumcenter;
-    double radiusSquared;
-    Triangle() : p1(), p2(), p3(), circumcenter(std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity()),
-        radiusSquared(std::numeric_limits<double>::infinity()) {}
-    Triangle(const QPointF& a, const QPointF& b, const QPointF& c) : p1(a), p2(b), p3(c) {
-        calculateCircumcircle();
-    }
-    // Добавляем оператор ==
-    bool operator==(const Triangle& other) const {
-        // Сравниваем треугольники по их вершинам
-        // Поскольку порядок вершин может быть разным, нужно проверить все возможные перестановки
-        QVector<QPointF> thisPoints = {p1, p2, p3};
-        QVector<QPointF> otherPoints = {other.p1, other.p2, other.p3};
 
-        // Сортируем точки для корректного сравнения
-        std::sort(thisPoints.begin(), thisPoints.end(), [](const QPointF& a, const QPointF& b) {
-            return (a.x() < b.x()) || (a.x() == b.x() && a.y() < b.y());
-        });
-        std::sort(otherPoints.begin(), otherPoints.end(), [](const QPointF& a, const QPointF& b) {
-            return (a.x() < b.x()) || (a.x() == b.x() && a.y() < b.y());
-        });
+std::vector<double> bezierCoefficients(int d, double t);
+std::vector<Term> combineLikeTerms(const std::vector<Term>& terms);
+std::vector<Term> differentiateTerms(const std::vector<Term>& terms);
+std::vector<Term> bezierBaseTerms(int d);
+double evaluateTerms(const std::vector<Term>& terms, double t);
+std::pair<std::vector<std::vector<double>>, std::vector<double>>
+buildSystemForBezierWithDerivatives(int d, const std::vector<Condition>& conditions);
 
-        return thisPoints[0] == otherPoints[0] &&
-               thisPoints[1] == otherPoints[1] &&
-               thisPoints[2] == otherPoints[2];
-    }
-    void calculateCircumcircle();
-    bool containsPoint(const QPointF& p) const;
-};
+std::vector<double> getBezierCoefficientsForDerivative(int d, int derivativeOrder, double t);
+std::vector<double> Gauss_SLAY(std::vector<std::vector<double>> A, std::vector<double> b);
 
 
-QVector<QPointF> generateLinearBezier(const QVector<QPointF>& points, int segments = 100);
-QVector<QPointF> generateQuadraticBezier(const QVector<QPointF>& points, int segments = 100);
-QVector<QPointF> generateCubicBezier(const QVector<QPointF>& points, int segments = 100);
-QVector<QPointF> generateManualBezier(const QVector<QPointF>& points, int degree, int segments = 100);
+QVector<QPointF> generateBezierChainFromPoints(const QVector<QPointF>& inputPoints, int d, int segmentsPerCurve);
+
+
+QVector<QPointF> computeQuadraticBezierChain(const QVector<QPointF>& points, int segmentsPerCurve);
+
+QVector<QPointF> generateSegmentedBezier(const QVector<QPointF>& points, int segments, int degree);
+
+
+QVector<QPointF> generateManualBezier(const QVector<QPointF>& points, int segments);
 
 
 #endif // BEZIERUTILS_H
