@@ -107,26 +107,7 @@ void CustomDrawWidget::mousePressEvent(QMouseEvent *pe)
     {
         layMove = true;
 
-//        if (typeTask == task1 || typeTask == task2 || typeTask == task3)
-//        {
-//            if (!vecPoint.isEmpty())
-//            {
-//                double radius = 10;
-//                double closestDistance = std::numeric_limits<double>::max();
-//                int closestIndex = -1;
 
-//                for (int i = 0; i < vecPoint.size(); ++i)
-//                {
-//                    double distanceToCurrent = dist(vecPoint[i], pe->localPos());
-//                    if (distanceToCurrent < radius && distanceToCurrent < closestDistance)
-//                    {
-//                        closestDistance = distanceToCurrent;
-//                        closestIndex = i;
-//                    }
-//                }
-//                m_id = closestIndex;
-//            }
-//        }
     }
 
     update();  // Обновление виджета для отображения новых изменений

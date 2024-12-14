@@ -3,50 +3,7 @@
 
 
 
-QVector<QPointF> computeQuadraticBezierChain(const QVector<QPointF>& points, int segmentsPerCurve) {
-    QVector<QPointF> result;
-    int n = points.size();
-    if (n < 3) {
-        // Нужно как минимум 3 точки, чтобы построить хотя бы одну квадратичную кривую
-        return result;
-    }
 
-    // Массив Q для контрольных точек Q_1, Q_2, ..., Q_{n-1}
-    QVector<QPointF> Q(n-1);
-
-    // Граничные условия для Q:
-    Q[0] = (points[0] + points[1]) / 2.0;         // Q_1
-    Q[n-2] = (points[n-1] + points[n-2]) / 2.0;   // Q_{n-1}
-
-    // Теперь для i от 1 до n-2 решить Q_i:
-    // Уравнения: Q_i + Q_{i+1} = 2 * P_i для i=1..n-2
-    // Для i=1: Q_1 + Q_2 = 2P_1 => Q_2 = 2P_1 - Q_1
-    for (int i = 1; i <= n-3; ++i) {
-        Q[i] = 2.0 * points[i] - Q[i-1]; // вычисляем Q_{i+1} через Q_i и P_i
-    }
-
-    // Теперь у нас есть все Q_i.
-
-    // Строим кривые Безье:
-    // Каждый сегмент: P_i, Q_{i+1}, P_{i+1}
-    for (int i = 0; i < n-1; ++i) {
-        // Квадратичная Безье: B(t) = (1-t)^2 * P_i + 2(1-t)*t * Q_{i+1} + t^2 * P_{i+1}
-        QPointF P0 = points[i];
-        QPointF P1 = Q[i];
-        QPointF P2 = points[i+1];
-
-        for (int seg = 0; seg <= segmentsPerCurve; ++seg) {
-            double t = double(seg) / segmentsPerCurve;
-            double u = (1.0 - t);
-            QPointF B = u*u*P0 + 2*u*t*P1 + t*t*P2;
-            result.push_back(B);
-        }
-
-
-    }
-
-    return result;
-}
 double binomial_coefficient(int n, int k) {
     if (k > n) return 0;
     if (k == 0 || k == n) return 1;
@@ -321,58 +278,14 @@ QVector<QPointF> generateBezierChainFromPoints(const QVector<QPointF>& inputPoin
             result.push_back(QPointF(xVal, yVal));
         }
 
-        // Если не хотим дубликации, можно:
-        // if (s < numSegments - 1) {
-        //     result.pop_back(); // удаляем последнюю точку сегмента, чтобы не дублировать узловые точки
-        // }
+
     }
 
     return result;
 }
 
 
-QVector<QPointF> generateLinearBezier(const QVector<QPointF>& points, int segments) {
-    QVector<QPointF> result;
-    if (points.size() < 2) return result; // Линейная кривая требует минимум 2 точки
 
-    for (int i = 0; i <= segments; ++i) {
-        double t = static_cast<double>(i) / segments;
-        QPointF point = (1 - t) * points[0] + t * points[1];
-        result.push_back(point);
-    }
-    return result;
-}
-
-QVector<QPointF> generateQuadraticBezier(const QVector<QPointF>& points, int segments) {
-    QVector<QPointF> result;
-    if (points.size() < 3) return result;
-
-    for (int k = 0; k < points.size() - 2; ++k) { // Перебираем тройки точек
-        for (int i = 0; i <= segments; ++i) {
-            double t = static_cast<double>(i) / segments;
-            QPointF point = (1 - t) * (1 - t) * points[k] +
-                            2 * (1 - t) * t * points[k + 1] +
-                            t * t * points[k + 2];
-            result.push_back(point);
-        }
-    }
-    return result;
-}
-
-QVector<QPointF> generateCubicBezier(const QVector<QPointF>& points, int segments) {
-    QVector<QPointF> result;
-    if (points.size() < 4) return result; // Кубическая кривая требует минимум 4 точки
-
-    for (int i = 0; i <= segments; ++i) {
-        double t = static_cast<double>(i) / segments;
-        QPointF point = (1 - t) * (1 - t) * (1 - t) * points[0] +
-                        3 * (1 - t) * (1 - t) * t * points[1] +
-                        3 * (1 - t) * t * t * points[2] +
-                        t * t * t * points[3];
-        result.push_back(point);
-    }
-    return result;
-}
 
 QVector<QPointF> generateManualBezier(const QVector<QPointF>& points, int segments) {
     QVector<QPointF> result;
@@ -393,61 +306,6 @@ QVector<QPointF> generateManualBezier(const QVector<QPointF>& points, int segmen
         result.push_back(point);
     }
     return result;
-}
-
-
-
-QVector<QPointF> generateSegmentedBezier(const QVector<QPointF>& points, int segments, int degree) {
-    QVector<QPointF> result;
-    if (points.size() < degree + 1) return result; // Не хватает точек для построения хотя бы одного сегмента
-
-    for (int k = 0; k <= points.size() - (degree + 1); ++k) { // Перебираем группы по degree+1 точек
-        QVector<QPointF> segmentPoints;
-        for (int i = 0; i <= segments; ++i) {
-            double t = static_cast<double>(i) / segments;
-
-            // Алгоритм Де Кастельжо для одной группы точек
-            QVector<QPointF> tempPoints = points.mid(k, degree + 1);
-            while (tempPoints.size() > 1) {
-                QVector<QPointF> nextPoints;
-                for (int j = 0; j < tempPoints.size() - 1; ++j) {
-                    QPointF point = (1 - t) * tempPoints[j] + t * tempPoints[j + 1];
-                    nextPoints.push_back(point);
-                }
-                tempPoints = nextPoints;
-            }
-            segmentPoints.push_back(tempPoints[0]);
-        }
-
-        // Добавляем сегмент в общий результат
-        result.append(segmentPoints);
-
-        // Удаляем дублирующуюся точку для \( C^0 \)-непрерывности
-        if (k > 0) {
-            result.remove(result.size() - segments - 1); // Удаляем повторяющуюся конечную точку
-        }
-    }
-
-    return result;
-}
-
-QVector<QPointF> smoothControlPoints(const QVector<QPointF>& points) {
-    QVector<QPointF> smoothedPoints = points;
-    for (int i = 1; i < points.size() - 1; ++i) {
-        QPointF prev = points[i - 1];
-        QPointF curr = points[i];
-        QPointF next = points[i + 1];
-
-        // Устанавливаем новую позицию точки как среднее между предыдущей и следующей
-        smoothedPoints[i] = (prev + next) / 2;
-    }
-    return smoothedPoints;
-}
-
-
-QVector<QPointF> generateSegmentedBezierWithSmoothing(const QVector<QPointF>& points, int segments, int degree) {
-    QVector<QPointF> smoothedPoints = smoothControlPoints(points);
-    return generateSegmentedBezier(smoothedPoints, segments, degree);
 }
 
 
