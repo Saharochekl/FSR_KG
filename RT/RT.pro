@@ -10,10 +10,15 @@ CONFIG += c++17
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    scene.cpp \
+    trasingwidget.cpp
 
 HEADERS += \
-    mainwindow.h
+    mainwindow.h \
+    objects.h \
+    scene.h \
+    trasingwidget.h
 
 FORMS += \
     mainwindow.ui
