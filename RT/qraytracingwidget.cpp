@@ -22,9 +22,9 @@ QRayTracingWidget::QRayTracingWidget(QWidget *parent)
 //    cur_sc.add_object(new Sphere(30, Vec3f(-50 - orbit_radius*cos(Angle), 250, 250 - orbit_radius*sin(Angle)), Color(255, 10, 10), 70, 0.4));
 
 
-    s1->setOrbit(Orbit_center, orbit_radius, 0.0, 0.02);
-    s2->setOrbit(Orbit_center, orbit_radius, 2*M_PI/3, 0.02);
-    s3->setOrbit(Orbit_center, orbit_radius, 4*M_PI/3, 0.02);
+    s1->setOrbit(Orbit_center, orbit_radius, 0.0, 0.01);
+    s2->setOrbit(Orbit_center, orbit_radius, 2*M_PI/3, 0.01);
+    s3->setOrbit(Orbit_center, orbit_radius, 4*M_PI/3, 0.01);
 
     cur_sc.add_object(s1);
     cur_sc.add_object(s2);
@@ -70,13 +70,13 @@ QRayTracingWidget::QRayTracingWidget(QWidget *parent)
     cur_sc.add_light(LightSource(POINT, Vec3f(700, 250, -500), 0.4));
     cur_sc.add_light(LightSource(POINT, Vec3f(-700, 250, -500), 0.4));
 
-//    QTimer* timer = new QTimer(this);
-//    connect(timer, &QTimer::timeout, this, [this]() {
-//        // Каждое срабатывание таймера будет обновлять сцену
-//        cur_sc.tick();   // вызываем tick, чтобы объекты могли обновить своё состояние
-//        update();        // перерисовать виджет
-//    });
-//    timer->start(3000); // обновление каждые 5 с (чтобы ретрейсинг успел произойти)
+    QTimer* timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, [this]() {
+        // Каждое срабатывание таймера будет обновлять сцену
+        cur_sc.tick();   // вызываем tick, чтобы объекты могли обновить своё состояние
+        update();        // перерисовать виджет
+    });
+    timer->start(3000); // обновление каждые 5 с (чтобы ретрейсинг успел произойти)
 
 }
 
