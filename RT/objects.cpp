@@ -1,8 +1,45 @@
 #include "objects.h"
 
 
+//
+// Конструкторы Vec3f
+//
+
+Vec3f:: Vec3f(){}
+
+Vec3f:: Vec3f(double inX, double inY, double inZ): x(inX), y(inY), z(inZ){
+
+}
+
+//
+// Функции Vec3f
+//
 
 
+
+//
+// Конструкторы Sphere
+//
+
+//
+// Функции Sphere
+//
+
+//
+// Конструкторы Plane3v
+//
+
+//
+// Функции Plane3v
+//
+
+//
+// Конструкторы Plane4v
+//
+
+//
+// Функции Plane4v
+//
 
 
 

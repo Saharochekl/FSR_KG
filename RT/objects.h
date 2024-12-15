@@ -14,9 +14,8 @@ struct Vec3f
     double y;
     double z;
 
-    Vec3f() { }
-    Vec3f(double inX, double inY, double inZ) : x(inX), y(inY), z(inZ) { }
-
+    Vec3f();
+    Vec3f(double inX, double inY, double inZ);
     Vec3f operator+(const Vec3f& o) const
     {
         return Vec3f(x + o.x, y + o.y, z + o.z);
