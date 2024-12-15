@@ -54,11 +54,13 @@ OBJECTS_DIR   = ./
 
 SOURCES       = ../RT/main.cpp \
 		../RT/mainwindow.cpp \
+		../RT/objects.cpp \
 		../RT/qraytracingwidget.cpp \
 		../RT/scene.cpp moc_mainwindow.cpp \
 		moc_qraytracingwidget.cpp
 OBJECTS       = main.o \
 		mainwindow.o \
+		objects.o \
 		qraytracingwidget.o \
 		scene.o \
 		moc_mainwindow.o \
@@ -232,6 +234,7 @@ DIST          = /Users/zuha/Qt/6.6.0/macos/mkspecs/features/spec_pre.prf \
 		../RT/qraytracingwidget.h \
 		../RT/scene.h ../RT/main.cpp \
 		../RT/mainwindow.cpp \
+		../RT/objects.cpp \
 		../RT/qraytracingwidget.cpp \
 		../RT/scene.cpp
 QMAKE_TARGET  = RT
@@ -620,7 +623,7 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../RT/mainwindow.h ../RT/objects.h ../RT/qraytracingwidget.h ../RT/scene.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../RT/main.cpp ../RT/mainwindow.cpp ../RT/qraytracingwidget.cpp ../RT/scene.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../RT/main.cpp ../RT/mainwindow.cpp ../RT/objects.cpp ../RT/qraytracingwidget.cpp ../RT/scene.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../RT/mainwindow.ui $(DISTDIR)/
 
 
@@ -711,6 +714,9 @@ mainwindow.o: ../RT/mainwindow.cpp ../RT/mainwindow.h \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtGui.framework/Headers/qimage.h \
 		../RT/objects.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../RT/mainwindow.cpp
+
+objects.o: ../RT/objects.cpp ../RT/objects.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o objects.o ../RT/objects.cpp
 
 qraytracingwidget.o: ../RT/qraytracingwidget.cpp ../RT/qraytracingwidget.h \
 		/Users/zuha/Qt/6.6.0/macos/lib/QtWidgets.framework/Headers/QWidget \

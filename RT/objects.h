@@ -58,6 +58,12 @@ struct Vec3f
     Vec3f Normilize() const { return (*this) * (1.0 / length()); }
 };
 
+
+struct IntersectionResult {
+    double t;
+    int planeIndex;
+};
+
 inline Vec3f operator*(const double& a, const Vec3f& v)
 {
     return v * a;
@@ -346,9 +352,18 @@ struct Star : public Object{
     Vec3f center;               // Центр звезды
     double scale;               // Масштаб звезды
     double rotationAngle;       // Угол вращения вокруг оси Z
+    mutable int lastPlaneIndex; // индекс последней пересечённой грани
+    Color st_col;
+
     Star(): Object(Color()) { } // dummy object
-    Star(const Vec3f& c, double s, Color col)
+
+    Star(const Vec3f& c, double scaleFactor, Color col)
         :  Object(col) {
+        s = -1;
+        r = -1;
+        scale = scaleFactor;
+        center = c;
+
         // Определяем вершины
         vertices = {
             Vec3f(-0.198617, 0.000000, 0.198617),
@@ -364,26 +379,24 @@ struct Star : public Object{
             Vec3f(0.000000, -0.101898, 0.000000)
         };
 
-
-
         // Определяем грани (треугольники)
         planes = {
-            Plane3v(vertices[6]* s + c, vertices[10]* s + c, vertices[0]* s + c, col),
-            Plane3v(vertices[6]* s + c, vertices[1]* s + c, vertices[10]* s + c, col),
-            Plane3v(vertices[3]* s + c, vertices[10]* s + c, vertices[5]* s + c, col),
-            Plane3v(vertices[5]* s + c, vertices[10]* s + c, vertices[1]* s + c, col),
-            Plane3v(vertices[9]* s + c, vertices[4]* s + c, vertices[2]* s + c, col),
-            Plane3v(vertices[2]* s + c, vertices[7]* s + c, vertices[9]* s + c, col),
-            Plane3v(vertices[7]* s + c, vertices[3]* s + c, vertices[9]* s + c, col),
-            Plane3v(vertices[3]* s + c, vertices[5]* s + c, vertices[9]* s + c, col),
-            Plane3v(vertices[5]* s + c, vertices[1]* s + c, vertices[9]* s + c, col),
-            Plane3v(vertices[9]* s + c, vertices[6]* s + c, vertices[0]* s + c, col),
-            Plane3v(vertices[6]* s + c, vertices[9]* s + c, vertices[1]* s + c, col),
-            Plane3v(vertices[4]* s + c, vertices[9]* s + c, vertices[0]* s + c, col),
-            Plane3v(vertices[7]* s + c, vertices[10]* s + c, vertices[3]* s + c, col),
-            Plane3v(vertices[2]* s + c, vertices[10]* s + c, vertices[7]* s + c, col),
-            Plane3v(vertices[4]* s + c, vertices[10]* s + c, vertices[2]* s + c, col),
-            Plane3v(vertices[0]* s + c, vertices[10]* s + c, vertices[4]* s + c, col)
+            Plane3v(vertices[6]* scale   + center, vertices[10]* scale   + center, vertices[0]* scale + center, col),
+            Plane3v(vertices[6]* scale   + center, vertices[1]* scale  + center, vertices[10]* scale  + center, col),
+            Plane3v(vertices[3]* scale   + center, vertices[10]* scale  + center, vertices[5]* scale  + center, col),
+            Plane3v(vertices[5]* scale   + center, vertices[10]* scale  + center, vertices[1]* scale   + center, col),
+            Plane3v(vertices[9]* scale   + center, vertices[4]* scale   + center, vertices[2]* scale   + center, col),
+            Plane3v(vertices[2]* scale   + center, vertices[7]* scale   + center, vertices[9]* scale   + center, col),
+            Plane3v(vertices[7]* scale   + center, vertices[3]* scale   + center, vertices[9]* scale   + center, col),
+            Plane3v(vertices[3]* scale   + center, vertices[5]* scale   + center, vertices[9]* scale   + center, col),
+            Plane3v(vertices[5]* scale   + center, vertices[1]* scale   + center, vertices[9]* scale   + center, col),
+            Plane3v(vertices[9]* scale   + center, vertices[6]* scale   + center, vertices[0]* scale   + center, col),
+            Plane3v(vertices[6]* scale   + center, vertices[9]* scale   + center, vertices[1]* scale   + center, col),
+            Plane3v(vertices[4]* scale   + center, vertices[9]* scale   + center, vertices[0]* scale   + center, col),
+            Plane3v(vertices[7]* scale   + center, vertices[10]* scale   + center, vertices[3]* scale   + center, col),
+            Plane3v(vertices[2]* scale   + center, vertices[10]* scale   + center, vertices[7]* scale   + center, col),
+            Plane3v(vertices[4]* scale   + center, vertices[10]* scale   + center, vertices[2]* scale   + center, col),
+            Plane3v(vertices[0]* scale   + center, vertices[10]* scale   + center, vertices[4]* scale   + center, col)
         };
 
     }
@@ -393,49 +406,33 @@ struct Star : public Object{
         int intersectedPlaneIndex = -1;
         for (size_t i = 0; i < planes.size(); ++i) {
             double t = planes[i].is_intersect(r);
-            if (t > 0 && (minT < 0 || t < minT)) {
+            if (t > 1e-6 && (minT < 0 || t < minT)) {
                 minT = t;
-                intersectedPlaneIndex = i; // Сохраняем индекс пересечённой грани
-                std::cout << "Ray: (" << r.beg.x << ", " << r.beg.y << ", " << r.beg.z
-                          << ") -> (" << r.dir.x << ", " << r.dir.y << ", " << r.dir.z << ")\n";
-                std::cout << "Nearest intersection at t = " << minT
-                          << ", with plane index: " << intersectedPlaneIndex << "\n";
+                intersectedPlaneIndex = (int)i;
             }
-
         }
-
+        // Сохраняем индекс пересечённой грани
+        lastPlaneIndex = intersectedPlaneIndex;
         return minT;
     }
 
     virtual Vec3f get_normal(const Vec3f& v) const override {
-        for (const auto& plane : planes) {
-            if (plane.is_intersect(Ray(v, Vec3f(0, 0, 1))) > 0) {
-                return plane.get_normal(v).Normilize();
-            }
+        // Используем сохранённый индекс грани, чтобы получить корректную нормаль
+        if (lastPlaneIndex >= 0 && (size_t)lastPlaneIndex < planes.size()) {
+            return planes[lastPlaneIndex].get_normal(v).Normilize();
         }
-        return Vec3f(0, 0, 0); // Если точка не принадлежит ни одной грани
+        return Vec3f(0, 0, 0);
     }
-
     // Перемещение центра звезды
-    void moving(const Vec3f& delta) {
-        for (auto& vertex : vertices) {
-            vertex = vertex + delta;
-        }
-        center = center + delta;
-    }
-
+    void moving(const Vec3f& delta);
     // Масштабирование звезды
-    void scaling(double factor) {
-        for (auto& vertex : vertices) {
-            vertex = center + (vertex - center) * factor;
-        }
-    }
+    void scaling(double factor);
 
     // Вращение вокруг осей
     void rotating(double angleX, double angleY, double angleZ) {
         for (auto& vertex : vertices) {
             // Приводим вершину к локальной системе координат звезды
-            Vec3f localVertex = vertex - center;
+            Vec3f localVertex = vertex;
 
             // Вращение вокруг оси X
             double sinX = sin(angleX);
@@ -465,10 +462,10 @@ struct Star : public Object{
                 );
 
             // Возвращаем вершину в глобальную систему координат
-            vertex = center + localVertex;
+            vertex = localVertex;
         }
     }
-
+    void updatePlanes();
     // Вывод состояния звезды
     void printState() const {
         std::cout << "Center: (" << center.x << ", " << center.y << ", " << center.z << ")\n";
@@ -478,5 +475,9 @@ struct Star : public Object{
         }
     }
 };
+
+
+
+
 
 #endif // OBJECTS_H

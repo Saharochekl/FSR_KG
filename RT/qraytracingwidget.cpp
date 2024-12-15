@@ -12,7 +12,18 @@ QRayTracingWidget::QRayTracingWidget(QWidget *parent)
 
 
 
-    cur_sc.add_object(new Star(Vec3f(50, 100, 50), 200, Color(255, 255, 0)));
+    Star* star = new Star(Vec3f(50, 100, 50), 200, Color(255, 255, 0));
+    // Поворот вокруг оси X на 90 градусов (M_PI_2 — это π/2, если не определено, можно использовать 1.5708)
+    double angleX = M_PI_2; // 90 градусов в радианах
+    double angleY = 0.0;
+    double angleZ = 0.0;
+    star->rotating(angleX, angleY, angleZ);
+
+    // Обновляем грани после трансформации
+    star->updatePlanes();
+
+    // Добавляем звезду в сцену
+    cur_sc.add_object(star);
     // Звездочка
     cur_sc.add_object(new Plane3v(Vec3f(100, 150, -250),
                                   Vec3f(100, 230, -250),
