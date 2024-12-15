@@ -100,10 +100,10 @@ struct Color
     unsigned short G;
     unsigned short B;
 
-    Color() : R(0), G(0), B(0) { }
+    Color();
     Color(unsigned short iR,
           unsigned short iG,
-          unsigned short iB) : R(iR), G(iG), B(iB) { }
+          unsigned short iB);
 
     Color operator*(const double& d) const
     {
@@ -132,8 +132,8 @@ struct Ray
     Vec3f beg;
     Vec3f dir;
 
-    Ray() { }
-    Ray(const Vec3f& b, const Vec3f& d) : beg(b), dir(d) { }
+    Ray();
+    Ray(const Vec3f& b, const Vec3f& d);
 
     Vec3f operator()(double t) const
     {
@@ -149,9 +149,8 @@ struct LightSource
     Vec3f position;
     double intensity;
 
-    LightSource() { }
-    LightSource(int t, const Vec3f& v, const double& intens)
-        : type(t), position(v), intensity(intens) { }
+    LightSource();
+    LightSource(int t, const Vec3f& v, const double& intens);
 };
 
 struct Object
@@ -162,8 +161,8 @@ struct Object
     virtual double is_intersect(const Ray& r) const = 0;
     virtual Vec3f get_normal(const Vec3f& v) const = 0;
 
-    Object() { }
-    Object(Color c) : color(c) { }
+    Object();
+    Object(Color c);
     virtual void tick() { }
 };
 
@@ -198,23 +197,21 @@ struct Sphere : public Object
     double phase;
     double amp;
 
-    Sphere() { }
-    Sphere(const double& rad, const Vec3f& v) : radius(rad), center(v), dir(0, 1, 0), step(5), phase(0), amp(300) { }
+    Sphere();
+    Sphere(const double& rad, const Vec3f& v) ;
     Sphere(const double& rad,
            const Vec3f& v,
-           Color c) : Object(c), radius(rad), center(v), dir(0, 1, 0), step(5), phase(0), amp(300) {r=-1; s=-1;}
+           Color c);
     Sphere(const double& rad,
            const Vec3f& v,
-           Color c,  double spect, double refl) : Object(c), radius(rad), center(v), dir(0, 1, 0), step(5), phase(0), amp(300) {r = refl; s = spect;}
+           Color c,  double spect, double refl);
 
     Sphere(const double& rad,
            const Vec3f& v,
            Color c,
            double in_step,
            Vec3f in_dir,
-           double in_amp) :
-        Object(c), radius(rad), center(v),
-        dir(in_dir), step(in_step), phase(0), amp(in_amp) { }
+           double in_amp);
 
     virtual Vec3f get_normal(const Vec3f& v) const
     {
@@ -260,29 +257,15 @@ struct Plane3v : public Object
 {
     Vec3f vert[3];
 
-    Plane3v() : Object(Color()) { } // dummy object
+    Plane3v();
     Plane3v(const Vec3f& A,
             const Vec3f& B,
             const Vec3f& C,
-            Color col) : Object(col)
-    {
-        vert[0] = A;
-        vert[1] = B;
-        vert[2] = C;
-        s = -1;
-        r = -1;
-    }
+            Color col);
     Plane3v(const Vec3f& A,
             const Vec3f& B,
             const Vec3f& C,
-            Color col, double spect, double refl) : Object(col)
-    {
-        vert[0] = A;
-        vert[1] = B;
-        vert[2] = C;
-        s = spect;
-        r = refl;
-    }
+            Color col, double spect, double refl);
 
 
     virtual double is_intersect(const Ray& r) const
@@ -301,33 +284,17 @@ struct Plane4v : public Object
 {
     Vec3f vert[4];
 
-    Plane4v() : Object(Color()) { } // dummy object
+    Plane4v();
     Plane4v(const Vec3f& A,
             const Vec3f& B,
             const Vec3f& C,
             const Vec3f& D,
-            Color col) : Object(col)
-    {
-        vert[0] = A;
-        vert[1] = B;
-        vert[2] = C;
-        vert[3] = D;
-        s = -1;
-        r = -1;
-    }
+            Color col);
     Plane4v(const Vec3f& A,
             const Vec3f& B,
             const Vec3f& C,
             const Vec3f& D,
-            Color col, double spect, double refl) : Object(col)
-    {
-        vert[0] = A;
-        vert[1] = B;
-        vert[2] = C;
-        vert[3] = D;
-        s = spect;
-        r = refl;
-    }
+            Color col, double spect, double refl);
 
 
     virtual double is_intersect(const Ray& r) const

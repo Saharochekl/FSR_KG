@@ -16,10 +16,62 @@ Vec3f:: Vec3f(double inX, double inY, double inZ): x(inX), y(inY), z(inZ){
 //
 
 
+//
+// Конструкторы Color
+//
+
+Color:: Color() : R(0), G(0), B(0) { }
+Color:: Color(unsigned short iR,
+      unsigned short iG,
+      unsigned short iB) : R(iR), G(iG), B(iB) { }
+
+
+//
+// Конструкторы Ray
+//
+
+Ray::Ray() { }
+Ray:: Ray(const Vec3f& b, const Vec3f& d) : beg(b), dir(d) { }
+
+//
+// Конструкторы LightSourse
+//
+
+LightSource:: LightSource() { }
+LightSource:: LightSource(int t, const Vec3f& v, const double& intens)
+    : type(t), position(v), intensity(intens) { }
+
+
+//
+// Конструкторы Object
+//
+
+Object:: Object() { }
+Object:: Object(Color c) : color(c) { }
+
 
 //
 // Конструкторы Sphere
 //
+
+
+Sphere:: Sphere() { }
+Sphere:: Sphere(const double& rad, const Vec3f& v) : radius(rad), center(v), dir(0, 1, 0), step(5), phase(0), amp(300) { }
+Sphere:: Sphere(const double& rad,
+       const Vec3f& v,
+       Color c) : Object(c), radius(rad), center(v), dir(0, 1, 0), step(5), phase(0), amp(300) {r=-1; s=-1;}
+Sphere:: Sphere(const double& rad,
+       const Vec3f& v,
+       Color c,  double spect, double refl) : Object(c), radius(rad), center(v), dir(0, 1, 0), step(5), phase(0), amp(300) {r = refl; s = spect;}
+
+Sphere:: Sphere(const double& rad,
+       const Vec3f& v,
+       Color c,
+       double in_step,
+       Vec3f in_dir,
+       double in_amp) :
+    Object(c), radius(rad), center(v),
+    dir(in_dir), step(in_step), phase(0), amp(in_amp) { }
 
 //
 // Функции Sphere
@@ -29,6 +81,31 @@ Vec3f:: Vec3f(double inX, double inY, double inZ): x(inX), y(inY), z(inZ){
 // Конструкторы Plane3v
 //
 
+Plane3v:: Plane3v() : Object(Color()) { } // dummy object
+Plane3v:: Plane3v(const Vec3f& A,
+        const Vec3f& B,
+        const Vec3f& C,
+        Color col) : Object(col)
+{
+    vert[0] = A;
+    vert[1] = B;
+    vert[2] = C;
+    s = -1;
+    r = -1;
+}
+Plane3v:: Plane3v(const Vec3f& A,
+        const Vec3f& B,
+        const Vec3f& C,
+        Color col, double spect, double refl) : Object(col)
+{
+    vert[0] = A;
+    vert[1] = B;
+    vert[2] = C;
+    s = spect;
+    r = refl;
+}
+
+
 //
 // Функции Plane3v
 //
@@ -36,6 +113,34 @@ Vec3f:: Vec3f(double inX, double inY, double inZ): x(inX), y(inY), z(inZ){
 //
 // Конструкторы Plane4v
 //
+
+Plane4v:: Plane4v() : Object(Color()) { } // dummy object
+Plane4v:: Plane4v(const Vec3f& A,
+        const Vec3f& B,
+        const Vec3f& C,
+        const Vec3f& D,
+        Color col) : Object(col)
+{
+    vert[0] = A;
+    vert[1] = B;
+    vert[2] = C;
+    vert[3] = D;
+    s = -1;
+    r = -1;
+}
+Plane4v:: Plane4v(const Vec3f& A,
+        const Vec3f& B,
+        const Vec3f& C,
+        const Vec3f& D,
+        Color col, double spect, double refl) : Object(col)
+{
+    vert[0] = A;
+    vert[1] = B;
+    vert[2] = C;
+    vert[3] = D;
+    s = spect;
+    r = refl;
+}
 
 //
 // Функции Plane4v
