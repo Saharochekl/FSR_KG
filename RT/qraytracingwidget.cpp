@@ -14,7 +14,7 @@ QRayTracingWidget::QRayTracingWidget(QWidget *parent)
 
     Sphere* s1 = new Sphere(30, Vec3f(-50, 200, 550), Color(12, 100, 15), 70, 0.3);
     Sphere* s2 = new Sphere(30, Vec3f(-50 + orbit_radius*cos(2*M_PI/3), 200, 250 + orbit_radius*sin(2*M_PI/3)), Color(100, 50, 107), 70, 0.3);
-    Sphere* s3 = new Sphere(30, Vec3f(-50 - orbit_radius*cos(4*M_PI/3), 200, 250 + orbit_radius*sin(4*M_PI/3)), Color(255, 10, 10), 70, 0.3);
+    Sphere* s3 = new Sphere(30, Vec3f(-50 + orbit_radius*cos(4*M_PI/3), 200, 250 + orbit_radius*sin(4*M_PI/3)), Color(255, 10, 10), 70, 0.3);
 
 
 //    cur_sc.add_object(new Sphere(30, Vec3f(-50, 250, 550), Color(12, 100, 15), 70, 0.4));
@@ -31,7 +31,7 @@ QRayTracingWidget::QRayTracingWidget(QWidget *parent)
     cur_sc.add_object(s3);
     // Напоминалка про vec3f(лево-право, выше-ниже, ближе-дальше)
 
-    Star* star = new Star(Vec3f(-50, 100, 250), 200, Color(153, 204, 255));
+    Star* star = new Star(Vec3f(-50, 100, 250), 200, Color(153, 204, 255), 70, 0.5);
     // Поворот вокруг оси X на 90 градусов
     double angleX = M_PI_2; // 90 градусов в радианах
     double angleY = 0.0;
@@ -43,7 +43,7 @@ QRayTracingWidget::QRayTracingWidget(QWidget *parent)
     // Добавляем звезду в сцену
     cur_sc.add_object(star);
 
-    Peaks4* peaks = new Peaks4(Vec3f(-50, -50, 0), 3, Color(75, 0, 130));
+    Peaks4* peaks = new Peaks4(Vec3f(-50, -50, 0), 3, Color(75, 0, 130), -1, -1);
 
      angleX = 0.0; // 90 градусов в радианах
      angleY = M_PI/4;
@@ -70,13 +70,13 @@ QRayTracingWidget::QRayTracingWidget(QWidget *parent)
     cur_sc.add_light(LightSource(POINT, Vec3f(700, 250, -500), 0.4));
     cur_sc.add_light(LightSource(POINT, Vec3f(-700, 250, -500), 0.4));
 
-    QTimer* timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, [this]() {
-        // Каждое срабатывание таймера будет обновлять сцену
-        cur_sc.tick();   // вызываем tick, чтобы объекты могли обновить своё состояние
-        update();        // перерисовать виджет
-    });
-    timer->start(3000); // обновление каждые 5 с (чтобы ретрейсинг успел произойти)
+//    QTimer* timer = new QTimer(this);
+//    connect(timer, &QTimer::timeout, this, [this]() {
+//        // Каждое срабатывание таймера будет обновлять сцену
+//        cur_sc.tick();   // вызываем tick, чтобы объекты могли обновить своё состояние
+//        update();        // перерисовать виджет
+//    });
+//    timer->start(3000); // обновление каждые 5 с (чтобы ретрейсинг успел произойти)
 
 }
 

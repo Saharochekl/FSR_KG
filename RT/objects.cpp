@@ -241,11 +241,11 @@ Star::Star() : Object(Color()), lastPlaneIndex(-1), scale(1.0), rotationAngle(0.
     // Тут можно оставить пусто или инициализировать поля по умолчанию, мб потом чёт поменяю
 }
 
-Star::Star(const Vec3f& c, double scaleFactor, Color col)
+Star::Star(const Vec3f& c, double scaleFactor, Color col, double spect, double refl)
     : Object(col), lastPlaneIndex(-1), scale(scaleFactor), center(c)
 {
-    s = -1;
-    r = -1;
+    s = spect;
+    r = refl;
     scale = scaleFactor;
     center = c;
 
@@ -392,20 +392,16 @@ Vec3f Star:: get_normal(const Vec3f& v) const  {
 
 void Star::tick() {
     // Увеличиваем время
-    animTime += 0.03;
+    animTime += 0.02;
 
     // Зададим колебательное движение по оси Z
     double delta = 50; // амплитуда
     double offsetZ = delta * sin(animTime);
 
     // Перемещаем звезду по синусоиде вверх-вниз
-    // Мы хотим, чтобы звезда колебалась вокруг своей изначальной точки, допустим `center` - это её базовое положение.
-    // Так как мы в moving меняем center, лучше пусть moving меняет только центр.
-    // Или же мы можем просто менять center напрямую, если не хотим трогать вершины.
+    // Так как мы в moving меняем center, лучше пусть moving меняет только центр, в итоге без него обошлись)
 
-    // Но вы сейчас moving изменяете только center:
-    // значит просто делаем:
-    Vec3f baseCenter(-50, 100, 250); // база, где звезда была изначально
+    Vec3f baseCenter(-50, 100, 250); // начальная точка где звезда была
     center = baseCenter + Vec3f(0,offsetZ,0);
 
     // Вращение звезды вокруг оси Z (например)
@@ -425,11 +421,11 @@ Peaks4::Peaks4() : Object(Color()), lastPlaneIndex(-1), scale(1.0), rotationAngl
     // Тут можно оставить пусто или инициализировать поля по умолчанию, мб потом чёт поменяю
 }
 
-Peaks4::Peaks4(const Vec3f& c, double scaleFactor, Color col)
+Peaks4::Peaks4(const Vec3f& c, double scaleFactor, Color col, double spect, double refl)
     : Object(col), lastPlaneIndex(-1), scale(scaleFactor), center(c)
 {
-    s = -1;
-    r = -1;
+    s = spect;
+    r = refl;
     scale = scaleFactor;
     center = c;
 

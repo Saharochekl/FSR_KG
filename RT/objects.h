@@ -274,7 +274,7 @@ struct Star : public Object{
 
     Star();
 
-    Star(const Vec3f& c, double scaleFactor, Color col);
+    Star(const Vec3f& c, double scaleFactor, Color col, double spect, double refl);
 
     // Переопределение метода от Object (необходимо для сцены)
     virtual double is_intersect(const Ray& r) const override ;
@@ -304,7 +304,7 @@ struct Peaks4 : public Object{
     mutable int lastPlaneIndex; // индекс последней пересечённой грани
     Color st_col;
     Peaks4();
-    Peaks4(const Vec3f& c, double scaleFactor, Color col);
+    Peaks4(const Vec3f& c, double scaleFactor, Color col, double spect, double refl);
 
     // Переопределение метода от Object (необходимо для сцены)
     virtual double is_intersect(const Ray& r) const override ;
