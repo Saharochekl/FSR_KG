@@ -2,7 +2,6 @@
 #include <QPainter>
 #include <QImage>
 #include <iostream>
-#include <QTimer>
 
 
 QRayTracingWidget::QRayTracingWidget(QWidget *parent)
@@ -36,7 +35,18 @@ QRayTracingWidget::QRayTracingWidget(QWidget *parent)
     peaks->updatePlanes();
 
     cur_sc.add_object(peaks);
-
+    // плоскость
+    cur_sc.add_object(new Plane4v(Vec3f(-1100, -600, 100),
+                                  Vec3f(1100,  -600, 100),
+                                  Vec3f(1100,  -600, 8000),
+                                  Vec3f(-1100, -600, 8000),
+                                  Color(150, 72, 118), -1, -1));
+    // плоскость
+    cur_sc.add_object(new Plane4v(Vec3f(-1100, 600, 6000),
+                                  Vec3f(1100,  600, 6000),
+                                  Vec3f(1100,  -600, 6000),
+                                  Vec3f(-1100, -600, 6000),
+                                  Color(240, 240, 240), 0, 1));
 
     cur_sc.add_light(LightSource(AMBIENT, Vec3f(), 0.3));
     cur_sc.add_light(LightSource(POINT, Vec3f(700, 500, 0), 0.8));
