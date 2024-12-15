@@ -242,3 +242,65 @@ void Star::scaling(double factor) {
         vertex = center + (vertex - center) * factor;
     }
 }
+
+// Вращение вокруг осей
+void Star:: rotating(double angleX, double angleY, double angleZ) {
+    for (auto& vertex : vertices) {
+        // Приводим вершину к локальной системе координат звезды
+        Vec3f localVertex = vertex;
+
+        // Вращение вокруг оси X
+        double sinX = sin(angleX);
+        double cosX = cos(angleX);
+        localVertex = Vec3f(
+            localVertex.x,
+            localVertex.y * cosX - localVertex.z * sinX,
+            localVertex.y * sinX + localVertex.z * cosX
+            );
+
+        // Вращение вокруг оси Y
+        double sinY = sin(angleY);
+        double cosY = cos(angleY);
+        localVertex = Vec3f(
+            localVertex.x * cosY + localVertex.z * sinY,
+            localVertex.y,
+            -localVertex.x * sinY + localVertex.z * cosY
+            );
+
+        // Вращение вокруг оси Z
+        double sinZ = sin(angleZ);
+        double cosZ = cos(angleZ);
+        localVertex = Vec3f(
+            localVertex.x * cosZ - localVertex.y * sinZ,
+            localVertex.x * sinZ + localVertex.y * cosZ,
+            localVertex.z
+            );
+
+        // Возвращаем вершину в глобальную систему координат
+        vertex = localVertex;
+    }
+}
+
+// Переопределение метода от Object (необходимо для сцены)
+double Star:: is_intersect(const Ray& r) const  {
+    double minT = -1.0;
+    int intersectedPlaneIndex = -1;
+    for (size_t i = 0; i < planes.size(); ++i) {
+        double t = planes[i].is_intersect(r);
+        if (t > 1e-6 && (minT < 0 || t < minT)) {
+            minT = t;
+            intersectedPlaneIndex = (int)i;
+        }
+    }
+    // Сохраняем индекс пересечённой грани
+    lastPlaneIndex = intersectedPlaneIndex;
+    return minT;
+}
+
+Vec3f Star:: get_normal(const Vec3f& v) const  {
+    // Используем сохранённый индекс грани, чтобы получить корректную нормаль
+    if (lastPlaneIndex >= 0 && (size_t)lastPlaneIndex < planes.size()) {
+        return planes[lastPlaneIndex].get_normal(v).Normilize();
+    }
+    return Vec3f(0, 0, 0);
+}
