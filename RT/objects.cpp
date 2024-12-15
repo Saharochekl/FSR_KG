@@ -55,14 +55,17 @@ Object:: Object(Color c) : color(c) { }
 //
 
 
-Sphere:: Sphere() { }
-Sphere:: Sphere(const double& rad, const Vec3f& v) : radius(rad), center(v), dir(0, 1, 0), step(5), phase(0), amp(300) { }
+Sphere:: Sphere() : orbitRadius(0), angle(0), angleStep(0) { }
+Sphere:: Sphere(const double& rad, const Vec3f& v): radius(rad), center(v), dir(0, 1, 0), step(5), phase(0), amp(300), orbitRadius(0), angle(0), angleStep(0) { }
 Sphere:: Sphere(const double& rad,
        const Vec3f& v,
-       Color c) : Object(c), radius(rad), center(v), dir(0, 1, 0), step(5), phase(0), amp(300) {r=-1; s=-1;}
+       Color c)  : Object(c), radius(rad), center(v), dir(0, 1, 0), step(5), phase(0), amp(300), orbitRadius(0), angle(0), angleStep(0) {r=-1; s=-1;}
+
+
 Sphere:: Sphere(const double& rad,
        const Vec3f& v,
-       Color c,  double spect, double refl) : Object(c), radius(rad), center(v), dir(0, 1, 0), step(5), phase(0), amp(300) {r = refl; s = spect;}
+       Color c,  double spect, double refl) : Object(c), radius(rad), center(v), dir(0,1,0), step(5), phase(0), amp(300), orbitRadius(0), angle(0), angleStep(0) {r = refl; s = spect;}
+
 
 Sphere:: Sphere(const double& rad,
        const Vec3f& v,
@@ -71,8 +74,7 @@ Sphere:: Sphere(const double& rad,
        Vec3f in_dir,
        double in_amp) :
     Object(c), radius(rad), center(v),
-    dir(in_dir), step(in_step), phase(0), amp(in_amp) { }
-
+    dir(in_dir), step(in_step), phase(0), amp(in_amp), orbitRadius(0), angle(0), angleStep(0) { }
 //
 // Функции Sphere
 //
@@ -109,14 +111,32 @@ double Sphere:: is_intersect(const Ray& r) const
 
 void Sphere:: tick()
 {
-    phase += step;
-    if(fabs(phase) > amp)
+    // Если orbitRadius > 0, значит сфера движется по орбите
+    if(orbitRadius > 0)
     {
-        step *= -1;
-        phase += step * 2;
+        // Фиксируем высоту
+        double fixedY = center.y;
+
+        angle += angleStep; // увеличиваем угол
+        // Вычисляем новые координаты вокруг orbitCenter
+        // Движение по кругу в плоскости XZ:
+        double newX = orbitCenter.x + orbitRadius * cos(angle);
+        double newZ = orbitCenter.z + orbitRadius * sin(angle);
+
+        // Обновляем центр сферы
+        center = Vec3f(newX, fixedY, newZ);
     }
+
+
 }
 
+void Sphere:: setOrbit(const Vec3f& orbitC, double radius, double initialAngle, double stepAngle)
+{
+    orbitCenter = orbitC;
+    orbitRadius = radius;
+    angle = initialAngle;
+    angleStep = stepAngle;
+}
 
 //
 // Конструкторы Plane3v

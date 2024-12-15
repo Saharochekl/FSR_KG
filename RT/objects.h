@@ -196,22 +196,18 @@ struct Sphere : public Object
     double step;
     double phase;
     double amp;
+    // Новые поля для орбитального движения
+    Vec3f orbitCenter;  // Центр орбиты
+    double orbitRadius; // Радиус орбиты
+    double angle;       // Текущий угол на орбите
+    double angleStep;   // На сколько радиан поворачивать за 1 тик
 
     Sphere();
     Sphere(const double& rad, const Vec3f& v) ;
-    Sphere(const double& rad,
-           const Vec3f& v,
-           Color c);
-    Sphere(const double& rad,
-           const Vec3f& v,
-           Color c,  double spect, double refl);
+    Sphere(const double& rad, const Vec3f& v, Color c);
+    Sphere(const double& rad, const Vec3f& v, Color c, double spect, double refl);
 
-    Sphere(const double& rad,
-           const Vec3f& v,
-           Color c,
-           double in_step,
-           Vec3f in_dir,
-           double in_amp);
+    Sphere(const double& rad, const Vec3f& v, Color c, double in_step, Vec3f in_dir, double in_amp);
 
     virtual Vec3f get_normal(const Vec3f& v) const;
 
@@ -219,7 +215,10 @@ struct Sphere : public Object
 
     virtual double is_intersect(const Ray& r) const;
 
-    virtual void tick();
+    virtual void tick() override;
+
+    void setOrbit(const Vec3f& orbitC, double radius, double initialAngle = 0.0, double stepAngle = 0.01);
+
 };
 
 struct Plane3v : public Object
