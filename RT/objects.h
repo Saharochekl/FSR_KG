@@ -355,51 +355,10 @@ struct Star : public Object{
     mutable int lastPlaneIndex; // индекс последней пересечённой грани
     Color st_col;
 
-    Star(): Object(Color()) { } // dummy object
+    Star();
 
-    Star(const Vec3f& c, double scaleFactor, Color col)
-        :  Object(col) {
-        s = -1;
-        r = -1;
-        scale = scaleFactor;
-        center = c;
+    Star(const Vec3f& c, double scaleFactor, Color col);
 
-        // Определяем вершины
-        vertices = {
-            Vec3f(-0.198617, 0.000000, 0.198617),
-            Vec3f(0.200833, 0.000000, 0.198195),
-            Vec3f(-0.197404, 0.000000, -0.202679),
-            Vec3f(0.198195, 0.000000, -0.200833),
-            Vec3f(-0.599098, 0.000000, 0.000000),
-            Vec3f(0.596460, 0.000000, 0.000000),
-            Vec3f(0.000000, 0.000000, 0.603001),
-            Vec3f(0.000000, 0.000000, -0.599098),
-            Vec3f(0.000000, 0.000000, 0.000000),
-            Vec3f(0.000000, 0.098429, 0.000000),
-            Vec3f(0.000000, -0.101898, 0.000000)
-        };
-
-        // Определяем грани (треугольники)
-        planes = {
-            Plane3v(vertices[6]* scale   + center, vertices[10]* scale   + center, vertices[0]* scale + center, col),
-            Plane3v(vertices[6]* scale   + center, vertices[1]* scale  + center, vertices[10]* scale  + center, col),
-            Plane3v(vertices[3]* scale   + center, vertices[10]* scale  + center, vertices[5]* scale  + center, col),
-            Plane3v(vertices[5]* scale   + center, vertices[10]* scale  + center, vertices[1]* scale   + center, col),
-            Plane3v(vertices[9]* scale   + center, vertices[4]* scale   + center, vertices[2]* scale   + center, col),
-            Plane3v(vertices[2]* scale   + center, vertices[7]* scale   + center, vertices[9]* scale   + center, col),
-            Plane3v(vertices[7]* scale   + center, vertices[3]* scale   + center, vertices[9]* scale   + center, col),
-            Plane3v(vertices[3]* scale   + center, vertices[5]* scale   + center, vertices[9]* scale   + center, col),
-            Plane3v(vertices[5]* scale   + center, vertices[1]* scale   + center, vertices[9]* scale   + center, col),
-            Plane3v(vertices[9]* scale   + center, vertices[6]* scale   + center, vertices[0]* scale   + center, col),
-            Plane3v(vertices[6]* scale   + center, vertices[9]* scale   + center, vertices[1]* scale   + center, col),
-            Plane3v(vertices[4]* scale   + center, vertices[9]* scale   + center, vertices[0]* scale   + center, col),
-            Plane3v(vertices[7]* scale   + center, vertices[10]* scale   + center, vertices[3]* scale   + center, col),
-            Plane3v(vertices[2]* scale   + center, vertices[10]* scale   + center, vertices[7]* scale   + center, col),
-            Plane3v(vertices[4]* scale   + center, vertices[10]* scale   + center, vertices[2]* scale   + center, col),
-            Plane3v(vertices[0]* scale   + center, vertices[10]* scale   + center, vertices[4]* scale   + center, col)
-        };
-
-    }
     // Переопределение метода от Object (необходимо для сцены)
     virtual double is_intersect(const Ray& r) const override {
         double minT = -1.0;
