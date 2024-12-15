@@ -3,22 +3,32 @@
 #include <QImage>
 #include <iostream>
 #include <Qtimer>
-
+#include <math.h>
 
 QRayTracingWidget::QRayTracingWidget(QWidget *parent)
     : QWidget{parent}, cur_sc(width(), height(), width() + height())
 {
-    Vec3f Orbit_center(-50, 250, 250);
+    Vec3f Orbit_center(-50, 200, 250);
     double orbit_radius = 300;
 
-    Sphere* s1 = new Sphere(30, Vec3f(-50, 250, 500), Color(12, 100, 15), 70, 0.3);
-    Sphere* s2 = new Sphere(30, Vec3f(-50, 250, 500), Color(12, 100, 15), 70, 0.3);
-    Sphere* s3 = new Sphere(30, Vec3f(-50, 250, 500), Color(12, 100, 15), 70, 0.3);
 
-    cur_sc.add_object(new Sphere(30, Vec3f(300, 50, 200), Color(12, 100, 15), 70, 0.4));
-    cur_sc.add_object(new Sphere(30, Vec3f(250, 170, 350), Color(100, 50, 107), 70, 0));
-    cur_sc.add_object(new Sphere(30, Vec3f(-350, 10, 200), Color(255, 10, 10), 70, 0.4));
+    Sphere* s1 = new Sphere(30, Vec3f(-50, 200, 550), Color(12, 100, 15), 70, 0.3);
+    Sphere* s2 = new Sphere(30, Vec3f(-50 + orbit_radius*cos(2*M_PI/3), 200, 250 + orbit_radius*sin(2*M_PI/3)), Color(100, 50, 107), 70, 0.3);
+    Sphere* s3 = new Sphere(30, Vec3f(-50 - orbit_radius*cos(4*M_PI/3), 200, 250 + orbit_radius*sin(4*M_PI/3)), Color(255, 10, 10), 70, 0.3);
 
+
+//    cur_sc.add_object(new Sphere(30, Vec3f(-50, 250, 550), Color(12, 100, 15), 70, 0.4));
+//    cur_sc.add_object(new Sphere(30, Vec3f(-50 + orbit_radius*cos(Angle), 250, 250 - orbit_radius*sin(Angle)), Color(100, 50, 107), 70, 0));
+//    cur_sc.add_object(new Sphere(30, Vec3f(-50 - orbit_radius*cos(Angle), 250, 250 - orbit_radius*sin(Angle)), Color(255, 10, 10), 70, 0.4));
+
+
+    s1->setOrbit(Orbit_center, orbit_radius, 0.0, 0.02);
+    s2->setOrbit(Orbit_center, orbit_radius, 2*M_PI/3, 0.02);
+    s3->setOrbit(Orbit_center, orbit_radius, 4*M_PI/3, 0.02);
+
+    cur_sc.add_object(s1);
+    cur_sc.add_object(s2);
+    cur_sc.add_object(s3);
     // Напоминалка про vec3f(лево-право, выше-ниже, ближе-дальше)
 
     Star* star = new Star(Vec3f(-50, 100, 250), 200, Color(153, 204, 255));
@@ -60,13 +70,13 @@ QRayTracingWidget::QRayTracingWidget(QWidget *parent)
     cur_sc.add_light(LightSource(POINT, Vec3f(700, 250, -500), 0.4));
     cur_sc.add_light(LightSource(POINT, Vec3f(-700, 250, -500), 0.4));
 
-//    QTimer* timer = new QTimer(this);
-//    connect(timer, &QTimer::timeout, this, [this]() {
-//        // Каждое срабатывание таймера будет обновлять сцену
-//        cur_sc.tick();   // вызываем tick, чтобы объекты могли обновить своё состояние
-//        update();        // перерисовать виджет
-//    });
-//    timer->start(3000); // обновление каждые 5 с (чтобы ретрейсинг успел произойти)
+    QTimer* timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, [this]() {
+        // Каждое срабатывание таймера будет обновлять сцену
+        cur_sc.tick();   // вызываем tick, чтобы объекты могли обновить своё состояние
+        update();        // перерисовать виджет
+    });
+    timer->start(3000); // обновление каждые 5 с (чтобы ретрейсинг успел произойти)
 
 }
 
