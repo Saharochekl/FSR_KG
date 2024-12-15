@@ -213,44 +213,13 @@ struct Sphere : public Object
            Vec3f in_dir,
            double in_amp);
 
-    virtual Vec3f get_normal(const Vec3f& v) const
-    {
-        return (v - center).Normilize();
-    }
+    virtual Vec3f get_normal(const Vec3f& v) const;
 
-    Vec3f gep_pos() const
-    {
-        return center + phase * dir;
-    }
+    Vec3f gep_pos() const;
 
-    virtual double is_intersect(const Ray& r) const
-    {
-        double A = r.dir.sq();
-        Vec3f v = r.beg - gep_pos();
-        double B = r.dir * v;
-        double C = v.sq() - radius * radius;
+    virtual double is_intersect(const Ray& r) const;
 
-        double D = B * B - A * C;
-
-        if(D < 0)
-            return -1.0;
-
-        double sD = sqrt(D);
-        double t1 = (-B - sD) / A;
-        double t2 = (-B + sD) / A;
-
-        return (t1 > 0) ? t1 : t2;
-    }
-
-    virtual void tick()
-    {
-        phase += step;
-        if(fabs(phase) > amp)
-        {
-            step *= -1;
-            phase += step * 2;
-        }
-    }
+    virtual void tick();
 };
 
 struct Plane3v : public Object
@@ -268,16 +237,9 @@ struct Plane3v : public Object
             Color col, double spect, double refl);
 
 
-    virtual double is_intersect(const Ray& r) const
-    {
-        return is_intersect_tr(r, vert[0], vert[1], vert[2]);
+    virtual double is_intersect(const Ray& r) const;
 
-    }
-
-    virtual Vec3f get_normal(const Vec3f& v) const
-    {
-        return ((vert[2] - vert[0]) % (vert[1] - vert[0])).Normilize();
-    }
+    virtual Vec3f get_normal(const Vec3f& v) const;
 };
 
 struct Plane4v : public Object
@@ -297,19 +259,8 @@ struct Plane4v : public Object
             Color col, double spect, double refl);
 
 
-    virtual double is_intersect(const Ray& r) const
-    {
-        double t1 = is_intersect_tr(r, vert[0], vert[1], vert[2]);
-        if(t1 > 0)
-            return t1;
-
-        return is_intersect_tr(r, vert[2], vert[3], vert[0]);
-    }
-
-    virtual Vec3f get_normal(const Vec3f& v) const
-    {
-        return ((vert[2] - vert[0]) % (vert[1] - vert[0])).Normilize();
-    }
+    virtual double is_intersect(const Ray& r) const;
+    virtual Vec3f get_normal(const Vec3f& v) const;
 };
 
 struct Star : public Object{

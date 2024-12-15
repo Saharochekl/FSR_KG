@@ -77,6 +77,47 @@ Sphere:: Sphere(const double& rad,
 // Функции Sphere
 //
 
+
+Vec3f Sphere:: get_normal(const Vec3f& v) const
+{
+    return (v - center).Normilize();
+}
+
+Vec3f Sphere:: gep_pos() const
+{
+    return center + phase * dir;
+}
+
+double Sphere:: is_intersect(const Ray& r) const
+{
+    double A = r.dir.sq();
+    Vec3f v = r.beg - gep_pos();
+    double B = r.dir * v;
+    double C = v.sq() - radius * radius;
+
+    double D = B * B - A * C;
+
+    if(D < 0)
+        return -1.0;
+
+    double sD = sqrt(D);
+    double t1 = (-B - sD) / A;
+    double t2 = (-B + sD) / A;
+
+    return (t1 > 0) ? t1 : t2;
+}
+
+void Sphere:: tick()
+{
+    phase += step;
+    if(fabs(phase) > amp)
+    {
+        step *= -1;
+        phase += step * 2;
+    }
+}
+
+
 //
 // Конструкторы Plane3v
 //
@@ -110,11 +151,22 @@ Plane3v:: Plane3v(const Vec3f& A,
 // Функции Plane3v
 //
 
+double Plane3v:: is_intersect(const Ray& r) const
+{
+    return is_intersect_tr(r, vert[0], vert[1], vert[2]);
+
+}
+
+Vec3f Plane3v:: get_normal(const Vec3f& v) const
+{
+    return ((vert[2] - vert[0]) % (vert[1] - vert[0])).Normilize();
+}
+
 //
 // Конструкторы Plane4v
 //
 
-Plane4v:: Plane4v() : Object(Color()) { } // dummy object
+Plane4v:: Plane4v() : Object(Color()) { }
 Plane4v:: Plane4v(const Vec3f& A,
         const Vec3f& B,
         const Vec3f& C,
@@ -146,6 +198,19 @@ Plane4v:: Plane4v(const Vec3f& A,
 // Функции Plane4v
 //
 
+double Plane4v:: is_intersect(const Ray& r) const
+{
+    double t1 = is_intersect_tr(r, vert[0], vert[1], vert[2]);
+    if(t1 > 0)
+        return t1;
+
+    return is_intersect_tr(r, vert[2], vert[3], vert[0]);
+}
+
+Vec3f Plane4v:: get_normal(const Vec3f& v) const
+{
+    return ((vert[2] - vert[0]) % (vert[1] - vert[0])).Normilize();
+}
 
 
 //
