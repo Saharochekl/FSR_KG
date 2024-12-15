@@ -5,6 +5,13 @@ Scene::Scene(double w, double h, double l0)
 {
 
 }
+
+void Scene::tick()
+{
+    for(size_t q(0); q < objects.size(); q++)
+        objects[q]->tick();
+}
+
 QImage Scene::render() // метод render класса Scene
 {
     QImage ret(width, height, QImage::Format_RGB888); // создание изображения ret размером width x height

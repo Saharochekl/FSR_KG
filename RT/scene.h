@@ -35,11 +35,7 @@ public:
         proj = Projector(w + h);
     }
 
-    void tick()
-    {
-        for(size_t q(0); q < objects.size(); q++)
-            objects[q]->tick();
-    }
+    void tick();
 };
 
 #endif // SCENE_H

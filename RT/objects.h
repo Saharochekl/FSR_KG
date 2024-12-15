@@ -283,7 +283,7 @@ struct Star : public Object{
     virtual Vec3f get_normal(const Vec3f& v) const override ;
 
 
-    //virtual void tick() override; // Переопределяем метод tick
+    virtual void tick() override; // Переопределяем метод tick
 
     // Перемещение центра звезды
     void moving(const Vec3f& delta);
