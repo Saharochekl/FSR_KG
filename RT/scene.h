@@ -13,6 +13,7 @@ protected:
 
     int width;
     int height;
+
     Projector proj;
 
     std :: vector<Object *> objects;
@@ -25,16 +26,10 @@ public:
     Color compLight(const Vec3f pt,const  size_t i);
     Color TraceR(Ray r, int rec_d);
 
-    void clear() { objects.clear(); }
-    void add_object(Object * o) { objects.push_back(o); }
-    void add_light(const LightSource& s) { lights.push_back(s); }
-    void resize(int w, int h)
-    {
-        width = w;
-        height = h;
-        proj = Projector(w + h);
-    }
-
+    void clear();
+    void add_object(Object * o);
+    void add_light(const LightSource& s);
+    void resize(int w, int h);
     void tick();
 };
 

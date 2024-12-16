@@ -209,11 +209,11 @@ struct Sphere : public Object
 
     Sphere(const double& rad, const Vec3f& v, Color c, double in_step, Vec3f in_dir, double in_amp);
 
-    virtual Vec3f get_normal(const Vec3f& v) const;
+    virtual Vec3f get_normal(const Vec3f& v) const override;
 
     Vec3f gep_pos() const;
 
-    virtual double is_intersect(const Ray& r) const;
+    virtual double is_intersect(const Ray& r) const override;
 
     virtual void tick() override;
 
@@ -263,20 +263,22 @@ struct Plane4v : public Object
 };
 
 struct Star : public Object{
-    std::vector<Plane3v> planes; // Грани звезды
-    std::vector<Vec3f> vertices;   // Вершины
-    Vec3f center;               // Центр звезды
-    double scale;               // Масштаб звезды
-    double rotationAngle;       // Угол вращения вокруг оси Z
+    std::vector<Plane3v> planes;// Грани звезды
+    std::vector<Vec3f> vertices;// Вершины
+
+    Vec3f center;// Центр звезды
+
+    double scale;// Масштаб звезды
+    double rotationAngle;// Угол вращения вокруг оси Z
+    double animTime; // счётчик для анимации
+
     mutable int lastPlaneIndex; // индекс последней пересечённой грани
-    double animTime; // Время для анимации
+
     Color st_col;
 
     Star();
-
     Star(const Vec3f& c, double scaleFactor, Color col, double spect, double refl);
 
-    // Переопределение метода от Object (необходимо для сцены)
     virtual double is_intersect(const Ray& r) const override ;
 
     virtual Vec3f get_normal(const Vec3f& v) const override ;
@@ -284,13 +286,10 @@ struct Star : public Object{
 
     virtual void tick() override; // Переопределяем метод tick
 
-    // Перемещение центра звезды
-    void moving(const Vec3f& delta);
-    // Масштабирование звезды
-    void scaling(double factor);
 
-    // Вращение вокруг осей
-    void rotating(double angleX, double angleY, double angleZ);
+    void moving(const Vec3f& delta);// Перемещение центра звезды
+    void scaling(double factor);// Масштабирование звезды
+    void rotating(double angleX, double angleY, double angleZ);// Вращение вокруг осей
     void updatePlanes();
 
 };
@@ -298,11 +297,15 @@ struct Star : public Object{
 struct Peaks4 : public Object{
     std::vector<Plane3v> planes; // Грани пиков
     std::vector<Vec3f> vertices;   // Вершины
-    Vec3f center;               // Центр звезды
-    double scale;               // Масштаб звезды
+
+    Vec3f center;               // Центр пиков(центр между четырьмя пиками)
+
+    double scale;               // Масштаб пиков
     double rotationAngle;       // Угол вращения вокруг оси Z
     mutable int lastPlaneIndex; // индекс последней пересечённой грани
+
     Color st_col;
+
     Peaks4();
     Peaks4(const Vec3f& c, double scaleFactor, Color col, double spect, double refl);
 
@@ -310,13 +313,10 @@ struct Peaks4 : public Object{
     virtual double is_intersect(const Ray& r) const override ;
 
     virtual Vec3f get_normal(const Vec3f& v) const override ;
-    // Перемещение центра звезды
-    void moving(const Vec3f& delta);
-    // Масштабирование звезды
-    void scaling(double factor);
 
-    // Вращение вокруг осей
-    void rotating(double angleX, double angleY, double angleZ);
+    void moving(const Vec3f& delta);// Перемещение центра звезды
+    void scaling(double factor);// Масштабирование звезды
+    void rotating(double angleX, double angleY, double angleZ);// Вращение вокруг осей
     void updatePlanes();
 
                 };
