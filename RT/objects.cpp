@@ -100,8 +100,9 @@ double Sphere:: is_intersect(const Ray& r) const
     double D = B * B - A * C;
 
     if(D < 0)
+    {
         return -1.0;
-
+    }
     double sD = sqrt(D);
     double t1 = (-B - sD) / A;
     double t2 = (-B + sD) / A;
@@ -117,13 +118,11 @@ void Sphere:: tick()
         // Фиксируем высоту
         double fixedY = center.y;
 
-        angle += angleStep; // увеличиваем угол
-        // Вычисляем новые координаты вокруг orbitCenter
+        angle += angleStep;
         // Движение по кругу в плоскости XZ:
         double newX = orbitCenter.x + orbitRadius * cos(angle);
         double newZ = orbitCenter.z + orbitRadius * sin(angle);
 
-        // Обновляем центр сферы
         center = Vec3f(newX, fixedY, newZ);
     }
 
@@ -238,7 +237,6 @@ Vec3f Plane4v:: get_normal(const Vec3f& v) const
 //
 
 Star::Star() : Object(Color()), lastPlaneIndex(-1), scale(1.0), rotationAngle(0.0) {
-    // Тут можно оставить пусто или инициализировать поля по умолчанию, мб потом чёт поменяю
 }
 
 Star::Star(const Vec3f& c, double scaleFactor, Color col, double spect, double refl)
@@ -315,9 +313,6 @@ void Star::updatePlanes() {
 
 // Перемещение центра звезды
 void Star::moving(const Vec3f& delta) {
-//    for (auto& vertex : vertices) {
-//        vertex = vertex + delta;
-//    }
     center = center + delta;
 }
 
@@ -418,7 +413,6 @@ void Star::tick() {
 //
 
 Peaks4::Peaks4() : Object(Color()), lastPlaneIndex(-1), scale(1.0), rotationAngle(0.0) {
-    // Тут можно оставить пусто или инициализировать поля по умолчанию, мб потом чёт поменяю
 }
 
 Peaks4::Peaks4(const Vec3f& c, double scaleFactor, Color col, double spect, double refl)
