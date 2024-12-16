@@ -12,7 +12,7 @@ QRayTracingWidget::QRayTracingWidget(QWidget *parent)
     double orbit_radius = 300;
 
 
-    Sphere* s1 = new Sphere(30, Vec3f(-50, 200, 550), Color(12, 100, 15), 70, 0.3);
+    Sphere* s1 = new Sphere(30, Vec3f(-50+ orbit_radius, 200, 250), Color(12, 100, 15), 70, 0.3);
     Sphere* s2 = new Sphere(30, Vec3f(-50 + orbit_radius*cos(2*M_PI/3), 200, 250 + orbit_radius*sin(2*M_PI/3)), Color(150, 150, 250), 70, 0.3);
     Sphere* s3 = new Sphere(30, Vec3f(-50 + orbit_radius*cos(4*M_PI/3), 200, 250 + orbit_radius*sin(4*M_PI/3)), Color(255, 10, 10), 70, 0.3);
 
@@ -28,19 +28,18 @@ QRayTracingWidget::QRayTracingWidget(QWidget *parent)
 
     Star* star = new Star(Vec3f(-50, 100, 250), 200, Color(153, 204, 255), 70, 0.5);
     // Поворот вокруг оси X на 90 градусов
-    double angleX = M_PI_2; // 90 градусов в радианах
+    double angleX = M_PI_2;
     double angleY = 0.0;
     double angleZ = 0.0;
     star->rotating(angleX, angleY, angleZ);
     // Обновляем грани после трансформации
     star->updatePlanes();
 
-    // Добавляем звезду в сцену
     cur_sc.add_object(star);
 
     Peaks4* peaks = new Peaks4(Vec3f(-50, -50, 0), 3, Color(75, 0, 130), -1, -1);
 
-     angleX = 0.0; // 90 градусов в радианах
+     angleX = 0.0;
      angleY = M_PI/4;
      angleZ = 0.0;
     peaks->rotating(angleX, angleY, angleZ);
