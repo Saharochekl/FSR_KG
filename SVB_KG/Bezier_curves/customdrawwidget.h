@@ -5,7 +5,6 @@
 #include <QMouseEvent>
 #include <QPen>
 #include "bezierutils.h"
-#include "longdouble.h"
 
 
 
@@ -31,17 +30,12 @@ public:
     QVector<QPointF> vecPoint;
     QVector<QPointF> hullPoints;
     QVector<QPointF> Polygon1;
-    QVector<Edge> triangulationEdges;
     QColor m_color;
 
     int m_id = 0;
 
     bool layMove = false;
-    bool isLinearChecked = false;
-    bool isQuadraticChecked = false;
-    bool isCubicChecked = false;
-    bool isManualChecked = false;
-    bool isnumP_curveChecked = false;
+
 
     double scale;
     QVector<QPolygonF> resultPolygons; // Результирующие многоугольники
@@ -50,7 +44,6 @@ public:
 signals:
     void dataChanged(QPointF point);
 private:
-    double normalizeValue(const LongDouble value, const LongDouble maxValue, double maxRange);
     int degree = 4; // Степень по умолчанию
 
 };

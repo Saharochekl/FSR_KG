@@ -262,65 +262,6 @@ struct Plane4v : public Object
     virtual Vec3f get_normal(const Vec3f& v) const;
 };
 
-struct Star : public Object{
-    std::vector<Plane3v> planes;// Грани звезды
-    std::vector<Vec3f> vertices;// Вершины
-
-    Vec3f center;// Центр звезды
-
-    double scale;// Масштаб звезды
-    double rotationAngle;// Угол вращения вокруг оси Z
-    double animTime; // счётчик для анимации
-
-    mutable int lastPlaneIndex; // индекс последней пересечённой грани
-
-    Color st_col;
-
-    Star();
-    Star(const Vec3f& c, double scaleFactor, Color col, double spect, double refl);
-
-    virtual double is_intersect(const Ray& r) const override ;
-
-    virtual Vec3f get_normal(const Vec3f& v) const override ;
-
-
-    virtual void tick() override; // Переопределяем метод tick
-
-
-    void moving(const Vec3f& delta);// Перемещение центра звезды
-    void scaling(double factor);// Масштабирование звезды
-    void rotating(double angleX, double angleY, double angleZ);// Вращение вокруг осей
-    void updatePlanes();
-
-};
-
-struct Peaks4 : public Object{
-    std::vector<Plane3v> planes; // Грани пиков
-    std::vector<Vec3f> vertices;   // Вершины
-
-    Vec3f center;               // Центр пиков(центр между четырьмя пиками)
-
-    double scale;               // Масштаб пиков
-    double rotationAngle;       // Угол вращения вокруг оси Z
-    mutable int lastPlaneIndex; // индекс последней пересечённой грани
-
-    Color st_col;
-
-    Peaks4();
-    Peaks4(const Vec3f& c, double scaleFactor, Color col, double spect, double refl);
-
-    // Переопределение метода от Object (необходимо для сцены)
-    virtual double is_intersect(const Ray& r) const override ;
-
-    virtual Vec3f get_normal(const Vec3f& v) const override ;
-
-    void moving(const Vec3f& delta);// Перемещение центра звезды
-    void scaling(double factor);// Масштабирование звезды
-    void rotating(double angleX, double angleY, double angleZ);// Вращение вокруг осей
-    void updatePlanes();
-
-                };
-
 
 
 #endif // OBJECTS_H

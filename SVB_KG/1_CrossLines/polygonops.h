@@ -23,6 +23,8 @@ bool in_figure(QVector<Edge> seg, QPointF A);
  QVector <Edge> do_intersection(QVector <Edge> segA, QVector <Edge> segB);
  QVector <Edge> do_union(QVector <Edge> segA, QVector <Edge> segB, QPointF firstP1, QPointF firstP2);
  QVector <Edge> do_difference(QVector <Edge> segA, QVector <Edge> segB);
+ bool isConvexPolygon(const QVector<QPointF>& polygon);
+
 
 
 
