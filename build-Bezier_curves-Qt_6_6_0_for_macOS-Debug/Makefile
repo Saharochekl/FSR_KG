@@ -199,7 +199,6 @@ DIST          = /Users/zuha/Qt/6.6.0/macos/mkspecs/features/spec_pre.prf \
 		/Users/zuha/Qt/6.6.0/macos/mkspecs/features/qt_config.prf \
 		/Users/zuha/Qt/6.6.0/macos/mkspecs/macx-clang/qmake.conf \
 		/Users/zuha/Qt/6.6.0/macos/mkspecs/features/spec_post.prf \
-		../Bezier_curves/.qmake.stash \
 		/Users/zuha/Qt/6.6.0/macos/mkspecs/features/exclusive_builds.prf \
 		/Users/zuha/Qt/6.6.0/macos/mkspecs/features/mac/sdk.prf \
 		/Users/zuha/Qt/6.6.0/macos/mkspecs/features/toolchain.prf \
@@ -245,7 +244,7 @@ TARGET        = Bezier_curves.app/Contents/MacOS/Bezier_curves
 EXPORT_QMAKE_MAC_SDK = macosx
 EXPORT_QMAKE_MAC_SDK_VERSION = 14.4
 EXPORT_QMAKE_XCODE_DEVELOPER_PATH = /Library/Developer/CommandLineTools
-EXPORT__QMAKE_STASH_ = /Users/zuha/Desktop/FKI/3 курс/5 семестр 2024/FSR_KG/build-Bezier_curves-Qt_6_6_0_for_macOS-Debug/.qmake.stash
+EXPORT__QMAKE_STASH_ = 
 EXPORT_VALID_ARCHS = x86_64 arm64
 EXPORT_DEFAULT_ARCHS = arm64
 EXPORT_ARCHS = $(filter $(EXPORT_VALID_ARCHS), $(if $(ARCHS), $(ARCHS), $(if $(EXPORT_DEFAULT_ARCHS), $(EXPORT_DEFAULT_ARCHS), $(EXPORT_VALID_ARCHS))))
@@ -395,7 +394,6 @@ Makefile: ../Bezier_curves/Bezier_curves.pro /Users/zuha/Qt/6.6.0/macos/mkspecs/
 		/Users/zuha/Qt/6.6.0/macos/mkspecs/features/qt_config.prf \
 		/Users/zuha/Qt/6.6.0/macos/mkspecs/macx-clang/qmake.conf \
 		/Users/zuha/Qt/6.6.0/macos/mkspecs/features/spec_post.prf \
-		.qmake.stash \
 		/Users/zuha/Qt/6.6.0/macos/mkspecs/features/exclusive_builds.prf \
 		/Users/zuha/Qt/6.6.0/macos/mkspecs/features/mac/sdk.prf \
 		/Users/zuha/Qt/6.6.0/macos/mkspecs/features/toolchain.prf \
@@ -564,7 +562,6 @@ Makefile: ../Bezier_curves/Bezier_curves.pro /Users/zuha/Qt/6.6.0/macos/mkspecs/
 /Users/zuha/Qt/6.6.0/macos/mkspecs/features/qt_config.prf:
 /Users/zuha/Qt/6.6.0/macos/mkspecs/macx-clang/qmake.conf:
 /Users/zuha/Qt/6.6.0/macos/mkspecs/features/spec_post.prf:
-.qmake.stash:
 /Users/zuha/Qt/6.6.0/macos/mkspecs/features/exclusive_builds.prf:
 /Users/zuha/Qt/6.6.0/macos/mkspecs/features/mac/sdk.prf:
 /Users/zuha/Qt/6.6.0/macos/mkspecs/features/toolchain.prf:
@@ -634,7 +631,6 @@ clean: compiler_clean
 
 distclean: clean 
 	-$(DEL_FILE) -r Bezier_curves.app
-	-$(DEL_FILE) .qmake.stash
 	-$(DEL_FILE) Makefile
 
 
