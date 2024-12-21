@@ -16,21 +16,14 @@ public:
     ~MainWindow();
 
 private:
-    bool isLinearChecked = false;
-    bool isQuadraticChecked = false;
-    bool isCubicChecked = false;
-    bool isManualChecked = false;
-    bool isnumP_curveChecked = false;
+
 
     QVector<QPointF> points; // Контейнер для хранения точек
     Ui::MainWindow *ui;
 
 private slots:
     void getMouseCoord(QPointF point);
-    void on_Draw_curve_clicked();
-    void on_Deletepoints_clicked();
-    void onCheckboxStateChanged(int state);
-   // void on_getResult_clicked();
+
 
 
 };

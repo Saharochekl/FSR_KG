@@ -306,3 +306,24 @@ QVector <Edge> do_difference(QVector <Edge> segA, QVector <Edge> segB){
     return seg;
 }
 
+
+bool isConvexPolygon(const QVector<QPointF>& polygon) {
+    if (polygon.size() < 3) return false; // Многоугольник должен иметь хотя бы 3 вершины
+
+    bool sign = false;
+    for (int i = 0; i < polygon.size(); ++i) {
+        QPointF p1 = polygon[i];
+        QPointF p2 = polygon[(i + 1) % polygon.size()];
+        QPointF p3 = polygon[(i + 2) % polygon.size()];
+
+        double crossProduct = (p2.x() - p1.x()) * (p3.y() - p1.y()) -
+                              (p2.y() - p1.y()) * (p3.x() - p1.x());
+
+        if (i == 0) {
+            sign = crossProduct > 0;
+        } else if ((crossProduct > 0) != sign) {
+            return false; // Выпуклость нарушена
+        }
+    }
+    return true;
+}

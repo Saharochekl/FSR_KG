@@ -5,8 +5,6 @@
 #include <QMouseEvent>
 #include <QPen>
 #include "geometryutils.h"
-#include "polygonops.h"
-#include "triangulation.h"
 #include "longdouble.h"
 
 

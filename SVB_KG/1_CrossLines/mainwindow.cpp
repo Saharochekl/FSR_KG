@@ -307,6 +307,10 @@ void MainWindow::on_intersection_calc_clicked()
                 ui->widget->Polygon2.append(ui->widget->Polygon2.first());
             }
         }
+        if (!isConvexPolygon(ui->widget->Polygon1) || !isConvexPolygon(ui->widget->Polygon2)) {
+            ui->textBrowser->append("Ошибка: Один из многоугольников не является выпуклым!");
+            return;
+        }
         QVector<Edge> segA;
         QVector<Edge> segB;
 
@@ -362,6 +366,10 @@ void MainWindow::on_combining_calc_clicked()
                 ui->widget->Polygon2.append(ui->widget->Polygon2.first());
             }
         }
+        if (!isConvexPolygon(ui->widget->Polygon1) || !isConvexPolygon(ui->widget->Polygon2)) {
+            ui->textBrowser->append("Ошибка: Один из многоугольников не является выпуклым!");
+            return;
+        }
         QVector<Edge> segA;
         QVector<Edge> segB;
 
@@ -416,6 +424,10 @@ void MainWindow::on_difference_calc_clicked()
             if (M > 1 && ui->widget->Polygon2.first() != ui->widget->Polygon2.last()) {
                 ui->widget->Polygon2.append(ui->widget->Polygon2.first());
             }
+        }
+        if (!isConvexPolygon(ui->widget->Polygon1) || !isConvexPolygon(ui->widget->Polygon2)) {
+            ui->textBrowser->append("Ошибка: Один из многоугольников не является выпуклым!");
+            return;
         }
         QVector<Edge> segA;
         QVector<Edge> segB;

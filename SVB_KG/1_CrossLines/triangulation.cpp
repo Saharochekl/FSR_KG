@@ -12,7 +12,7 @@ bool check(Edge s0, QVector <Edge> s){
 }
 
 
-QVector<Triangle> delaunayTriangulation(const QVector<QPointF>& points) { //Сама триангуляция
+QVector<Triangle> delaunayTriangulation(const QVector<QPointF>& points) { //триангуляция
     // Создаем супер-треугольник
     double minX = points[0].x();
     double minY = points[0].y();

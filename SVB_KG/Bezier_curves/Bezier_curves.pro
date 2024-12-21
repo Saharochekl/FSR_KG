@@ -19,14 +19,12 @@ SOURCES += \
     bezierutils.cpp \
     customdrawwidget.cpp \
     main.cpp \
-    mainwindow.cpp \
-    longdouble.cpp
+    mainwindow.cpp
 
 HEADERS += \
     bezierutils.h \
     customdrawwidget.h \
-    mainwindow.h \
-    longdouble.h
+    mainwindow.h
 
 FORMS += \
     mainwindow.ui
