@@ -28,3 +28,10 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+mac {
+    # Qt на mac иногда тащит AGL вместе с OpenGL (привет из 2009-го)
+    QMAKE_LIBS_OPENGL -= -framework AGL
+    LIBS             -= -framework AGL
+    QMAKE_LFLAGS     -= -framework AGL
+}
