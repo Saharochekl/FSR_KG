@@ -69,19 +69,19 @@ QImage Scene::render()
      starts.reserve((H + block - 1) / block);
      for (int y = 0; y < H; y += block) starts.push_back(y);
 
-//     QtConcurrent::blockingMap(starts, [&](int y0){
-//         const int y1 = std::min(H, y0 + block);
-//         for (int h = y0; h < y1; ++h) {
-//             QRgb* row = base + h * stride;     // <-- без scanLine
-//             const double Y = vh * 0.5 - ((h + 0.5) * sy);
-//             for (int w = 0; w < W; ++w) {
-//                 const double X = ((w + 0.5) * sx) - vw * 0.5;
-//                 Ray r(org, Vec3f(X, Y, 0) - org);
-//                 Color c = TraceR(r, 2);
-//                 row[w] = qRgb(clamp8(c.R), clamp8(c.G), clamp8(c.B));
-//             }
-//         }
-//     });
+     QtConcurrent::blockingMap(starts, [&](int y0){
+         const int y1 = std::min(H, y0 + block);
+         for (int h = y0; h < y1; ++h) {
+             QRgb* row = base + h * stride;     // <-- без scanLine
+             const double Y = vh * 0.5 - ((h + 0.5) * sy);
+             for (int w = 0; w < W; ++w) {
+                 const double X = ((w + 0.5) * sx) - vw * 0.5;
+                 Ray r(org, Vec3f(X, Y, 0) - org);
+                 Color c = TraceR(r, 2);
+                 row[w] = qRgb(clamp8(c.R), clamp8(c.G), clamp8(c.B));
+             }
+         }
+     });
 
      return ret;
 }

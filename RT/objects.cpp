@@ -388,9 +388,9 @@ double Star:: is_intersect(const Ray& r) const  {
 
 Vec3f Star:: get_normal(const Vec3f& v) const  {
     // Используем сохранённый индекс грани, чтобы получить корректную нормаль
-    if (lastPlaneIndex >= 0 && (size_t)lastPlaneIndex < planes.size()) {
-        return planes[lastPlaneIndex].get_normal(v).Normilize();
-    }
+//    if (lastPlaneIndex >= 0 && (size_t)lastPlaneIndex < planes.size()) {
+//        return planes[lastPlaneIndex].get_normal(v).Normilize();
+//    }
     return Vec3f(0, 0, 0);
 }
 
@@ -504,9 +504,9 @@ double Peaks4:: is_intersect(const Ray& r) const  {
 
 Vec3f Peaks4:: get_normal(const Vec3f& v) const  {
     // Используем сохранённый индекс грани, чтобы получить корректную нормаль
-    if (lastPlaneIndex >= 0 && (size_t)lastPlaneIndex < planes.size()) {
-        return planes[lastPlaneIndex].get_normal(v).Normilize();
-    }
+//    if (lastPlaneIndex >= 0 && (size_t)lastPlaneIndex < planes.size()) {
+//        return planes[lastPlaneIndex].get_normal(v).Normilize();
+//    }
     return Vec3f(0, 0, 0);
 }
 
