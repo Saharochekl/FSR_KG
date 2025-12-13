@@ -48,8 +48,11 @@ QImage Scene::render()
     for(int h = 0; h < height; h++)
         for(int w = 0; w < width; w++)
         {
-            double X = w - width / 2;
-            double Y = height / 2 - h;
+            double sx = double(vw) / double(width);
+            double sy = double(vh) / double(height);
+
+            double X = ( (w + 0.5) * sx ) - vw * 0.5;
+            double Y = vh * 0.5 - ( (h + 0.5) * sy );
 
             Vec3f scr_pt(X, Y, 0); // координаты обрабатываемого пикселя на экране
             Ray r(org, scr_pt - org); // создание луча из глаза...

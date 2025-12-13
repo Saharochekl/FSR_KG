@@ -11,8 +11,8 @@ class Scene
 
 protected:
 
-    int width;
-    int height;
+    int width, height;      // render size (буфер)
+    int vw = 0, vh = 0;      // viewport size (окно, геометрия)
 
     Projector proj;
 
@@ -21,6 +21,8 @@ protected:
 
 public:
     Scene(double w = 100, double h = 100, double l0 = 200);
+    void setViewport(int w, int h);   // влияет на proj/камеру
+    void resize(int w, int h);        //  только render size
     QImage render();
 
     Color compLight(const Vec3f pt,const  size_t i);
@@ -29,7 +31,6 @@ public:
     void clear();
     void add_object(Object * o);
     void add_light(const LightSource& s);
-    void resize(int w, int h);
     void tick();
 };
 

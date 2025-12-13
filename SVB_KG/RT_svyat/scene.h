@@ -34,7 +34,6 @@ public:
     void tick();
 
     void setViewport(int w, int h);    // влияет на projector/FOV
-    void setRenderSize(int w, int h);  // влияет только на размер QImage/циклы
 };
 
 #endif // SCENE_H

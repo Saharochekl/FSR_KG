@@ -24,36 +24,43 @@ void Scene:: add_light(const LightSource& s) {
      lights.push_back(s);
 }
 
+void Scene::setViewport(int w, int h)
+{
+     vw = w;
+     vh = h;
+     proj = Projector(vw + vh); // или другой твой выбор, но точно НЕ от render-size
+}
+
 void Scene:: resize(int w, int h)
 {
      width = w;
      height = h;
-     proj = Projector(w + h);
 }
 
 
 QImage Scene::render()
 {
-    QImage ret(width, height, QImage::Format_RGB888); // Создаем пустую картинку
+    QImage ret(width, height, QImage::Format_RGB32); // Создаем пустую картинку
 
     Color amb(150, 150, 150); //ПодсветОчка
-    Vec3f org(-100, 300, -proj.get_l0()); // Положение наблюдателя
+    Vec3f org(-100, 300, -proj.get_l0());
 
-    for(int h = 0; h < height; h++)
-        for(int w = 0; w < width; w++)
-        {
-            double X = w - width / 2;
-            double Y = height / 2 - h;
+    const double sx = double(vw) / double(width);
+    const double sy = double(vh) / double(height);
 
-            Vec3f scr_pt(X, Y, 0); // координаты обрабатываемого пикселя на экране
-            Ray r(org, scr_pt - org); // создание луча из глаза...
+    for (int h = 0; h < height; ++h) {
+        auto* row = reinterpret_cast<uint32_t*>(ret.scanLine(h));
+        for (int w = 0; w < width; ++w) {
+            const double X = ((w + 0.5) * sx) - vw * 0.5;
+            const double Y = vh * 0.5 - ((h + 0.5) * sy);
 
-            Color cur_col(0, 0, 0);
-            cur_col = TraceR(r, 2); // трассировка луча глубина трассировки
-            ret.setPixel(w, h, qRgb(cur_col.R, cur_col.G, cur_col.B)); // красим пиксель
+            Ray r(org, Vec3f(X, Y, 0) - org);
+            Color c = TraceR(r, 2);
+
+            row[w] = qRgb(c.R, c.G, c.B);
         }
-
-    return  ret;
+    }
+    return ret;
 }
 
 Color Scene::compLight(Vec3f pt, const size_t i){

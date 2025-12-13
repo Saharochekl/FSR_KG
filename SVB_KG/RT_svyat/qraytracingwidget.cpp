@@ -53,6 +53,13 @@ QRayTracingWidget::QRayTracingWidget(QWidget *parent)
     cur_sc.add_light(LightSource(POINT, Vec3f(700, 250, -500), 0.4));
     cur_sc.add_light(LightSource(POINT, Vec3f(-700, 250, -500), 0.4));
 
+    frame = QImage(size(), QImage::Format_RGB32);
+    renderInProgress = false;
+
+    timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, &QRayTracingWidget::onTick);
+    timer->start(16); // ~60 Гц; можно 33 для ~30
+
 }
 
 

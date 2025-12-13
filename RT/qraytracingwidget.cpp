@@ -115,15 +115,16 @@ void QRayTracingWidget::MakeFilm()
 
 
 void QRayTracingWidget::onTick() {
-
     if (renderInProgress) return;
     renderInProgress = true;
-    cur_sc.tick(); // <-- “двигаем сцену”
 
-    const double scale = 1;
-    QSize outSize = QSize(int(size().width()*scale), int(size().height()*scale));
-    outSize = outSize.expandedTo(QSize(1,1));
-    // копия сцены, чтобы UI и рендер не дрались за один объект
+    cur_sc.tick();
+
+    const QSize vp = size();
+    const double scale = 0.5; // потом 0.5/0.33
+    QSize rs(int(vp.width()*scale), int(vp.height()*scale));
+    rs = rs.expandedTo(QSize(1,1));
+
     Scene sc = cur_sc;
 
     auto watcher = new QFutureWatcher<QImage>(this);
@@ -131,13 +132,12 @@ void QRayTracingWidget::onTick() {
         frame = watcher->result();
         renderInProgress = false;
         watcher->deleteLater();
-        update();                  // <-- просим перерисовать виджет
+        update();
     });
 
-
-
-    watcher->setFuture(QtConcurrent::run([sc, outSize]() mutable {
-        sc.resize(outSize.width(), outSize.height());
+    watcher->setFuture(QtConcurrent::run([sc, vp, rs]() mutable {
+        sc.setViewport(vp.width(), vp.height());
+        sc.resize(rs.width(), rs.height());
         return sc.render();
     }));
 }
