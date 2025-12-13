@@ -1358,7 +1358,9 @@ qraytracingwidget.o: ../RT/qraytracingwidget.cpp ../RT/qraytracingwidget.h \
 scene.o: ../RT/scene.cpp ../RT/scene.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/QImage \
 		/opt/homebrew/lib/QtGui.framework/Headers/qimage.h \
-		../RT/objects.h
+		../RT/objects.h \
+		/opt/homebrew/lib/QtCore.framework/Headers/QVector \
+		/opt/homebrew/lib/QtCore.framework/Headers/qvector.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o scene.o ../RT/scene.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 

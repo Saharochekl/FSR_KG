@@ -51,6 +51,15 @@ Object:: Object(Color c) : color(c) { }
 
 
 //
+// Функции Object
+//
+
+Vec3f Object::ctr() const { return Vec3f(0,0,0); }
+double Object::boundRadius() const { return -1.0; }
+
+
+
+//
 // Конструкторы Sphere
 //
 

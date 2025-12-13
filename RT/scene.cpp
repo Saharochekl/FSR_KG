@@ -1,4 +1,14 @@
 #include "scene.h"
+#include <thread>
+#include <vector>
+#include <algorithm>
+#include <cmath>
+#include <limits>
+#include <QVector>
+#include <QtConcurrent/QtConcurrent>
+
+
+
 
 Scene::Scene(double w, double h, double l0)
     : width(w), height(h), proj(l0) // Инициализация параметров сцены
@@ -40,28 +50,43 @@ void Scene:: resize(int w, int h)
 
 QImage Scene::render()
 {
-    QImage ret(width, height, QImage::Format_RGB32); // Создаем пустую картинку
+     QImage ret(width, height, QImage::Format_RGB32);
+     if (width <= 0 || height <= 0 || vw <= 0 || vh <= 0) return ret;
 
-    Color amb(150, 150, 150); //ПодсветОчка
-    Vec3f org(-100, 300, -proj.get_l0());
+     ret.detach();
+     auto* base = reinterpret_cast<QRgb*>(ret.bits());
+     const int stride = ret.bytesPerLine() / int(sizeof(QRgb));
 
-    const double sx = double(vw) / double(width);
-    const double sy = double(vh) / double(height);
+     const int H = height, W = width;
+     const double sx = double(vw) / double(W);
+     const double sy = double(vh) / double(H);
+     const Vec3f org(-100, 300, -proj.get_l0());
 
-    for (int h = 0; h < height; ++h) {
-        auto* row = reinterpret_cast<uint32_t*>(ret.scanLine(h));
-        for (int w = 0; w < width; ++w) {
-            const double X = ((w + 0.5) * sx) - vw * 0.5;
-            const double Y = vh * 0.5 - ((h + 0.5) * sy);
+     auto clamp8 = [](int v){ return v < 0 ? 0 : (v > 255 ? 255 : v); };
 
-            Ray r(org, Vec3f(X, Y, 0) - org);
-            Color c = TraceR(r, 2);
+     const int block = 16;
+     QVector<int> starts;
+     starts.reserve((H + block - 1) / block);
+     for (int y = 0; y < H; y += block) starts.push_back(y);
 
-            row[w] = qRgb(c.R, c.G, c.B);
-        }
-    }
-    return ret;
+//     QtConcurrent::blockingMap(starts, [&](int y0){
+//         const int y1 = std::min(H, y0 + block);
+//         for (int h = y0; h < y1; ++h) {
+//             QRgb* row = base + h * stride;     // <-- без scanLine
+//             const double Y = vh * 0.5 - ((h + 0.5) * sy);
+//             for (int w = 0; w < W; ++w) {
+//                 const double X = ((w + 0.5) * sx) - vw * 0.5;
+//                 Ray r(org, Vec3f(X, Y, 0) - org);
+//                 Color c = TraceR(r, 2);
+//                 row[w] = qRgb(clamp8(c.R), clamp8(c.G), clamp8(c.B));
+//             }
+//         }
+//     });
+
+     return ret;
 }
+
+
 
 Color Scene::compLight(Vec3f pt, const size_t i){
 
@@ -100,6 +125,25 @@ Color Scene::compLight(Vec3f pt, const size_t i){
     return cur_col;
 }
 
+static inline bool rayHitsSphere(const Ray& r, const Vec3f& c, double R)
+{
+    Vec3f oc = r.beg - c;
+
+    const double a  = r.dir * r.dir;
+    const double b  = 2.0 * (oc * r.dir);
+    const double cc = (oc * oc) - R*R;
+
+    const double disc = b*b - 4.0*a*cc;
+    if (disc < 0.0) return false;
+
+    const double s = sqrt(disc);
+    const double t1 = (-b - s) / (2.0*a);
+    const double t2 = (-b + s) / (2.0*a);
+
+    return (t1 > 1e-4) || (t2 > 1e-4);
+}
+
+
 Color Scene::TraceR(Ray r, int rec_d){ // Сама трассировка луча
 
     double max_t = std::numeric_limits<double>::max();
@@ -112,6 +156,11 @@ Color Scene::TraceR(Ray r, int rec_d){ // Сама трассировка луч
 
     for(size_t i = 0; i < objects.size(); i++) // цикл по всем объектам сцены
     {
+        const double R = objects[i]->boundRadius();
+        if (R > 0.0) {
+            if (!rayHitsSphere(r, objects[i]->ctr(), R))
+                continue; // луч мимо bounding sphere -> тяжелый тест не нужен
+        }
         cur_t = objects[i]->is_intersect(r); // Проверяем наличие пересечений
         pt = r(cur_t);
         if(cur_t > 0.0001)

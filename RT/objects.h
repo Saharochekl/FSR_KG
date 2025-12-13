@@ -160,6 +160,8 @@ struct Object
     double r;// отражение
     virtual double is_intersect(const Ray& r) const = 0;
     virtual Vec3f get_normal(const Vec3f& v) const = 0;
+    virtual Vec3f ctr() const;
+    virtual double boundRadius() const;
 
     Object();
     Object(Color c);

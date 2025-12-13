@@ -114,14 +114,15 @@ void QRayTracingWidget::MakeFilm()
 
 
 
-void QRayTracingWidget::onTick() {
+void QRayTracingWidget::onTick()
+{
     if (renderInProgress) return;
     renderInProgress = true;
 
     cur_sc.tick();
 
     const QSize vp = size();
-    const double scale = 0.5; // потом 0.5/0.33
+    const double scale = 0.5; // потом подберёшь
     QSize rs(int(vp.width()*scale), int(vp.height()*scale));
     rs = rs.expandedTo(QSize(1,1));
 
@@ -136,8 +137,8 @@ void QRayTracingWidget::onTick() {
     });
 
     watcher->setFuture(QtConcurrent::run([sc, vp, rs]() mutable {
-        sc.setViewport(vp.width(), vp.height());
-        sc.resize(rs.width(), rs.height());
+        sc.setViewport(vp.width(), vp.height()); // viewport = окно
+        sc.resize(rs.width(), rs.height());      // render-size = уменьшенный буфер
         return sc.render();
     }));
 }
