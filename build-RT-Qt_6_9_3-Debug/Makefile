@@ -14,10 +14,10 @@ EQ            = =
 
 CC            = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang
 CXX           = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++
-DEFINES       = -DQT_QML_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
+DEFINES       = -DQT_QML_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CONCURRENT_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -g $(EXPORT_ARCH_ARGS) -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk -mmacosx-version-min=14.0 -Wall -Wextra $(DEFINES)
 CXXFLAGS      = -pipe -stdlib=libc++ -g -std=gnu++1z $(EXPORT_ARCH_ARGS) -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk -mmacosx-version-min=14.0 -Wall -Wextra $(DEFINES)
-INCPATH       = -I../RT -I. -I/opt/homebrew/lib/QtWidgets.framework/Headers -I/opt/homebrew/lib/QtGui.framework/Headers -I/opt/homebrew/lib/QtCore.framework/Headers -I. -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk/System/Library/Frameworks/OpenGL.framework/Headers -I. -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk/System/Library/Frameworks/OpenGL.framework/Headers -I/opt/homebrew/share/qt/mkspecs/macx-clang -F/opt/homebrew/lib
+INCPATH       = -I../RT -I. -I/opt/homebrew/lib/QtWidgets.framework/Headers -I/opt/homebrew/lib/QtGui.framework/Headers -I/opt/homebrew/lib/QtConcurrent.framework/Headers -I/opt/homebrew/lib/QtCore.framework/Headers -I. -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk/System/Library/Frameworks/OpenGL.framework/Headers -I. -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk/System/Library/Frameworks/OpenGL.framework/Headers -I/opt/homebrew/share/qt/mkspecs/macx-clang -F/opt/homebrew/lib
 QMAKE         = /opt/homebrew/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -40,7 +40,7 @@ DISTNAME      = RT1.0.0
 DISTDIR = /Users/zuha/Desktop/FKI/3\ курс\ 2023-2025/5\ семестр\ 2024/FSR_KG/build-RT-Qt_6_9_3-Debug/.tmp/RT1.0.0
 LINK          = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++
 LFLAGS        = -stdlib=libc++ -headerpad_max_install_names $(EXPORT_ARCH_ARGS) -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk -mmacosx-version-min=14.0 -Wl,-rpath,@executable_path/../Frameworks -Wl,-rpath,/opt/homebrew/lib
-LIBS          = $(SUBLIBS) -F/opt/homebrew/lib -framework QtWidgets -framework QtGui -framework AppKit -framework OpenGL -framework ImageIO -framework Metal -framework QtCore -framework IOKit -framework DiskArbitration -framework UniformTypeIdentifiers   
+LIBS          = $(SUBLIBS) -F/opt/homebrew/lib -framework QtWidgets -framework QtGui -framework AppKit -framework OpenGL -framework ImageIO -framework Metal -framework QtConcurrent -framework QtCore -framework IOKit -framework DiskArbitration -framework UniformTypeIdentifiers   
 AR            = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar cq
 RANLIB        = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib -s
 SED           = sed
@@ -842,6 +842,7 @@ Makefile: ../RT/RT.pro /opt/homebrew/share/qt/mkspecs/macx-clang/qmake.conf /opt
 		../RT/RT.pro \
 		/opt/homebrew/lib/QtWidgets.framework/Resources/QtWidgets.prl \
 		/opt/homebrew/lib/QtGui.framework/Resources/QtGui.prl \
+		/opt/homebrew/lib/QtConcurrent.framework/Resources/QtConcurrent.prl \
 		/opt/homebrew/lib/QtCore.framework/Resources/QtCore.prl
 	$(QMAKE) -o Makefile ../RT/RT.pro -spec macx-clang CONFIG+=debug CONFIG+=qml_debug
 /opt/homebrew/share/qt/mkspecs/features/spec_pre.prf:
@@ -1218,6 +1219,7 @@ Makefile: ../RT/RT.pro /opt/homebrew/share/qt/mkspecs/macx-clang/qmake.conf /opt
 ../RT/RT.pro:
 /opt/homebrew/lib/QtWidgets.framework/Resources/QtWidgets.prl:
 /opt/homebrew/lib/QtGui.framework/Resources/QtGui.prl:
+/opt/homebrew/lib/QtConcurrent.framework/Resources/QtConcurrent.prl:
 /opt/homebrew/lib/QtCore.framework/Resources/QtCore.prl:
 qmake: FORCE
 	@$(QMAKE) -o Makefile ../RT/RT.pro -spec macx-clang CONFIG+=debug CONFIG+=qml_debug
@@ -1288,7 +1290,7 @@ moc_mainwindow.cpp: ../RT/mainwindow.h \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/qmainwindow.h \
 		moc_predefs.h \
 		/opt/homebrew/share/qt/libexec/moc
-	/opt/homebrew/share/qt/libexec/moc $(DEFINES) --include '/Users/zuha/Desktop/FKI/3 курс 2023-2025/5 семестр 2024/FSR_KG/build-RT-Qt_6_9_3-Debug/moc_predefs.h' -I/opt/homebrew/share/qt/mkspecs/macx-clang -I'/Users/zuha/Desktop/FKI/3 курс 2023-2025/5 семестр 2024/FSR_KG/RT' -I/opt/homebrew/lib/QtWidgets.framework/Headers -I/opt/homebrew/lib/QtGui.framework/Headers -I/opt/homebrew/lib/QtCore.framework/Headers -I. -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk/usr/include/c++/v1 -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/17/include -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk/usr/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -F/opt/homebrew/lib ../RT/mainwindow.h -o moc_mainwindow.cpp
+	/opt/homebrew/share/qt/libexec/moc $(DEFINES) --include '/Users/zuha/Desktop/FKI/3 курс 2023-2025/5 семестр 2024/FSR_KG/build-RT-Qt_6_9_3-Debug/moc_predefs.h' -I/opt/homebrew/share/qt/mkspecs/macx-clang -I'/Users/zuha/Desktop/FKI/3 курс 2023-2025/5 семестр 2024/FSR_KG/RT' -I/opt/homebrew/lib/QtWidgets.framework/Headers -I/opt/homebrew/lib/QtGui.framework/Headers -I/opt/homebrew/lib/QtConcurrent.framework/Headers -I/opt/homebrew/lib/QtCore.framework/Headers -I. -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk/usr/include/c++/v1 -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/17/include -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk/usr/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -F/opt/homebrew/lib ../RT/mainwindow.h -o moc_mainwindow.cpp
 
 moc_qraytracingwidget.cpp: ../RT/qraytracingwidget.h \
 		/opt/homebrew/lib/QtWidgets.framework/Headers/QWidget \
@@ -1299,7 +1301,7 @@ moc_qraytracingwidget.cpp: ../RT/qraytracingwidget.h \
 		../RT/objects.h \
 		moc_predefs.h \
 		/opt/homebrew/share/qt/libexec/moc
-	/opt/homebrew/share/qt/libexec/moc $(DEFINES) --include '/Users/zuha/Desktop/FKI/3 курс 2023-2025/5 семестр 2024/FSR_KG/build-RT-Qt_6_9_3-Debug/moc_predefs.h' -I/opt/homebrew/share/qt/mkspecs/macx-clang -I'/Users/zuha/Desktop/FKI/3 курс 2023-2025/5 семестр 2024/FSR_KG/RT' -I/opt/homebrew/lib/QtWidgets.framework/Headers -I/opt/homebrew/lib/QtGui.framework/Headers -I/opt/homebrew/lib/QtCore.framework/Headers -I. -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk/usr/include/c++/v1 -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/17/include -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk/usr/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -F/opt/homebrew/lib ../RT/qraytracingwidget.h -o moc_qraytracingwidget.cpp
+	/opt/homebrew/share/qt/libexec/moc $(DEFINES) --include '/Users/zuha/Desktop/FKI/3 курс 2023-2025/5 семестр 2024/FSR_KG/build-RT-Qt_6_9_3-Debug/moc_predefs.h' -I/opt/homebrew/share/qt/mkspecs/macx-clang -I'/Users/zuha/Desktop/FKI/3 курс 2023-2025/5 семестр 2024/FSR_KG/RT' -I/opt/homebrew/lib/QtWidgets.framework/Headers -I/opt/homebrew/lib/QtGui.framework/Headers -I/opt/homebrew/lib/QtConcurrent.framework/Headers -I/opt/homebrew/lib/QtCore.framework/Headers -I. -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk/usr/include/c++/v1 -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/17/include -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.1.sdk/usr/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -F/opt/homebrew/lib ../RT/qraytracingwidget.h -o moc_qraytracingwidget.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
@@ -1349,7 +1351,7 @@ qraytracingwidget.o: ../RT/qraytracingwidget.cpp ../RT/qraytracingwidget.h \
 		../RT/objects.h \
 		/opt/homebrew/lib/QtGui.framework/Headers/QPainter \
 		/opt/homebrew/lib/QtGui.framework/Headers/qpainter.h \
-		/opt/homebrew/lib/QtCore.framework/Headers/Qtimer \
+		/opt/homebrew/lib/QtCore.framework/Headers/QTimer \
 		/opt/homebrew/lib/QtCore.framework/Headers/qtimer.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qraytracingwidget.o ../RT/qraytracingwidget.cpp
 

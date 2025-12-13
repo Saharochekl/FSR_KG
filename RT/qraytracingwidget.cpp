@@ -2,8 +2,9 @@
 #include <QPainter>
 #include <QImage>
 #include <iostream>
-#include <Qtimer>
+#include <QTimer>
 #include <math.h>
+#include <QtConcurrent/QtConcurrent>
 
 QRayTracingWidget::QRayTracingWidget(QWidget *parent)
     : QWidget{parent}, cur_sc(width(), height(), width() + height())
@@ -64,43 +65,85 @@ QRayTracingWidget::QRayTracingWidget(QWidget *parent)
     cur_sc.add_light(LightSource(POINT, Vec3f(700, 250, -500), 0.4));
     cur_sc.add_light(LightSource(POINT, Vec3f(-700, 250, -500), 0.4));
 
-    QTimer* timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, [this]() {
-        // Каждое срабатывание таймера будет обновлять сцену
-        cur_sc.tick();   //Меняем объекты и их положение
-        update();
-    });
-    timer->start(3000); // обновление каждые 3 с (чтобы ретрейсинг успел произойти)
+    frame = QImage(size(), QImage::Format_RGB32);
+    renderInProgress = false;
+
+    timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, &QRayTracingWidget::onTick);
+    timer->start(16); // ~60 Гц; можно 33 для ~30
 
 }
 
 
 void QRayTracingWidget::paintEvent(QPaintEvent *)
 {
+//    QPainter p(this);
+//    int wW = width();
+//    int hW = height();
+
+
+
+
+//    cur_sc.resize(wW, hW);
+//    QImage img = cur_sc.render();
+//    p.drawImage(0, 0, img);
+
+//    QPen cpen(Qt::red);
+//    cpen.setWidth(3);
+//    QPen oldpen = p.pen();
+//    p.setPen(cpen);
+//    p.drawRect(0, 0, wW - 1, hW - 1) ;
+//    QString qs = QString :: asprintf("(%d,%d)", wW, hW);
+//    p.drawText(p.window().width() / 2, p.window().height() - 20, qs);
+//    p.setPen(oldpen);
+
     QPainter p(this);
-    int wW = width();
-    int hW = height();
+    if (!frame.isNull()) p.drawImage(rect(), frame);
 
 
-
-
-    cur_sc.resize(wW, hW);
-    QImage img = cur_sc.render();
-    p.drawImage(0, 0, img);
-
-    QPen cpen(Qt::red);
-    cpen.setWidth(3);
-    QPen oldpen = p.pen();
-    p.setPen(cpen);
-    p.drawRect(0, 0, wW - 1, hW - 1) ;
-    QString qs = QString :: asprintf("(%d,%d)", wW, hW);
-    p.drawText(p.window().width() / 2, p.window().height() - 20, qs);
-    p.setPen(oldpen);
 }
+
+
 
 void QRayTracingWidget::MakeFilm()
 {
 
 
 
+}
+
+
+
+void QRayTracingWidget::onTick() {
+
+    if (renderInProgress) return;
+    renderInProgress = true;
+    cur_sc.tick(); // <-- “двигаем сцену”
+
+    const double scale = 1;
+    QSize outSize = QSize(int(size().width()*scale), int(size().height()*scale));
+    outSize = outSize.expandedTo(QSize(1,1));
+    // копия сцены, чтобы UI и рендер не дрались за один объект
+    Scene sc = cur_sc;
+
+    auto watcher = new QFutureWatcher<QImage>(this);
+    connect(watcher, &QFutureWatcher<QImage>::finished, this, [this, watcher]() {
+        frame = watcher->result();
+        renderInProgress = false;
+        watcher->deleteLater();
+        update();                  // <-- просим перерисовать виджет
+    });
+
+
+
+    watcher->setFuture(QtConcurrent::run([sc, outSize]() mutable {
+        sc.resize(outSize.width(), outSize.height());
+        return sc.render();
+    }));
+}
+
+void QRayTracingWidget::onFrameReady(const QImage& img) {
+    frame = img;
+    renderInProgress = false;
+    update();
 }

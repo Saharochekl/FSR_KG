@@ -38,10 +38,20 @@ template <> constexpr inline auto QRayTracingWidget::qt_create_metaobjectdata<qt
 {
     namespace QMC = QtMocConstants;
     QtMocHelpers::StringRefStorage qt_stringData {
-        "QRayTracingWidget"
+        "QRayTracingWidget",
+        "onTick",
+        "",
+        "onFrameReady",
+        "img"
     };
 
     QtMocHelpers::UintData qt_methods {
+        // Slot 'onTick'
+        QtMocHelpers::SlotData<void()>(1, 2, QMC::AccessPrivate, QMetaType::Void),
+        // Slot 'onFrameReady'
+        QtMocHelpers::SlotData<void(const QImage &)>(3, 2, QMC::AccessPrivate, QMetaType::Void, {{
+            { QMetaType::QImage, 4 },
+        }}),
     };
     QtMocHelpers::UintData qt_properties {
     };
@@ -63,10 +73,13 @@ Q_CONSTINIT const QMetaObject QRayTracingWidget::staticMetaObject = { {
 void QRayTracingWidget::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
 {
     auto *_t = static_cast<QRayTracingWidget *>(_o);
-    (void)_t;
-    (void)_c;
-    (void)_id;
-    (void)_a;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        switch (_id) {
+        case 0: _t->onTick(); break;
+        case 1: _t->onFrameReady((*reinterpret_cast< std::add_pointer_t<QImage>>(_a[1]))); break;
+        default: ;
+        }
+    }
 }
 
 const QMetaObject *QRayTracingWidget::metaObject() const
@@ -85,6 +98,18 @@ void *QRayTracingWidget::qt_metacast(const char *_clname)
 int QRayTracingWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
     _id = QWidget::qt_metacall(_c, _id, _a);
+    if (_id < 0)
+        return _id;
+    if (_c == QMetaObject::InvokeMetaMethod) {
+        if (_id < 2)
+            qt_static_metacall(this, _c, _id, _a);
+        _id -= 2;
+    }
+    if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
+        if (_id < 2)
+            *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
+        _id -= 2;
+    }
     return _id;
 }
 QT_WARNING_POP

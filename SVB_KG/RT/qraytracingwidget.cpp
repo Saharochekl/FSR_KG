@@ -2,7 +2,7 @@
 #include <QPainter>
 #include <QImage>
 #include <iostream>
-#include <Qtimer>
+#include <QTimer>
 #include <math.h>
 
 QRayTracingWidget::QRayTracingWidget(QWidget *parent)

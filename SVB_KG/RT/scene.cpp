@@ -24,11 +24,17 @@ void Scene:: add_light(const LightSource& s) {
      lights.push_back(s);
 }
 
+void Scene::setViewport(int w, int h)
+{
+     vw = w;
+     vh = h;
+     proj = Projector(vw + vh); // или другой твой выбор, но точно НЕ от render-size
+}
+
 void Scene:: resize(int w, int h)
 {
      width = w;
      height = h;
-     proj = Projector(w + h);
 }
 
 

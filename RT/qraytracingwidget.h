@@ -16,7 +16,18 @@ public:
 
     void MakeFilm();
 
+
+
 signals:
+
+private slots:
+    void onTick();
+    void onFrameReady(const QImage& img);
+
+private:
+    QImage frame;
+    bool renderInProgress = false;
+    QTimer* timer = nullptr;
 
 
 };
