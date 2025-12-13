@@ -19,6 +19,8 @@ public:
 signals:
 
 
+
+
 };
 
 #endif // QRAYTRACINGWIDGET_H

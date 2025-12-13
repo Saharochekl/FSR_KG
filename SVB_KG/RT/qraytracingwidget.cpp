@@ -4,6 +4,7 @@
 #include <iostream>
 #include <QTimer>
 #include <math.h>
+#include <QtConcurrent/QtConcurrent>
 
 QRayTracingWidget::QRayTracingWidget(QWidget *parent)
     : QWidget{parent}, cur_sc(width(), height(), width() + height())
@@ -83,4 +84,37 @@ void QRayTracingWidget::MakeFilm()
 
 
 
+}
+
+
+void QRayTracingWidget::onTick() {
+    if (renderInProgress) return;
+    renderInProgress = true;
+
+    cur_sc.tick();
+
+    const double scale = 0.5;
+    QSize outSize(int(size().width()*scale), int(size().height()*scale));
+    outSize = outSize.expandedTo(QSize(1,1));
+
+    Scene sc = cur_sc;
+
+    auto watcher = new QFutureWatcher<QImage>(this);
+    connect(watcher, &QFutureWatcher<QImage>::finished, this, [this, watcher]() {
+        frame = watcher->result();
+        renderInProgress = false;
+        watcher->deleteLater();
+        update();
+    });
+
+    watcher->setFuture(QtConcurrent::run([sc, outSize]() mutable {
+        sc.resize(outSize.width(), outSize.height());
+        return sc.render();
+    }));
+}
+
+void QRayTracingWidget::onFrameReady(const QImage& img) {
+    frame = img;
+    renderInProgress = false;
+    update();
 }
