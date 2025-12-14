@@ -122,7 +122,7 @@ void QRayTracingWidget::onTick()
     cur_sc.tick();
 
     const QSize vp = size();
-    const double scale = 0.5; // потом подберёшь
+    const double scale = 1.0; // потом подберёшь
     QSize rs(int(vp.width()*scale), int(vp.height()*scale));
     rs = rs.expandedTo(QSize(1,1));
 
