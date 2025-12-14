@@ -5,7 +5,7 @@
 // Конструкторы Vec3f
 //
 
-Vec3f:: Vec3f(){}
+Vec3f::Vec3f() : x(0), y(0), z(0) {}
 
 Vec3f:: Vec3f(double inX, double inY, double inZ): x(inX), y(inY), z(inZ){
 
@@ -371,9 +371,10 @@ void Star:: rotating(double angleX, double angleY, double angleZ) {
 }
 
 // Переопределение метода от Object (необходимо для сцены)
-double Star:: is_intersect(const Ray& r) const  {
+double Star::is_intersect(const Ray& r) const {
     double minT = -1.0;
     int intersectedPlaneIndex = -1;
+
     for (size_t i = 0; i < planes.size(); ++i) {
         double t = planes[i].is_intersect(r);
         if (t > 1e-6 && (minT < 0 || t < minT)) {
@@ -381,16 +382,17 @@ double Star:: is_intersect(const Ray& r) const  {
             intersectedPlaneIndex = (int)i;
         }
     }
-    // Сохраняем индекс пересечённой грани
-    lastPlaneIndex = intersectedPlaneIndex;
+
+    lastPlaneIndex.store(intersectedPlaneIndex, std::memory_order_relaxed);
     return minT;
 }
 
 Vec3f Star:: get_normal(const Vec3f& v) const  {
     // Используем сохранённый индекс грани, чтобы получить корректную нормаль
-//    if (lastPlaneIndex >= 0 && (size_t)lastPlaneIndex < planes.size()) {
-//        return planes[lastPlaneIndex].get_normal(v).Normilize();
-//    }
+    const int idx = lastPlaneIndex.load(std::memory_order_relaxed);
+    if (idx >= 0 && (size_t)idx < planes.size()) {
+        return planes[(size_t)idx].get_normal(v); // уже normalized
+    }
     return Vec3f(0, 0, 0);
 }
 
@@ -487,9 +489,10 @@ Peaks4::Peaks4(const Vec3f& c, double scaleFactor, Color col, double spect, doub
 // Функции Peaks4
 //
 
-double Peaks4:: is_intersect(const Ray& r) const  {
+double Peaks4::is_intersect(const Ray& r) const {
     double minT = -1.0;
     int intersectedPlaneIndex = -1;
+
     for (size_t i = 0; i < planes.size(); ++i) {
         double t = planes[i].is_intersect(r);
         if (t > 1e-6 && (minT < 0 || t < minT)) {
@@ -497,16 +500,17 @@ double Peaks4:: is_intersect(const Ray& r) const  {
             intersectedPlaneIndex = (int)i;
         }
     }
-    // Сохраняем индекс пересечённой грани
-    lastPlaneIndex = intersectedPlaneIndex;
+
+    lastPlaneIndex.store(intersectedPlaneIndex, std::memory_order_relaxed);
     return minT;
 }
 
 Vec3f Peaks4:: get_normal(const Vec3f& v) const  {
     // Используем сохранённый индекс грани, чтобы получить корректную нормаль
-//    if (lastPlaneIndex >= 0 && (size_t)lastPlaneIndex < planes.size()) {
-//        return planes[lastPlaneIndex].get_normal(v).Normilize();
-//    }
+    const int idx = lastPlaneIndex.load(std::memory_order_relaxed);
+    if (idx >= 0 && (size_t)idx < planes.size()) {
+        return planes[(size_t)idx].get_normal(v); // уже normalized
+    }
     return Vec3f(0, 0, 0);
 }
 

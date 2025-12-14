@@ -102,7 +102,8 @@ Color Scene::compLight(Vec3f pt, const size_t i){
         {
             Vec3f ldir = ( ls.position - pt) * (1 / (pt - ls.position).length()); // Направляем вектор к источнику
 
-            double cos = (ldir * objects[i]->get_normal(pt));
+            Vec3f N = objects[i]->get_normal(pt);
+            double cos = (ldir * N);
 
             if(cos >= 0)
             {
@@ -112,7 +113,7 @@ Color Scene::compLight(Vec3f pt, const size_t i){
             if(objects[i]->s != -1) // если оно должно блестеть
             {
 
-                Vec3f R = (2 * objects[i]->get_normal(pt) * (ldir * objects[i]->get_normal(pt)) - ldir);
+                Vec3f R = (2 * N * (ldir * N) - ldir);
                 double r_dot_v = R.norm() * pt.norm(); // Отражение
 
                 if (r_dot_v < 0)

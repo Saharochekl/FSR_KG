@@ -6,6 +6,7 @@
 #include <iomanip>
 #include <sstream>
 #include <string>
+#include <atomic>
 #include <vector>
 
 struct Vec3f
@@ -272,9 +273,9 @@ struct Star : public Object{
 
     double scale;// Масштаб звезды
     double rotationAngle;// Угол вращения вокруг оси Z
-    double animTime; // счётчик для анимации
+    double animTime = 0.0; // счётчик для анимации
 
-    mutable int lastPlaneIndex; // индекс последней пересечённой грани
+    mutable std::atomic<int> lastPlaneIndex{-1};// индекс последней пересечённой грани
 
     Color st_col;
 
@@ -304,7 +305,7 @@ struct Peaks4 : public Object{
 
     double scale;               // Масштаб пиков
     double rotationAngle;       // Угол вращения вокруг оси Z
-    mutable int lastPlaneIndex; // индекс последней пересечённой грани
+    mutable std::atomic<int> lastPlaneIndex{-1}; // индекс последней пересечённой грани
 
     Color st_col;
 
@@ -320,6 +321,7 @@ struct Peaks4 : public Object{
     void scaling(double factor);// Масштабирование звезды
     void rotating(double angleX, double angleY, double angleZ);// Вращение вокруг осей
     void updatePlanes();
+
 
                 };
 
