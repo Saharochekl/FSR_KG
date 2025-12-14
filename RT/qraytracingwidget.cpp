@@ -88,7 +88,7 @@ void QRayTracingWidget::paintEvent(QPaintEvent *)
 //    QImage img = cur_sc.render();
 //    p.drawImage(0, 0, img);
 
-//    QPen cpen(Qt::red);
+//    QPen cpen(Qt::red);ф
 //    cpen.setWidth(3);
 //    QPen oldpen = p.pen();
 //    p.setPen(cpen);
