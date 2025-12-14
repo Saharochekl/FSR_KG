@@ -159,11 +159,14 @@ struct Object
     Color color;
     double s;// приломление
     double r;// отражение
+    virtual ~Object() = default;
     virtual double is_intersect(const Ray& r) const = 0;
-    virtual Vec3f get_normal(const Vec3f& v) const = 0;
+    virtual Vec3f get_normal(const Vec3f& v, int planeIndex = -1) const = 0;
     virtual Vec3f ctr() const;
     virtual double boundRadius() const;
-
+    virtual IntersectionResult intersect(const Ray& ray) const {
+        return { is_intersect(ray), -1 };
+    }
     Object();
     Object(Color c);
     virtual void tick() { }
@@ -212,7 +215,7 @@ struct Sphere : public Object
 
     Sphere(const double& rad, const Vec3f& v, Color c, double in_step, Vec3f in_dir, double in_amp);
 
-    virtual Vec3f get_normal(const Vec3f& v) const override;
+    virtual Vec3f get_normal(const Vec3f& v, int planeIndex = -1) const override;
 
     Vec3f gep_pos() const;
 
@@ -239,9 +242,9 @@ struct Plane3v : public Object
             Color col, double spect, double refl);
 
 
-    virtual double is_intersect(const Ray& r) const;
+    virtual double is_intersect(const Ray& r) const override;
 
-    virtual Vec3f get_normal(const Vec3f& v) const;
+    virtual Vec3f get_normal(const Vec3f& v, int planeIndex = -1) const override;
 };
 
 struct Plane4v : public Object
@@ -261,8 +264,8 @@ struct Plane4v : public Object
             Color col, double spect, double refl);
 
 
-    virtual double is_intersect(const Ray& r) const;
-    virtual Vec3f get_normal(const Vec3f& v) const;
+    virtual double is_intersect(const Ray& r) const override;
+    virtual Vec3f get_normal(const Vec3f& v, int planeIndex = -1) const override;
 };
 
 struct Star : public Object{
@@ -275,16 +278,17 @@ struct Star : public Object{
     double rotationAngle;// Угол вращения вокруг оси Z
     double animTime = 0.0; // счётчик для анимации
 
-    mutable std::atomic<int> lastPlaneIndex{-1};// индекс последней пересечённой грани
+    // mutable std::atomic<int> lastPlaneIndex{-1};// индекс последней пересечённой грани
 
     Color st_col;
 
     Star();
     Star(const Vec3f& c, double scaleFactor, Color col, double spect, double refl);
 
+    IntersectionResult intersect(const Ray& r) const override;
     virtual double is_intersect(const Ray& r) const override ;
 
-    virtual Vec3f get_normal(const Vec3f& v) const override ;
+    Vec3f get_normal(const Vec3f& v, int planeIndex = -1) const override;
 
 
     virtual void tick() override; // Переопределяем метод tick
@@ -305,7 +309,7 @@ struct Peaks4 : public Object{
 
     double scale;               // Масштаб пиков
     double rotationAngle;       // Угол вращения вокруг оси Z
-    mutable std::atomic<int> lastPlaneIndex{-1}; // индекс последней пересечённой грани
+    //mutable std::atomic<int> lastPlaneIndex{-1}; // индекс последней пересечённой грани
 
     Color st_col;
 
@@ -313,9 +317,9 @@ struct Peaks4 : public Object{
     Peaks4(const Vec3f& c, double scaleFactor, Color col, double spect, double refl);
 
     // Переопределение метода от Object (необходимо для сцены)
-    virtual double is_intersect(const Ray& r) const override ;
-
-    virtual Vec3f get_normal(const Vec3f& v) const override ;
+    IntersectionResult intersect(const Ray& r) const override;
+    double is_intersect(const Ray& r) const override;
+    Vec3f get_normal(const Vec3f& v, int planeIndex = -1) const override;
 
     void moving(const Vec3f& delta);// Перемещение центра звезды
     void scaling(double factor);// Масштабирование звезды

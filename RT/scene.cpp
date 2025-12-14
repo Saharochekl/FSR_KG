@@ -88,42 +88,33 @@ QImage Scene::render()
 
 
 
-Color Scene::compLight(Vec3f pt, const size_t i){
+Color Scene::compLight(Vec3f pt, const size_t i, int planeIndex)
+{
+     Color cur_col(0,0,0);
+     Vec3f N = objects[i]->get_normal(pt, planeIndex).Normilize();
 
-    Color cur_col = Color(0,0,0);
-
-    for(size_t l(0); l < lights.size(); l++)  { // цикл по всем источникам света
-        LightSource& ls(lights[l]); // текущий источник света
-        if (ls.type == AMBIENT)
-        {
+     for (size_t l = 0; l < lights.size(); ++l) {
+        LightSource& ls(lights[l]);
+        if (ls.type == AMBIENT) {
             cur_col = cur_col + ls.intensity * objects[i]->color;
-        }
-        else if(ls.type == POINT)
-        {
-            Vec3f ldir = ( ls.position - pt) * (1 / (pt - ls.position).length()); // Направляем вектор к источнику
-
-            Vec3f N = objects[i]->get_normal(pt);
+        } else if (ls.type == POINT) {
+            Vec3f ldir = (ls.position - pt).Normilize();
             double cos = (ldir * N);
 
-            if(cos >= 0)
-            {
-                cur_col = cur_col + ls.intensity * cos * objects[i]->color; // добавляем освещение
+            if (cos >= 0) {
+                cur_col = cur_col + ls.intensity * cos * objects[i]->color;
             }
 
-            if(objects[i]->s != -1) // если оно должно блестеть
-            {
-
-                Vec3f R = (2 * N * (ldir * N) - ldir);
-                double r_dot_v = R.norm() * pt.norm(); // Отражение
-
-                if (r_dot_v < 0)
-                {
+            if (objects[i]->s != -1) {
+                Vec3f R = (2 * N * (ldir * N) - ldir).Normilize();
+                double r_dot_v = R * pt.norm(); // это у тебя сомнительно, но оставляю как было
+                if (r_dot_v < 0) {
                     cur_col = cur_col + ls.intensity * pow(r_dot_v, objects[i]->s) * objects[i]->color;
                 }
             }
         }
-    }
-    return cur_col;
+     }
+     return cur_col;
 }
 
 static inline bool rayHitsSphere(const Ray& r, const Vec3f& c, double R)
@@ -154,25 +145,25 @@ Color Scene::TraceR(Ray r, int rec_d){ // Сама трассировка луч
     Vec3f pt;
     Vec3f pt2;
     double cur_t = -1;
+    int bestPlane = -1;
 
-    for(size_t i = 0; i < objects.size(); i++) // цикл по всем объектам сцены
+    for(size_t i = 0; i < objects.size(); ++i) // цикл по всем объектам сцены
     {
         const double R = objects[i]->boundRadius();
         if (R > 0.0) {
             if (!rayHitsSphere(r, objects[i]->ctr(), R))
                 continue; // луч мимо bounding sphere -> тяжелый тест не нужен
         }
-        cur_t = objects[i]->is_intersect(r); // Проверяем наличие пересечений
+        auto hit = objects[i]->intersect(r);
+        cur_t = hit.t;
         pt = r(cur_t);
-        if(cur_t > 0.0001)
-        {
-            if(cur_t < max_t)
-            {
-                pt2 = pt;
-                cur_col = compLight(pt, i); // вычисляем цвет с учетом источников света
-                ind = i;
-                max_t = cur_t;
-            }
+
+        if (cur_t > 0.0001 && cur_t < max_t) {
+            pt2 = pt;
+            ind = i;
+            max_t = cur_t;
+            bestPlane = hit.planeIndex;
+            cur_col = compLight(pt, i, bestPlane); // см. шаг D
         }
     }
 
@@ -186,14 +177,32 @@ Color Scene::TraceR(Ray r, int rec_d){ // Сама трассировка луч
         { // если достигнута максимальная глубина трассировки или объект не отражает свет
             return cur_col; // возвращаем текущий цвет
         }
+
+
         if(max_t > 0.0001 && max_t != std::numeric_limits<double>::max()) // если было пересечение
         {
-            Vec3f N = objects[ind]->get_normal(pt2); // Нормаль к объекту в точке пересечения
-            Vec3f Rq = (2 * N * ((-1 * r.dir) * N) + r.dir).norm(); // Направление отраженного луча
+//            Vec3f N = objects[ind]->get_normal(pt2, bestPlane);  // Нормаль к объекту в точке пересечения
+//            Vec3f Rq = (2 * N * ((-1 * r.dir) * N) + r.dir).norm(); // Направление отраженного луча
 
-            Color reflected_c = TraceR(Ray(pt2, Rq), rec_d - 1); // Рекурсивная трассировка
+//            Color reflected_c = TraceR(Ray(pt2, Rq), rec_d - 1); // Рекурсивная трассировка
 
-            return cur_col * (1) + reflected_c * rr; // Возвращаем сумму цветов
+//            return cur_col * (1) + reflected_c * rr; // Возвращаем сумму цветов
+            Vec3f hit = r(max_t); // точка пересечения
+
+            Vec3f N = objects[ind]->get_normal(pt2, bestPlane).Normilize();
+            if ((r.dir * N) > 0) {
+                N = (-1) * N;
+            }
+                // смещение, чтобы не ловить самопересечение
+            const double eps = 1e-4;
+            Vec3f origin = hit + eps * N;
+
+            Vec3f Rq = (r.dir - 2.0 * N * (r.dir * N)).Normilize();
+
+            Color reflected_c = TraceR(Ray(origin, Rq), rec_d - 1);
+
+            return cur_col * (1.0 - rr) + reflected_c * rr;
+
         }
         else {
             return cur_col;

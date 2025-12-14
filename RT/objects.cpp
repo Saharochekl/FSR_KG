@@ -89,8 +89,7 @@ Sphere:: Sphere(const double& rad,
 //
 
 
-Vec3f Sphere:: get_normal(const Vec3f& v) const
-{
+Vec3f Sphere::get_normal(const Vec3f& v, int) const {
     return (v - center).Normilize();
 }
 
@@ -185,8 +184,7 @@ double Plane3v:: is_intersect(const Ray& r) const
 
 }
 
-Vec3f Plane3v:: get_normal(const Vec3f& v) const
-{
+Vec3f Plane3v::get_normal(const Vec3f&, int) const {
     return ((vert[2] - vert[0]) % (vert[1] - vert[0])).Normilize();
 }
 
@@ -235,8 +233,7 @@ double Plane4v:: is_intersect(const Ray& r) const
     return is_intersect_tr(r, vert[2], vert[3], vert[0]);
 }
 
-Vec3f Plane4v:: get_normal(const Vec3f& v) const
-{
+Vec3f Plane4v::get_normal(const Vec3f&, int) const {
     return ((vert[2] - vert[0]) % (vert[1] - vert[0])).Normilize();
 }
 
@@ -245,11 +242,11 @@ Vec3f Plane4v:: get_normal(const Vec3f& v) const
 //Конструкторы Star
 //
 
-Star::Star() : Object(Color()), lastPlaneIndex(-1), scale(1.0), rotationAngle(0.0) {
+Star::Star() : Object(Color()), scale(1.0), rotationAngle(0.0) {
 }
 
 Star::Star(const Vec3f& c, double scaleFactor, Color col, double spect, double refl)
-    : Object(col), lastPlaneIndex(-1), scale(scaleFactor), center(c)
+    : Object(col), scale(scaleFactor), center(c)
 {
     s = spect;
     r = refl;
@@ -371,29 +368,27 @@ void Star:: rotating(double angleX, double angleY, double angleZ) {
 }
 
 // Переопределение метода от Object (необходимо для сцены)
-double Star::is_intersect(const Ray& r) const {
+IntersectionResult Star::intersect(const Ray& r) const {
     double minT = -1.0;
-    int intersectedPlaneIndex = -1;
-
-    for (size_t i = 0; i < planes.size(); ++i) {
+    int idx = -1;
+    for (int i = 0; i < (int)planes.size(); ++i) {
         double t = planes[i].is_intersect(r);
         if (t > 1e-6 && (minT < 0 || t < minT)) {
             minT = t;
-            intersectedPlaneIndex = (int)i;
+            idx = i;
         }
     }
-
-    lastPlaneIndex.store(intersectedPlaneIndex, std::memory_order_relaxed);
-    return minT;
+    return { minT, idx };
 }
 
-Vec3f Star:: get_normal(const Vec3f& v) const  {
-    // Используем сохранённый индекс грани, чтобы получить корректную нормаль
-    const int idx = lastPlaneIndex.load(std::memory_order_relaxed);
-    if (idx >= 0 && (size_t)idx < planes.size()) {
-        return planes[(size_t)idx].get_normal(v); // уже normalized
-    }
-    return Vec3f(0, 0, 0);
+double Star::is_intersect(const Ray& r) const {
+    return intersect(r).t;
+}
+
+Vec3f Star::get_normal(const Vec3f& v, int planeIndex) const {
+    if (planeIndex >= 0 && planeIndex < (int)planes.size())
+        return planes[planeIndex].get_normal(v).Normilize();
+    return Vec3f(0,0,0);
 }
 
 void Star::tick() {
@@ -423,11 +418,11 @@ void Star::tick() {
 // Конструкторы Peaks4
 //
 
-Peaks4::Peaks4() : Object(Color()), lastPlaneIndex(-1), scale(1.0), rotationAngle(0.0) {
+Peaks4::Peaks4() : Object(Color()), scale(1.0), rotationAngle(0.0) {
 }
 
 Peaks4::Peaks4(const Vec3f& c, double scaleFactor, Color col, double spect, double refl)
-    : Object(col), lastPlaneIndex(-1), scale(scaleFactor), center(c)
+    : Object(col), scale(scaleFactor), center(c)
 {
     s = spect;
     r = refl;
@@ -489,29 +484,27 @@ Peaks4::Peaks4(const Vec3f& c, double scaleFactor, Color col, double spect, doub
 // Функции Peaks4
 //
 
-double Peaks4::is_intersect(const Ray& r) const {
+IntersectionResult Peaks4::intersect(const Ray& r) const {
     double minT = -1.0;
-    int intersectedPlaneIndex = -1;
-
-    for (size_t i = 0; i < planes.size(); ++i) {
+    int idx = -1;
+    for (int i = 0; i < (int)planes.size(); ++i) {
         double t = planes[i].is_intersect(r);
         if (t > 1e-6 && (minT < 0 || t < minT)) {
             minT = t;
-            intersectedPlaneIndex = (int)i;
+            idx = i;
         }
     }
-
-    lastPlaneIndex.store(intersectedPlaneIndex, std::memory_order_relaxed);
-    return minT;
+    return { minT, idx };
 }
 
-Vec3f Peaks4:: get_normal(const Vec3f& v) const  {
-    // Используем сохранённый индекс грани, чтобы получить корректную нормаль
-    const int idx = lastPlaneIndex.load(std::memory_order_relaxed);
-    if (idx >= 0 && (size_t)idx < planes.size()) {
-        return planes[(size_t)idx].get_normal(v); // уже normalized
-    }
-    return Vec3f(0, 0, 0);
+double Peaks4::is_intersect(const Ray& r) const {
+    return intersect(r).t;
+}
+
+Vec3f Peaks4::get_normal(const Vec3f& v, int planeIndex) const {
+    if (planeIndex >= 0 && planeIndex < (int)planes.size())
+        return planes[planeIndex].get_normal(v).Normilize();
+    return Vec3f(0,0,0);
 }
 
 void Peaks4::updatePlanes() {

@@ -25,7 +25,7 @@ public:
     void resize(int w, int h);        //  только render size
     QImage render();
 
-    Color compLight(const Vec3f pt,const  size_t i);
+    Color compLight(Vec3f pt, size_t i, int planeIndex);
     Color TraceR(Ray r, int rec_d);
 
     void clear();
