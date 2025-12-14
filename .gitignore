@@ -17,3 +17,5 @@ build/
 *.idx
 .qtc_clangd/build-DrawWidget-Qt_6_6_0_for_macOS-Debug/DrawWidget.app/Contents/MacOS/DrawWidget
 build-DrawWidget-Qt_6_6_0_for_macOS-Debug/DrawWidget.app/Contents/MacOS/DrawWidget
+build-*/
+*.app/
